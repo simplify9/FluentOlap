@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30105.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SW.FluentOlap", "SW.FluentOlap\SW.FluentOlap.csproj", "{29124265-B8C1-4C28-B661-5869704C4EE2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SW.FluentOlap.UnitTests", "SW.FluentOlap.UnitTests\SW.FluentOlap.UnitTests.csproj", "{D0714DEF-AF08-448A-8B62-28229569E739}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{29124265-B8C1-4C28-B661-5869704C4EE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29124265-B8C1-4C28-B661-5869704C4EE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29124265-B8C1-4C28-B661-5869704C4EE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29124265-B8C1-4C28-B661-5869704C4EE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0714DEF-AF08-448A-8B62-28229569E739}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0714DEF-AF08-448A-8B62-28229569E739}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0714DEF-AF08-448A-8B62-28229569E739}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0714DEF-AF08-448A-8B62-28229569E739}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {91FC745F-E78D-4797-8460-4CD101C3CACA}
+	EndGlobalSection
+EndGlobal
