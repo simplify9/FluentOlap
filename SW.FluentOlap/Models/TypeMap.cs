@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using TypeMapNode = System.Collections.Generic.KeyValuePair<string, SW.FluentOlap.Models.NodeProperties>;
 
 namespace SW.FluentOlap.Models
 {
@@ -25,7 +26,7 @@ namespace SW.FluentOlap.Models
             _typeMap.Add(key, value);
         }
 
-        public void Add(KeyValuePair<string, NodeProperties> item)
+        public void Add(TypeMapNode item)
         {
             _typeMap.Add(item);
         }
@@ -35,7 +36,7 @@ namespace SW.FluentOlap.Models
             _typeMap.Clear();
         }
 
-        public bool Contains(KeyValuePair<string, NodeProperties> item) => _typeMap.Contains(item);
+        public bool Contains(TypeMapNode item) => _typeMap.Contains(item);
 
         public bool ContainsKey(string key) => _typeMap.ContainsKey(key.ToLower());
 
@@ -52,16 +53,16 @@ namespace SW.FluentOlap.Models
             return TypeMap.FromString(typeMapString);
         }
 
-        public void CopyTo(KeyValuePair<string, NodeProperties>[] array, int arrayIndex)
+        public void CopyTo(TypeMapNode[] array, int arrayIndex)
         {
             _typeMap.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<KeyValuePair<string, NodeProperties>> GetEnumerator() => _typeMap.GetEnumerator();
+        public IEnumerator<TypeMapNode> GetEnumerator() => _typeMap.GetEnumerator();
 
         public bool Remove(string key) => _typeMap.Remove(key);
 
-        public bool Remove(KeyValuePair<string, NodeProperties> item) => _typeMap.Remove(item);
+        public bool Remove(TypeMapNode item) => _typeMap.Remove(item);
 
         public bool TryGetValue(string key, out NodeProperties value) => _typeMap.TryGetValue(key, out value);
 
@@ -81,7 +82,7 @@ namespace SW.FluentOlap.Models
         public override string ToString()
         {
             string typeMapsString = string.Empty;
-            foreach(KeyValuePair<string, NodeProperties> map in this)
+            foreach(TypeMapNode map in this)
             {
                 string mapString = $"{map.Key}:{map.Value},";
                 typeMapsString += mapString;
