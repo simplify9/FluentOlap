@@ -12,15 +12,22 @@ namespace SW.FluentOlap.Models
     }
     public class TypeMapDifference
     {
-        private string columnKey;
-        public string ColumnKey { get => columnKey.ToLower(); set => columnKey = value.ToLower(); }
-        public DifferenceType DifferenceType { get; set; }
+        private readonly string columnKey;
+        public string ColumnKey { get => columnKey.ToLower(); }
+        public DifferenceType DifferenceType { get; }
+        public KeyValuePair<string, NodeProperties> ModifiedColumn { get; }
+        public KeyValuePair<string, NodeProperties> OriginalColumn { get; }
+
 
         public TypeMapDifference() {}
-        public TypeMapDifference(string columnKey, DifferenceType differenceType)
+        public TypeMapDifference(string columnKey, DifferenceType differenceType,
+                                 KeyValuePair<string, NodeProperties> modified,
+                                 KeyValuePair<string, NodeProperties> original)
         {
-            ColumnKey = columnKey;
+            this.columnKey = columnKey.ToLower();
             DifferenceType = differenceType;
+            ModifiedColumn = modified;
+            OriginalColumn = original;
         }
 
     }
