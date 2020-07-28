@@ -17,18 +17,6 @@ namespace SW.FluentOlap.Utilities
 
             return sb.ToString();
         }
-        private static string typeMapToString(IDictionary<string, NodeProperties> typeMaps)
-        {
-            string typeMapsString = string.Empty;
-            foreach(KeyValuePair<string, NodeProperties> map in typeMaps)
-            {
-                string mapString = $"{map.Key}:{map.Value.ToString()},";
-                typeMapsString += mapString;
-                
-            }
-            return typeMapsString;
-
-        }
         public static string HashString(string subject, string encoding = "")
         {
             byte[] hashedSelect;
@@ -49,7 +37,7 @@ namespace SW.FluentOlap.Utilities
         {
             using (var sha256 = SHA256.Create())
             {
-                string mapString = typeMapToString(typeMaps);
+                string mapString = typeMaps.ToString();
                 byte[] hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(mapString));
                 return byteArrToString(hash);
             }
