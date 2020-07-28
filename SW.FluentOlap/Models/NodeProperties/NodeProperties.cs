@@ -76,7 +76,7 @@ namespace SW.FluentOlap.Models
             }
             props.SqlType = new InternalType(pairs[SQLTYPEKEY]);
             props.NodeName = pairs[NODENAMEKEY] != "NULL"? pairs["node_name"] : null;
-            props.ServiceName = pairs[SERVICENAMEKEY] != "NULL"? pairs["serivce_name"] : null;
+            props.ServiceName = pairs[SERVICENAMEKEY] != "NULL"? pairs[SERVICENAMEKEY] : null;
             props.Unique = bool.Parse(pairs[UNIQUEKEY]);
             return props;
         }
