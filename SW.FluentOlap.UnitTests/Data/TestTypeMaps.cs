@@ -48,6 +48,10 @@ namespace UtilityUnitTests.Data
             {
                 SqlType = InternalType.STRING
             },
+            ["parcel2level_supplier_phone_number"] = new NodeProperties
+            {
+                SqlType = InternalType.STRING
+            }
         };
 
         public readonly static TypeMap P3TypeMap = new TypeMap
@@ -62,6 +66,8 @@ namespace UtilityUnitTests.Data
             },
             ["parcel3level_referencetoparcel2level"] = new NodeProperties
             {
+                NodeName = "parcel2level",
+                ServiceName = "someservice",
                 SqlType = InternalType.STRING
             }
         };

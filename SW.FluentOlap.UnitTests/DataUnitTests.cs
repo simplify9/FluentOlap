@@ -54,6 +54,8 @@ namespace UtilityUnitTests
             var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.P3TypeMap);
             DictionaryAssert.KeysMatch(analyzed.TypeMap, TestTypeMaps.P3TypeMap);
 
+            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.P3TypeMap);
+
             Assert.AreEqual(analyzedHash, analyzedCurrentHash);
         }
 
@@ -64,6 +66,7 @@ namespace UtilityUnitTests
             TypeMap map = TypeMap.FromString(p3mapString);
             Assert.AreEqual(Hashing.HashTypeMaps(map), Hashing.HashTypeMaps(TestTypeMaps.P3TypeMap));
         }
+
 
         [TestMethod]
         public void Base64Compression()

@@ -1,6 +1,7 @@
 ﻿using SW.FluentOlap.AnalyticalNode;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace UtilityUnitTests.Models
@@ -10,10 +11,15 @@ namespace UtilityUnitTests.Models
         public string Name { get; set; }
         public string OriginCountry { get; set; }
     }
+    public class Phone
+    {
+        public string Number { get; set; }
+    }
     public class Supplier
     {
         public string Name { get; set; }
         public string DestinationCountry { get; set; }
+        public Phone Phone { get; set; }
     }
     public class Parcel2Level
     {
