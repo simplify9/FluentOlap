@@ -14,6 +14,8 @@ namespace SW.FluentOlap.Models
 
         public ICollection<NodeProperties> Values => _typeMap.Values;
 
+        public TypeMapDifferences GetDifferences(TypeMap other) => new TypeMapDifferences(this, other);
+
         public int Count => _typeMap.Count;
 
         public bool IsReadOnly => _typeMap.IsReadOnly;
