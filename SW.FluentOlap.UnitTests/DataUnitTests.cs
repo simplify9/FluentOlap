@@ -58,6 +58,24 @@ namespace UtilityUnitTests
         }
 
         [TestMethod]
+        public void StringifyingTest()
+        {
+            string p3mapString = TestTypeMaps.P3TypeMap.ToString();
+            TypeMap map = TypeMap.FromString(p3mapString);
+            Assert.AreEqual(Hashing.HashTypeMaps(map), Hashing.HashTypeMaps(TestTypeMaps.P3TypeMap));
+        }
+
+        [TestMethod]
+        public void Base64Compression()
+        {
+            string p3mapbase64 = TestTypeMaps.P3TypeMap.EncodeToBase64();
+            TypeMap testmap = TypeMap.DecodeFromBase64(p3mapbase64);
+            Assert.AreEqual(Hashing.HashTypeMaps(testmap), Hashing.HashTypeMaps(TestTypeMaps.P3TypeMap));
+
+        }
+
+
+        [TestMethod]
         public void IgnoreTest()
         {
             var analyzed = new Parcel2LevelAnalyzer();
