@@ -47,7 +47,6 @@ namespace SW.FluentOlap.Models
 
         public static TypeMap DecodeFromBase64(string base64)
         {
-            TypeMap map = new TypeMap();
             byte[] mapBytes = Convert.FromBase64String(base64);
             string typeMapString = Encoding.ASCII.GetString(mapBytes);
             return TypeMap.FromString(typeMapString);
