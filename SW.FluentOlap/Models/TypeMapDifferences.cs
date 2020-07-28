@@ -27,21 +27,26 @@ namespace SW.FluentOlap.Models
             typeMapDifferences = new List<TypeMapDifference>();
             foreach(var entry in first)
             {
-                var difference =
-                    new TypeMapDifference(entry.Key, 
-                    DifferenceType.DataTypeChange, 
-                    entry, 
-                    second.FirstOrDefault(e => e.Key == entry.Key));
 
-                if (second.Contains(entry))
+                if (second.ContainsKey(entry.Key))
                 {
-                    if(entry.Value != second[entry.Key])
+                    if(entry.Value.ToString() != second[entry.Key].ToString())
                     {
+                        var difference =
+                            new TypeMapDifference(entry.Key, 
+                            DifferenceType.DataTypeChange, 
+                            entry, 
+                            second.FirstOrDefault(e => e.Key == entry.Key));
                         typeMapDifferences.Add(difference);
                     }
                 }
                 else
                 {
+                        var difference =
+                            new TypeMapDifference(entry.Key, 
+                            DifferenceType.AddedColumn, 
+                            entry, 
+                            second.FirstOrDefault(e => e.Key == entry.Key));
                     typeMapDifferences.Add(difference);
                 }
             }
@@ -53,7 +58,7 @@ namespace SW.FluentOlap.Models
                     entry, 
                     first.FirstOrDefault(e => e.Key == entry.Key));
 
-                if(!first.Contains(entry))
+                if(!first.ContainsKey(entry.Key))
                     typeMapDifferences.Add(difference);
             }
         }
