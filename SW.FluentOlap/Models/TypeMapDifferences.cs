@@ -33,20 +33,20 @@ namespace SW.FluentOlap.Models
                     if(entry.Value.SqlType.ToString() != second[entry.Key].SqlType.ToString())
                     {
                         var difference =
-                            new TypeMapDifference(entry.Key, 
-                            DifferenceType.DataTypeChange, 
-                            entry, 
-                            second.FirstOrDefault(e => e.Key == entry.Key));
+                            new TypeMapDifference(entry.Key,
+                            DifferenceType.DataTypeChange,
+                            second.FirstOrDefault(e => e.Key == entry.Key),
+                            entry);
                         typeMapDifferences.Add(difference);
                     }
                 }
                 else
                 {
-                        var difference =
-                            new TypeMapDifference(entry.Key, 
-                            DifferenceType.AddedColumn, 
-                            entry, 
-                            second.FirstOrDefault(e => e.Key == entry.Key));
+                    var difference =
+                        new TypeMapDifference(entry.Key,
+                        DifferenceType.RemovedColumn,
+                        second.FirstOrDefault(e => e.Key == entry.Key),
+                        entry); 
                     typeMapDifferences.Add(difference);
                 }
             }
@@ -54,7 +54,7 @@ namespace SW.FluentOlap.Models
             {
                 var difference =
                     new TypeMapDifference(entry.Key, 
-                    DifferenceType.DataTypeChange, 
+                    DifferenceType.AddedColumn, 
                     entry, 
                     first.FirstOrDefault(e => e.Key == entry.Key));
 
