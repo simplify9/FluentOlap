@@ -31,28 +31,20 @@ namespace SW.FluentOlap.AnalyticalNode
             InitTypeMap();
         }
 
-        private void InitTypeMap(Type typeToInit = null, string prefix = null, string preferredName = null)
+        private void InitTypeMap(Type typeToInit = null, string prefix = null, string preferredName = null, string directParentName = null)
         {
-            if(typeToInit == null) typeToInit = this.AnalyzedType;
-            if(prefix == null) prefix = this.AnalyzedType.Name;
+            if (typeToInit == null) typeToInit = this.AnalyzedType;
+            if (prefix == null) prefix = this.AnalyzedType.Name;
             if (preferredName == null) preferredName = typeToInit.Name;
+            if (directParentName == null) directParentName = typeToInit.Name;
 
             if(typeToInit.IsPrimitive || typeToInit == typeof(string))
                 PopulateTypeMaps(TypeGuesser.GuessType(typeToInit), $"{prefix}_{preferredName}");
-
-            else foreach(var prop in typeToInit.GetProperties())
+            else 
             {
-                if(prop.PropertyType.IsPrimitive | prop.PropertyType == typeof(string))
-                {
-                    PopulateTypeMaps(TypeGuesser.GuessType(prop.PropertyType), $"{prefix}_{prop.Name}");
-                }
-                else
-                {
-                    foreach(var innerProp in prop.PropertyType.GetProperties())
-                    {
-                        InitTypeMap(innerProp.PropertyType, $"{prefix}_{prop.Name}", innerProp.Name);
-                    }
-                }
+                    if (prefix != directParentName) prefix = $"{prefix}_{directParentName}";
+                    foreach(var prop in typeToInit.GetProperties())
+                        InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name);
             }
         }
 
