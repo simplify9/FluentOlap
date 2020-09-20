@@ -70,6 +70,11 @@ namespace SW.FluentOlap.AnalyticalNode
             }
         }
 
+        public AnalyticalObject<T> GetDirectParent()
+        {
+            return null;
+        }
+
         /// <summary>
         /// Add a new map  by setting it to unique
         /// Or update the UNIQUE property if it exists
@@ -96,14 +101,14 @@ namespace SW.FluentOlap.AnalyticalNode
         {
             if (isPrimitive)
             {
-                this.TypeMap.Remove(Name.ToLower() + '_' + childName.ToLower());
+                this.TypeMap.Remove(childName.ToLower());
                 
             }
             else
             {
                 foreach(var entry in this.TypeMap)
                 {
-                    string toRemove = Name.ToLower() + '_' + childName.ToLower();
+                    string toRemove = childName.ToLower() + '_';
                     if (entry.Key.Contains(toRemove))
                         this.TypeMap.Remove(entry);
                 }
@@ -193,13 +198,15 @@ namespace SW.FluentOlap.AnalyticalNode
             return child;
         }
 
-        public void Ignore<TProperty>(Expression<Func<T, TProperty>> propertyExpression, AnalyticalObject<T> directParent = null)
+        public void Ignore<TProperty>(Expression<Func<T, TProperty>> propertyExpression)
         {
             var expression = (MemberExpression)propertyExpression.Body;
             string name = expression.Member.Name;
+
+            string toRemove = Name + '_' + name;
             if (typeof(TProperty).IsPrimitive || typeof(TProperty) == typeof(string))
-                DeleteFromTypeMap(name, true);
-            else DeleteFromTypeMap(name, false);
+                DeleteFromTypeMap(toRemove, true);
+            else DeleteFromTypeMap(toRemove, false);
 
         }
 

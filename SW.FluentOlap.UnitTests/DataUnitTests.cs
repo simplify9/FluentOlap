@@ -98,6 +98,16 @@ namespace UtilityUnitTests
             
         }
 
+        [TestMethod]
+        public void DeepIgnoreTest()
+        {
+            var analyzed = new IgnoreMapAnalyzer();
+            var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
+            var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.IgnoreTestMap);
+            
+            Assert.AreEqual(analyzedHash, analyzedCurrentHash);
+            
+        }
 
     }
 }

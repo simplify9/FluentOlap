@@ -11,9 +11,9 @@ namespace SW.FluentOlap.AnalyticalNode
 
     public class AnalyticalChild<TParent, T> : AnalyticalObject<T>
     {
-        readonly AnalyticalObject<TParent> analyticalObject;
         readonly Type childType;
         public string parentName { get; set; }
+        protected AnalyticalObject<TParent> DirectParent { get; set; }
         private bool isUnique;
         private InternalType sqlType;
 
@@ -28,8 +28,7 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="grandParentName"></param>
         public AnalyticalChild(AnalyticalObject<TParent> analyticalObject, string childName, Type childType, TypeMap typeMapsReference = null, string grandParentName = null)
         {
-            this.analyticalObject = analyticalObject;
-
+            this.DirectParent = analyticalObject;
             this.Name = childName;
             this.childType = childType;
             this.parentName = grandParentName == null? analyticalObject.Name : grandParentName + "_" + analyticalObject.Name;
@@ -39,6 +38,25 @@ namespace SW.FluentOlap.AnalyticalNode
                 TypeGuesser.TryGuessSqlType(childType, out this.sqlType);
                 PopulateTypeMaps(sqlType, childName);
             }
+        }
+
+
+        public new AnalyticalObject<TParent> GetDirectParent()
+        {
+            return DirectParent;
+        }
+
+        protected string GetParentChain()
+        {
+            List<string> parentChainArr = new List<string>();
+            var parent = DirectParent;
+            parentChainArr.Insert(0, parent.Name);
+            while (parent != null && parent.GetDirectParent() != null)
+            {
+                parentChainArr.Add(parent.Name);
+                parent = parent.GetDirectParent();
+            }
+            return string.Join(',', parentChainArr);
         }
 
 
@@ -67,6 +85,23 @@ namespace SW.FluentOlap.AnalyticalNode
         public new void PopulateTypeMaps(InternalType type, string childName)
         {
             base.PopulateTypeMaps(type, parentName + "_" + childName);
+        }
+
+        public new void DeleteFromTypemaps(string name, bool isPrimitive)
+        {
+            base.DeleteFromTypeMap(parentName + '_' + name, isPrimitive);
+        }
+        
+        public new void Ignore<TProperty>(Expression<Func<T, TProperty>> propertyExpression)
+        {
+            var parentChain = GetParentChain() + '_' + childType.Name;
+            var expression = (MemberExpression)propertyExpression.Body;
+            string name = parentChain + '_' + expression.Member.Name;
+            
+            if (typeof(TProperty).IsPrimitive || typeof(TProperty) == typeof(string))
+                DeleteFromTypeMap(name, true);
+            else DeleteFromTypeMap(name, false);
+
         }
 
         /// <summary>
