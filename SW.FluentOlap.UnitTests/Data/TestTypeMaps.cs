@@ -72,6 +72,18 @@ namespace UtilityUnitTests.Data
             }
         };
 
+        public readonly static TypeMap IgnoreTestMap = new TypeMap
+        {
+            ["ignoretestmap_complexobj2samename_name2"] = new NodeProperties
+            {
+                SqlType = InternalType.STRING
+            },
+            ["ignoretestmap_complex_stringprop"] = new NodeProperties
+            {
+                SqlType = InternalType.STRING
+            },
+        };
+
 
     }
 }
