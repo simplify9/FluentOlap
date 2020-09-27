@@ -16,6 +16,10 @@ namespace UtilityUnitTests.Data
             ["parcel1level_count"] = new NodeProperties
             {
                 SqlType = InternalType.INTEGER
+            },
+            ["parcel1level_datetime"] = new NodeProperties
+            {
+                SqlType = InternalType.DATETIME
             }
         };
 

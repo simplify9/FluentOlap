@@ -38,8 +38,10 @@ namespace SW.FluentOlap.AnalyticalNode
             if (preferredName == null) preferredName = typeToInit.Name;
             if (directParentName == null) directParentName = typeToInit.Name;
 
-            if(typeToInit.IsPrimitive || typeToInit == typeof(string))
-                PopulateTypeMaps(TypeUtils.GuessType(typeToInit), $"{prefix}_{preferredName}");
+            //if(typeToInit.IsPrimitive || typeToInit == typeof(string))
+                //PopulateTypeMaps(TypeUtils.GuessType(typeToInit), $"{prefix}_{preferredName}");
+            if (TypeUtils.TryGuessSqlType(typeToInit, out InternalType internalType))
+                PopulateTypeMaps(internalType, $"{prefix}_{preferredName}");
             else 
             {
                     if (prefix != directParentName) prefix = $"{prefix}_{directParentName}";
