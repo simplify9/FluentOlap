@@ -102,6 +102,10 @@ namespace UtilityUnitTests.Data
             {
                 InternalType = InternalType.INTEGER
             },
+            ["parcelselfreference_parcelselfreference_parcelselfreference_deeperselfreference_id"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            }
             
             
             
