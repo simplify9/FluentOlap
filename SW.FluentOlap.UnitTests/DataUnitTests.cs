@@ -85,7 +85,6 @@ namespace UtilityUnitTests
         public void IgnoreTest()
         {
             var analyzed = new Parcel2LevelAnalyzer();
-            analyzed.Ignore(p => p.Count);
             analyzed.Ignore(p => p.Shipper);
             var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
 
@@ -114,7 +113,8 @@ namespace UtilityUnitTests
         [TestMethod]
         public void SelfRefTest()
         {
-            var analyzed = new AnalyticalObject<ParcelSelfReference>();
+            var analyzed = new WideParcelSelfReference();
+            return;
         }
 
     }

@@ -32,10 +32,6 @@ namespace UtilityUnitTests.Data
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcel2level_count"] = new NodeProperties
-            {
-                InternalType = InternalType.INTEGER
-            },
             ["parcel2level_shipper_name"] = new NodeProperties
             {
                 InternalType = InternalType.STRING
@@ -86,6 +82,29 @@ namespace UtilityUnitTests.Data
             {
                 InternalType = InternalType.STRING
             },
+        };
+
+        public readonly static TypeMap SelfReferenceTest = new TypeMap
+        {
+            ["parcelselfreference_parcelreference_id"] = new NodeProperties
+            {
+                InternalType = InternalType.STRING
+            },
+            ["parcelselfreference_parcelselfreference_parcelreference_id"] = new NodeProperties
+            {
+                InternalType = InternalType.STRING
+            },
+            ["parcelselfreference_parcelselfreference_deeperselfreference_id"] = new NodeProperties
+            {
+                InternalType = InternalType.STRING
+            },
+            ["parcelselfreference_deeperselfreference_id"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            
+            
+            
         };
 
 
