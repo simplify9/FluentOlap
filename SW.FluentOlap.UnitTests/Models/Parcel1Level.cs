@@ -8,7 +8,7 @@ namespace UtilityUnitTests.Models
     {
         public string Id { get; set; }
         public int Location { get; set; }
-        public int Count { get; set; }
+        public int? Count { get; set; }
         public DateTime DateTime { get; set; }
     }
 

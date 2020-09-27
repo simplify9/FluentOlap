@@ -1,6 +1,7 @@
 ﻿using SW.FluentOlap.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SW.FluentOlap.Utilities
@@ -31,36 +32,37 @@ namespace SW.FluentOlap.Utilities
         
         public static bool TryGuessInternalType(Type type, out InternalType sqlType)
         {
+            Type focusedType = Nullable.GetUnderlyingType(type)?? type;
             sqlType = new InternalType();
 
-            if (type.IsAssignableFrom(typeof(string)))
+            if (focusedType.IsAssignableFrom(typeof(string)))
             {
                 sqlType = InternalType.STRING;
                 return true;
             }
 
-            if (type.IsAssignableFrom(typeof(DateTime)))
+            if (focusedType.IsAssignableFrom(typeof(DateTime)))
             {
                 sqlType = InternalType.DATETIME;
                 return true;
             }
 
-            if (type.IsAssignableFrom(typeof(decimal)))
+            if (focusedType.IsAssignableFrom(typeof(decimal)))
             {
                 sqlType = InternalType.FLOAT;
                 return true;
             }
             
 
-            if (!type.IsPrimitive) return false;
+            if (!focusedType.IsPrimitive) return false;
 
-            if (type.IsAssignableFrom(typeof(float)))
+            if (focusedType.IsAssignableFrom(typeof(float)))
                 sqlType = InternalType.FLOAT;
 
-            if (type.IsAssignableFrom(typeof(int)))
+            if (focusedType.IsAssignableFrom(typeof(int)))
                 sqlType = InternalType.INTEGER;
 
-            if (type.IsAssignableFrom(typeof(bool)))
+            if (focusedType.IsAssignableFrom(typeof(bool)))
                 sqlType = InternalType.BOOLEAN;
 
 
