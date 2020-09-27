@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using SW.FluentOlap.Attributes;
 
 namespace UtilityUnitTests.Models
 {
@@ -25,6 +26,8 @@ namespace UtilityUnitTests.Models
     {
         public string Id { get; set; }
         public int Location { get; set; }
+        
+        [Ignore]
         public int Count { get; set; }
 
         public Shipper Shipper { get; set; }
@@ -38,7 +41,6 @@ namespace UtilityUnitTests.Models
         {
             Property(p => p.Id);
             Property(p => p.Location);
-            Property(p => p.Count);
             Property(p => p.Shipper).Property(s => s.Name);
             Property(p => p.Shipper).Property(s => s.OriginCountry);
             Property(p => p.Supplier).Property(s => s.Name);
