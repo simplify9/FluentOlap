@@ -39,7 +39,7 @@ namespace SW.FluentOlap.AnalyticalNode
             if (directParentName == null) directParentName = typeToInit.Name;
 
             if(typeToInit.IsPrimitive || typeToInit == typeof(string))
-                PopulateTypeMaps(TypeGuesser.GuessType(typeToInit), $"{prefix}_{preferredName}");
+                PopulateTypeMaps(TypeUtils.GuessType(typeToInit), $"{prefix}_{preferredName}");
             else 
             {
                     if (prefix != directParentName) prefix = $"{prefix}_{directParentName}";
