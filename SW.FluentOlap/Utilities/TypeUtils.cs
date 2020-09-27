@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SW.FluentOlap.Utilities
 {
-    internal static class TypeGuesser
+    internal static class TypeUtils
     {
         public static InternalType GuessType(Type type)
         {
@@ -14,6 +14,21 @@ namespace SW.FluentOlap.Utilities
                 throw new Exception($"Could not guess type of {type.Name}, please define using Property()");
             return t;
         }
+
+
+        public static bool IsPrimitive(this Type type)
+        {
+            if (Nullable.GetUnderlyingType(type) != null)
+                return true;
+            if (type == typeof(string))
+                return true;
+            if (type == typeof(DateTime))
+                return true;
+            if (type == typeof(decimal))
+                return true;
+            return type.IsPrimitive;
+        }
+        
         public static bool TryGuessSqlType(Type type, out InternalType sqlType)
         {
             sqlType = new InternalType();

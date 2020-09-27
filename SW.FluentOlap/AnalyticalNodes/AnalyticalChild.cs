@@ -35,7 +35,7 @@ namespace SW.FluentOlap.AnalyticalNode
             this.TypeMap = typeMapsReference ?? base.TypeMap;
             if(childType.IsPrimitive || childType == typeof(string))
             {
-                TypeGuesser.TryGuessSqlType(childType, out this.sqlType);
+                TypeUtils.TryGuessSqlType(childType, out this.sqlType);
                 PopulateTypeMaps(sqlType, childName);
             }
         }

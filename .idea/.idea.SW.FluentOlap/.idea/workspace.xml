@@ -20,11 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78e6c99e-525a-4f0b-a8f8-773e474f6464" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/SW.FluentOlap.UnitTests/Models/ParcelDeepIgnore.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SW.FluentOlap.UnitTests/Data/TestTypeMaps.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SW.FluentOlap.UnitTests/Data/TestTypeMaps.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SW.FluentOlap.UnitTests/DataUnitTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SW.FluentOlap.UnitTests/DataUnitTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SW.FluentOlap/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SW.FluentOlap/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SW.FluentOlap/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SW.FluentOlap/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SW.FluentOlap/AnalyticalNodes/AnalyticalChild.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SW.FluentOlap/AnalyticalNodes/AnalyticalChild.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SW.FluentOlap/AnalyticalNodes/AnalyticalObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SW.FluentOlap/AnalyticalNodes/AnalyticalObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SW.FluentOlap/Utilities/TypeGuesser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SW.FluentOlap/Utilities/TypeUtils.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,6 +54,7 @@
         <option value="$PROJECT_DIR$/SW.FluentOlap.UnitTests/Data/TestTypeMaps.cs" />
         <option value="$PROJECT_DIR$/SW.FluentOlap/AnalyticalNodes/AnalyticalChild.cs" />
         <option value="$PROJECT_DIR$/SW.FluentOlap/AnalyticalNodes/AnalyticalObject.cs" />
+        <option value="$PROJECT_DIR$/SW.FluentOlap/Utilities/TypeUtils.cs" />
       </list>
     </option>
   </component>
@@ -87,7 +88,7 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="UnityProjectConfiguration" hasMinimizedUI="null" />
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -99,6 +100,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
@@ -231,10 +233,10 @@
           <line>100</line>
           <properties documentPath="$PROJECT_DIR$/SW.FluentOlap/AnalyticalNodes/AnalyticalObject.cs" initialLine="95">
             <startOffsets>
-              <option value="3559" />
+              <option value="3557" />
             </startOffsets>
             <endOffsets>
-              <option value="3560" />
+              <option value="3558" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="6" />
@@ -244,10 +246,10 @@
           <line>100</line>
           <properties documentPath="$PROJECT_DIR$/SW.FluentOlap/AnalyticalNodes/AnalyticalChild.cs" initialLine="99">
             <startOffsets>
-              <option value="3871" />
+              <option value="3869" />
             </startOffsets>
             <endOffsets>
-              <option value="3944" />
+              <option value="3942" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="8" />
@@ -285,10 +287,10 @@
           <line>203</line>
           <properties documentPath="$PROJECT_DIR$/SW.FluentOlap/AnalyticalNodes/AnalyticalObject.cs" initialLine="203">
             <startOffsets>
-              <option value="7617" />
+              <option value="7615" />
             </startOffsets>
             <endOffsets>
-              <option value="7654" />
+              <option value="7652" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="11" />
