@@ -53,13 +53,13 @@ namespace SW.FluentOlap.Models
         private const string NODENAMEKEY = "node_name";
         private const string UNIQUEKEY = "unique";
         private const string SERVICENAMEKEY = "service_name";
-        public InternalType SqlType { get; set; }
+        public InternalType InternalType { get; set; }
         public bool Unique { get; set; }
         public string  NodeName { get; set; }
         public string ServiceName { get; set; }
         public override string ToString()
         {
-            string stringified = $"{SQLTYPEKEY}={SqlType}&";
+            string stringified = $"{SQLTYPEKEY}={InternalType}&";
             stringified += $"{UNIQUEKEY}={Unique}&";
             stringified += $"{NODENAMEKEY}={NodeName?? "NULL"}&";
             stringified += $"{SERVICENAMEKEY}={ServiceName ?? "NULL"}";
@@ -74,7 +74,7 @@ namespace SW.FluentOlap.Models
                 var segArr = segment.Split('=');
                 pairs.Add(segArr[0], segArr[1]);
             }
-            props.SqlType = new InternalType(pairs[SQLTYPEKEY]);
+            props.InternalType = new InternalType(pairs[SQLTYPEKEY]);
             props.NodeName = pairs[NODENAMEKEY] != "NULL"? pairs["node_name"] : null;
             props.ServiceName = pairs[SERVICENAMEKEY] != "NULL"? pairs[SERVICENAMEKEY] : null;
             props.Unique = bool.Parse(pairs[UNIQUEKEY]);

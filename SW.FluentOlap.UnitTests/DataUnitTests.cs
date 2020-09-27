@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SW.FluentOlap.AnalyticalNode;
 using SW.FluentOlap.Models;
 using SW.FluentOlap.Utilities;
 using UtilityUnitTests.Data;
@@ -38,6 +39,9 @@ namespace UtilityUnitTests
             var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.P2TypeMap);
             foreach(string key in analyzed.TypeMap.Keys)
                 Assert.IsTrue(TestTypeMaps.P2TypeMap.ContainsKey(key));
+            
+            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.P2TypeMap);
+            
             Assert.AreEqual(analyzedHash, analyzedCurrentHash);
 
         }
@@ -105,6 +109,12 @@ namespace UtilityUnitTests
             
             Assert.AreEqual(analyzedHash, analyzedCurrentHash);
             
+        }
+
+        [TestMethod]
+        public void SelfRefTest()
+        {
+            var analyzed = new AnalyticalObject<ParcelSelfReference>();
         }
 
     }

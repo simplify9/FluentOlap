@@ -30,7 +30,7 @@ namespace SW.FluentOlap.Models
 
                 if (second.ContainsKey(entry.Key))
                 {
-                    if(entry.Value.SqlType.ToString() != second[entry.Key].SqlType.ToString())
+                    if(entry.Value.InternalType.ToString() != second[entry.Key].InternalType.ToString())
                     {
                         var difference =
                             new TypeMapDifference(entry.Key,

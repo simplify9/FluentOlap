@@ -7,54 +7,54 @@ namespace UtilityUnitTests.Data
         public readonly static TypeMap P1TypeMap = new TypeMap {
             ["parcel1level_id"] = new NodeProperties
             {
-                SqlType = InternalType.STRING
+                InternalType = InternalType.STRING
             },
             ["parcel1level_location"] = new NodeProperties
             {
-                SqlType = InternalType.INTEGER
+                InternalType = InternalType.INTEGER
             },
             ["parcel1level_count"] = new NodeProperties
             {
-                SqlType = InternalType.INTEGER
+                InternalType = InternalType.INTEGER
             },
             ["parcel1level_datetime"] = new NodeProperties
             {
-                SqlType = InternalType.DATETIME
+                InternalType = InternalType.DATETIME
             }
         };
 
         public readonly static TypeMap P2TypeMap = new TypeMap {
             ["parcel2level_id"] = new NodeProperties
             {
-                SqlType = InternalType.STRING
+                InternalType = InternalType.STRING
             },
             ["parcel2level_location"] = new NodeProperties
             {
-                SqlType = InternalType.INTEGER
+                InternalType = InternalType.INTEGER
             },
             ["parcel2level_count"] = new NodeProperties
             {
-                SqlType = InternalType.INTEGER
+                InternalType = InternalType.INTEGER
             },
             ["parcel2level_shipper_name"] = new NodeProperties
             {
-                SqlType = InternalType.STRING
+                InternalType = InternalType.STRING
             },
             ["parcel2level_shipper_origincountry"] = new NodeProperties
             {
-                SqlType = InternalType.STRING
+                InternalType = InternalType.STRING
             },
             ["parcel2level_supplier_name"] = new NodeProperties
             {
-                SqlType = InternalType.STRING
+                InternalType = InternalType.STRING
             },
             ["parcel2level_supplier_destinationcountry"] = new NodeProperties
             {
-                SqlType = InternalType.STRING
+                InternalType = InternalType.STRING
             },
             ["parcel2level_supplier_phone_number"] = new NodeProperties
             {
-                SqlType = InternalType.STRING
+                InternalType = InternalType.STRING
             }
         };
 
@@ -62,17 +62,17 @@ namespace UtilityUnitTests.Data
         {
             ["parcel3level_id"] = new NodeProperties
             {
-                SqlType = InternalType.INTEGER
+                InternalType = InternalType.INTEGER
             },
             ["parcel3level_reference"] = new NodeProperties
             {
-                SqlType = InternalType.STRING
+                InternalType = InternalType.STRING
             },
             ["parcel3level_referencetoparcel2level"] = new NodeProperties
             {
                 NodeName = "parcel2level",
                 ServiceName = "someservice",
-                SqlType = InternalType.STRING
+                InternalType = InternalType.STRING
             }
         };
 
@@ -80,11 +80,11 @@ namespace UtilityUnitTests.Data
         {
             ["ignoretestmap_complexobj2samename_name2"] = new NodeProperties
             {
-                SqlType = InternalType.STRING
+                InternalType = InternalType.STRING
             },
             ["ignoretestmap_complex_stringprop"] = new NodeProperties
             {
-                SqlType = InternalType.STRING
+                InternalType = InternalType.STRING
             },
         };
 

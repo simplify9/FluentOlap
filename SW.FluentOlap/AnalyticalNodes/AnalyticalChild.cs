@@ -26,16 +26,15 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="childType"></param>
         /// <param name="typeMapsReference"></param>
         /// <param name="grandParentName"></param>
-        public AnalyticalChild(AnalyticalObject<TParent> analyticalObject, string childName, Type childType, TypeMap typeMapsReference = null, string grandParentName = null)
+        public AnalyticalChild(AnalyticalObject<TParent> analyticalObject, string childName, Type childType, TypeMap typeMapsReference = null, string grandParentName = null) : base(analyticalObject.TypeMap)
         {
             this.DirectParent = analyticalObject;
             this.Name = childName;
             this.childType = childType;
             this.parentName = grandParentName == null? analyticalObject.Name : grandParentName + "_" + analyticalObject.Name;
             this.TypeMap = typeMapsReference ?? base.TypeMap;
-            if(childType.IsPrimitive || childType == typeof(string))
+            if(TypeUtils.TryGuessInternalType(childType, out this.sqlType))
             {
-                TypeUtils.TryGuessInternalType(childType, out this.sqlType);
                 PopulateTypeMaps(sqlType, childName);
             }
         }

@@ -17,18 +17,36 @@ namespace SW.FluentOlap.AnalyticalNode
     /// <typeparam name="T">Type of object ot be analyzed</typeparam>
     public class AnalyticalObject<T> : IAnalyticalNode
     {
+        public static Type OriginType { get; private set; }
         private static TypeMap FinalTypeMap { get; set; } = new TypeMap();
-        public TypeMap TypeMap { get; protected set; } = new TypeMap();
+        public TypeMap TypeMap { get; protected set; }
         public string ServiceName { get; set; }
+        public static byte SelfReferencingDepth { get; set; } = 0;
+        public static byte SelfReferencingLimit { get; set; } = 1;
         public MessageProperties MessageMap { get; set; }
         public string Name { get; set; }
         public Type AnalyzedType { get; set; }
         public AnalyticalObject()
         {
+            this.TypeMap = new TypeMap();
             this.AnalyzedType = typeof(T);
             this.Name = AnalyzedType.Name;
             AnalyzedType = typeof(T);
             InitTypeMap();
+        }
+
+        public AnalyticalObject(TypeMap existing)
+        {
+            this.TypeMap = existing;
+        }
+
+        private void OwnExistingTypeMap(TypeMap map)
+        {
+            
+            foreach (var entry in map)
+            {
+                PopulateTypeMaps(entry.Value.InternalType, $"{Name}_{entry.Key}");
+            }
         }
 
         private void InitTypeMap(Type typeToInit = null, string prefix = null, string preferredName = null, string directParentName = null)
@@ -37,16 +55,26 @@ namespace SW.FluentOlap.AnalyticalNode
             if (prefix == null) prefix = this.AnalyzedType.Name;
             if (preferredName == null) preferredName = typeToInit.Name;
             if (directParentName == null) directParentName = typeToInit.Name;
+            var directParent = this.GetDirectParent();
 
-            //if(typeToInit.IsPrimitive || typeToInit == typeof(string))
-                //PopulateTypeMaps(TypeUtils.GuessType(typeToInit), $"{prefix}_{preferredName}");
+
             if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType))
                 PopulateTypeMaps(internalType, $"{prefix}_{preferredName}");
             else 
             {
                     if (prefix != directParentName) prefix = $"{prefix}_{directParentName}";
-                    foreach(var prop in typeToInit.GetProperties())
-                        InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name);
+                    foreach (var prop in typeToInit.GetProperties())
+                    {
+                        if (prop.PropertyType == typeToInit)
+                        {
+                            if (SelfReferencingDepth <= SelfReferencingLimit)
+                            {
+                                SelfReferencingDepth += 1;
+                                OwnExistingTypeMap(FinalTypeMap);
+                            }
+                        }
+                        else InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name);
+                    }
             }
         }
 
@@ -63,12 +91,12 @@ namespace SW.FluentOlap.AnalyticalNode
             {
                 this.TypeMap[key] = new NodeProperties
                 {
-                    SqlType = type
+                    InternalType = type
                 };
             }
             else
             {
-                this.TypeMap[key].SqlType = type;
+                this.TypeMap[key].InternalType = type;
             }
         }
 
