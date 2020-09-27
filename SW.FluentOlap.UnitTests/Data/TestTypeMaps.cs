@@ -86,19 +86,19 @@ namespace UtilityUnitTests.Data
 
         public readonly static TypeMap SelfReferenceTest = new TypeMap
         {
-            ["parcelselfreference_parcelreference_id"] = new NodeProperties
-            {
-                InternalType = InternalType.STRING
-            },
-            ["parcelselfreference_parcelselfreference_parcelreference_id"] = new NodeProperties
-            {
-                InternalType = InternalType.STRING
-            },
-            ["parcelselfreference_parcelselfreference_deeperselfreference_id"] = new NodeProperties
+            ["parcelselfreference_id"] = new NodeProperties
             {
                 InternalType = InternalType.STRING
             },
             ["parcelselfreference_deeperselfreference_id"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference_parcelselfreference_id"] = new NodeProperties
+            {
+                InternalType = InternalType.STRING
+            },
+            ["parcelselfreference_parcelselfreference_deeperselfreference_id"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
