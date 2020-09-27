@@ -40,7 +40,7 @@ namespace SW.FluentOlap.AnalyticalNode
 
             //if(typeToInit.IsPrimitive || typeToInit == typeof(string))
                 //PopulateTypeMaps(TypeUtils.GuessType(typeToInit), $"{prefix}_{preferredName}");
-            if (TypeUtils.TryGuessSqlType(typeToInit, out InternalType internalType))
+            if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType))
                 PopulateTypeMaps(internalType, $"{prefix}_{preferredName}");
             else 
             {
