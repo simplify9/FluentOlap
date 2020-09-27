@@ -124,8 +124,6 @@ namespace UtilityUnitTests
             test += analyzed.TypeMap.ToString() + "\n\n\n\n\n\n\n\n\n";
             test += TestTypeMaps.SelfReferenceTest.ToString();
             
-            File.WriteAllText("./TEST123.txt", test);
-            
             Assert.AreEqual(analyzedHash, analyzedCurrentHash);
         }
 
