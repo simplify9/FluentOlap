@@ -22,7 +22,7 @@ namespace SW.FluentOlap.AnalyticalNode
         private static TypeMap FinalTypeMap { get; set; } = new TypeMap();
         public TypeMap TypeMap { get; protected set; }
         public string ServiceName { get; set; }
-        public static byte SelfReferencingDepth { get; set; } = 0;
+        public static IDictionary<string, byte> SelfReferencingDepths { get; set; } = new Dictionary<string, byte>();
         public static byte SelfReferencingLimit { get; set; } = 1;
         public MessageProperties MessageMap { get; set; }
         public string Name { get; set; }
@@ -41,7 +41,7 @@ namespace SW.FluentOlap.AnalyticalNode
         {
             foreach (var entry in selfRefEntries)
             {
-                OwnExistingTypeMap(this.TypeMap, entry);
+                OwnExistingTypeMap(entry);
             }
         }
 
@@ -50,29 +50,31 @@ namespace SW.FluentOlap.AnalyticalNode
             this.TypeMap = existing;
         }
 
-        private void OwnExistingTypeMap(TypeMap map, string key)
+        private void OwnExistingTypeMap(string key)
         {
             // Make a new enumerable to avoid modifying collection loop is iterating over
             TypeMap tmp = new TypeMap();
-            foreach (var entry in map)
-                tmp.Add(entry);
+            foreach (var entry in TypeMap)
+                if (entry.Key.Contains($"{key.ToLower()}_"))
+                {
+                    tmp.Add(entry);
+                }
             
             foreach (var entry in tmp)
             {
-                PopulateTypeMaps(entry.Value.InternalType, $"{key}_{entry.Key}");
+                PopulateTypeMaps(entry.Value.InternalType, $"{Name}_{entry.Key}");
             }
         }
 
-        private IEnumerable<string> InitTypeMap(Type typeToInit = null, string prefix = null, string preferredName = null, string directParentName = null)
+        private IEnumerable<string> InitTypeMap(Type typeToInit = null, string prefix = null, string preferredName = null, string directParentName = null, IList<string> selfRefEntries = null )
         {
             typeToInit ??= this.AnalyzedType;
             prefix ??= this.AnalyzedType.Name;
             preferredName ??= typeToInit.Name;
             directParentName ??= typeToInit.Name;
             
-            List<string> selfRefEntries = new List<string>();
-
-
+            if(selfRefEntries == null) selfRefEntries = new List<string>();
+            
             if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType))
                 PopulateTypeMaps(internalType, $"{prefix}_{preferredName}");
             else 
@@ -83,13 +85,16 @@ namespace SW.FluentOlap.AnalyticalNode
                         if (prop.GetCustomAttribute(typeof(IgnoreAttribute)) != null) continue;
                         if (prop.PropertyType == typeToInit)
                         {
-                            if (SelfReferencingDepth <= SelfReferencingLimit)
+                            if (!SelfReferencingDepths.ContainsKey(prop.PropertyType.Name))
+                               SelfReferencingDepths[prop.PropertyType.Name] = 0;
+                            
+                            if (SelfReferencingDepths[prop.PropertyType.Name] <= SelfReferencingLimit)
                             {
-                                SelfReferencingDepth += 1;
+                                SelfReferencingDepths[prop.PropertyType.Name] += 1;
                                 selfRefEntries.Add($"{prop.PropertyType.Name}");
                             }
                         }
-                        else InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name);
+                        else InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name, null, selfRefEntries);
                     }
             }
 
