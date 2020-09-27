@@ -77,8 +77,6 @@ namespace UtilityUnitTests
 
         }
 
-
-
         [TestMethod]
         public void IgnoreTest()
         {

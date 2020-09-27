@@ -32,11 +32,25 @@ namespace SW.FluentOlap.Utilities
         public static bool TryGuessSqlType(Type type, out InternalType sqlType)
         {
             sqlType = new InternalType();
+
             if (type.IsAssignableFrom(typeof(string)))
             {
                 sqlType = InternalType.STRING;
                 return true;
             }
+
+            if (type.IsAssignableFrom(typeof(DateTime)))
+            {
+                sqlType = InternalType.DATETIME;
+                return true;
+            }
+
+            if (type.IsAssignableFrom(typeof(decimal)))
+            {
+                sqlType = InternalType.FLOAT;
+                return true;
+            }
+            
 
             if (!type.IsPrimitive) return false;
 
@@ -48,9 +62,6 @@ namespace SW.FluentOlap.Utilities
 
             if (type.IsAssignableFrom(typeof(bool)))
                 sqlType = InternalType.BOOLEAN;
-
-            if (type.IsAssignableFrom(typeof(DateTime)))
-                sqlType = InternalType.DATETIME;
 
 
             return true;

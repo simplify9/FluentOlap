@@ -1,4 +1,5 @@
-﻿using SW.FluentOlap.AnalyticalNode;
+﻿using System;
+using SW.FluentOlap.AnalyticalNode;
 using SW.FluentOlap.Models;
 
 namespace UtilityUnitTests.Models
@@ -8,6 +9,7 @@ namespace UtilityUnitTests.Models
         public string Id { get; set; }
         public int Location { get; set; }
         public int Count { get; set; }
+        public DateTime DateTime { get; set; }
     }
 
     public class Parcel1LevelAnalyzer : AnalyticalObject<Parcel1Level>
@@ -17,6 +19,7 @@ namespace UtilityUnitTests.Models
             Property(p => p.Id);
             Property(p => p.Location);
             Property(p => p.Count);
+            Property(p => p.DateTime);
         }
         
     }
