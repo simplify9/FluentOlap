@@ -59,7 +59,7 @@ namespace SW.FluentOlap.AnalyticalNode
             
             foreach (var entry in tmp)
             {
-                PopulateTypeMaps(entry.Value.InternalType, $"{Name}_{key}_{entry.Key}");
+                PopulateTypeMaps(entry.Value.InternalType, $"{key}_{entry.Key}");
             }
         }
 
