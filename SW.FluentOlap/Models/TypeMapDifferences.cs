@@ -61,6 +61,24 @@ namespace SW.FluentOlap.Models
                 if(!first.ContainsKey(entry.Key))
                     typeMapDifferences.Add(difference);
             }
+
+            var secondInOrder = second.AsEnumerable().ToArray();
+            for (int i = 0; i < first.Count; ++i)
+            {
+                var atIndex = secondInOrder[i];
+                foreach (var entry in first)
+                {
+                    bool keyInOrder = atIndex.Key == entry.Key;
+                    if (!keyInOrder)
+                    {
+                        typeMapDifferences.Add(new TypeMapDifference(entry.Key,
+                            DifferenceType.ChangedColumnOrder,
+                            entry,
+                            atIndex
+                            ));
+                    }
+                }
+            }
         }
 
         public TypeMapDifferences()

@@ -8,7 +8,8 @@ namespace SW.FluentOlap.Models
     {
         DataTypeChange,
         AddedColumn,
-        RemovedColumn
+        RemovedColumn,
+        ChangedColumnOrder
     }
     public class TypeMapDifference
     {
