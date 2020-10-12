@@ -16,6 +16,7 @@ namespace UtilityUnitTests.Models
     {
         public Parcel1LevelAnalyzer()
         {
+            Handles(nameof(Parcel1LevelAnalyzer), nameof(Parcel1Level.Id));
             Property(p => p.Id);
             Property(p => p.Location);
             Property(p => p.Count);

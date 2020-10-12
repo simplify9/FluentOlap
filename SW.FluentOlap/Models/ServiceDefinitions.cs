@@ -23,6 +23,7 @@ namespace SW.FluentOlap.Models
             _services.Add(key.ToLower(), value);
         }
 
+
         public void Add(KeyValuePair<string, Service> item)
         {
             _services.Add(item);

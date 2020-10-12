@@ -20,7 +20,7 @@ namespace SW.FluentOlap.Models
         public KeyValuePair<string, NodeProperties> OriginalColumn { get; }
 
 
-        public TypeMapDifference() {}
+        private TypeMapDifference() {}
         public TypeMapDifference(string columnKey, DifferenceType differenceType,
                                  KeyValuePair<string, NodeProperties> modified,
                                  KeyValuePair<string, NodeProperties> original)
