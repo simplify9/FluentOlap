@@ -141,7 +141,6 @@ namespace UtilityUnitTests
                 }
             };
             
-            
             var analyzed = new PostAnalyzer();
             analyzed.GetFromService("postService");
             var result = analyzed.PopulateAsync(new PopulationContext<PostMessage>(new PostMessage
