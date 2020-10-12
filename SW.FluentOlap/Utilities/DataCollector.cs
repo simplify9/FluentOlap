@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using SW.FluentOlap.Models;
 using System.Threading;
+using SW.FluentOlap.AnalyticalNode;
 
 namespace SW.FluentOlap.Utilities
 {
@@ -24,10 +25,21 @@ namespace SW.FluentOlap.Utilities
         {
         }
 
+        public async Task<PopulationResult> GetDataFromEndpoints<T>(AnalyticalObject<T> analyticalObject, string rootValue,
+            IHttpClientFactory httpClientFactory = null)
+        {
+            return await 
+                GetDataFromEndpoints(analyticalObject.Name.ToLower(),
+                rootValue, analyticalObject.ServiceName,
+                FluentOlapConfiguration.ServiceDefinitions, 
+                analyticalObject.TypeMap, 
+                FluentOlapConfiguration.Metadata, 
+                httpClientFactory);
+        }
+
 
         /// <summary>
-        /// Gets data of root object using baseUrl, rootValue and rootName, then uses retrieved
-        /// data to expand from other services, if appropiate.
+        /// Gets data using service and returns it in a flattened dictionary
         /// </summary>
         /// <param name="rootValue">ID of root object</param>
         /// <param name="metadata">AnalyticalMetaData from MasterTypeMaps</param>

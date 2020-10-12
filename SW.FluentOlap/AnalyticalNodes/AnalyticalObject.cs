@@ -219,15 +219,7 @@ namespace SW.FluentOlap.AnalyticalNode
             string val = tok[this.MessageMap.KeyPath].ToString();
                 
             var collector = new DataCollector();
-            PopulationResult rs = await collector.GetDataFromEndpoints(
-                Name.ToLower(),
-                val,
-                this.ServiceName,
-                FluentOlapConfiguration.ServiceDefinitions,
-                AnalyticalObject<T>.FinalTypeMap.Count == 0 ? this.TypeMap : AnalyticalObject<T>.FinalTypeMap,
-                null,
-                cntx.HttpClientFactory
-            );
+            PopulationResult rs = await collector.GetDataFromEndpoints(this, val);
             rs.TargetTable = this.GetType().Name;
             return rs;
         }
