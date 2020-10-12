@@ -86,9 +86,9 @@ namespace SW.FluentOlap.AnalyticalNode
             base.PopulateTypeMaps(type, parentName + "_" + childName);
         }
 
-        public new void DeleteFromTypemaps(string name, bool isPrimitive)
+        public void DeleteFromTypemaps(string name, bool isPrimitive)
         {
-            base.DeleteFromTypeMap(parentName + '_' + name, isPrimitive);
+            DeleteFromTypeMap(parentName + '_' + name, isPrimitive);
         }
         
         public new void Ignore<TProperty>(Expression<Func<T, TProperty>> propertyExpression)

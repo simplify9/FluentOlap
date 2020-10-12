@@ -29,18 +29,21 @@ namespace SW.FluentOlap.Utilities
         /// Gets data of root object using baseUrl, rootValue and rootName, then uses retrieved
         /// data to expand from other services, if appropiate.
         /// </summary>
-        /// <param name="baseUrl">Base URL for the root object</param>
         /// <param name="rootValue">ID of root object</param>
-        /// <param name="rootName">Endpoint for root object</param>
         /// <param name="metadata">AnalyticalMetaData from MasterTypeMaps</param>
+        /// <param name="rootServiceName"></param>
         /// <param name="services">ServiceDefinitions from DI</param>
         /// <param name="typeMap">TypeMap of the root object</param>
-        /// <returns>Flatted and denormalized Dictionary of the root object and its children</returns>
-        public async Task<PopulationResult> GetDataFromEndpoints(string rootValue, string rootName, ServiceDefinitions services, TypeMap typeMap, AnalyticalMetadata metadata = null, IHttpClientFactory httpClientFactory = null)
+        /// <returns>Flattened and denormalized Dictionary of the root object and its children</returns>
+        public async Task<PopulationResult> GetDataFromEndpoints(string rootObjectName, string rootValue, string rootServiceName, ServiceDefinitions services, TypeMap typeMap, AnalyticalMetadata metadata = null, IHttpClientFactory httpClientFactory = null)
         {
-            string baseUrl = metadata == null? services[rootName].BaseUrl : metadata.BaseUrl;
-            string endpoint = services[rootName].Endpoint;
-            string fullUrl = (baseUrl.EndsWith("/") ? baseUrl : baseUrl + '/') + (rootName.EndsWith("/") ? endpoint : endpoint + '/') + rootValue;
+            if (services == null)
+                throw new Exception("No service definitions found.");
+
+            string baseUrl = metadata == null? services[rootServiceName].BaseUrl : metadata.BaseUrl;
+            string endpoint = services[rootServiceName].Endpoint.StartsWith('/')? services[rootServiceName].Endpoint : '/' + services[rootServiceName].Endpoint ;
+            string fullUrl = (baseUrl.EndsWith("/") ? baseUrl.Substring(0, baseUrl.Length - 1) : baseUrl) 
+                             + (endpoint.EndsWith("/") ? endpoint : endpoint + '/') + rootValue;
             IDictionary<string, object> objects = new Dictionary<string, object>();
 
             using(HttpClient httpClient = httpClientFactory != null? httpClientFactory.CreateClient() : new HttpClient())
@@ -49,7 +52,7 @@ namespace SW.FluentOlap.Utilities
                 IDictionary<string, object> rootObject = JsonHelper.DeserializeAndFlatten(rootObjectRs);;
 
                 foreach(KeyValuePair<string, object> childEntry in rootObject)
-                    objects.Add(endpoint.Replace("/", "") + "_" + childEntry.Key, childEntry.Value);
+                    objects.Add(rootObjectName.Replace("/", "") + "_" + childEntry.Key, childEntry.Value);
 
                 foreach (KeyValuePair<string, NodeProperties> map in typeMap) {
                     string serviceName = map.Value.ServiceName;

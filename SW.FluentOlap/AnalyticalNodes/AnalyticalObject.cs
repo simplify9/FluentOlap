@@ -32,7 +32,6 @@ namespace SW.FluentOlap.AnalyticalNode
             this.TypeMap = new TypeMap();
             this.AnalyzedType = typeof(T);
             this.Name = AnalyzedType.Name;
-            AnalyzedType = typeof(T);
             PostInitCleanUp(InitTypeMap());
             
         }
@@ -66,6 +65,11 @@ namespace SW.FluentOlap.AnalyticalNode
             }
         }
 
+        public AnalyticalObject<T> GetUsingSql(string sqlStatement, params string[] parameters)
+        {
+            return this;
+        }
+        
         private IEnumerable<string> InitTypeMap(Type typeToInit = null, string prefix = null, string preferredName = null, string directParentName = null, IList<string> selfRefEntries = null )
         {
             typeToInit ??= this.AnalyzedType;
@@ -123,7 +127,7 @@ namespace SW.FluentOlap.AnalyticalNode
             }
         }
 
-        public AnalyticalObject<T> GetDirectParent()
+        public virtual AnalyticalObject<T> GetDirectParent()
         {
             return null;
         }
@@ -134,7 +138,7 @@ namespace SW.FluentOlap.AnalyticalNode
         /// </summary>
         /// <param name="isUnique"></param>
         /// <param name="childName"></param>
-        public void IsUnique(bool isUnique, string childName)
+        protected virtual void IsUnique(bool isUnique, string childName)
         {
             string key = childName;
             if (!this.TypeMap.ContainsKey(key))
@@ -212,14 +216,16 @@ namespace SW.FluentOlap.AnalyticalNode
 
         public async Task<PopulationResult> PopulateAsync<TM>(PopulationContext<TM> cntx)
         {
-            string val = cntx.Message.ToString();
-            if (typeof(TM).Name == this.MessageMap.MessageName)
-            {
-                JToken tok = JToken.FromObject(cntx.Message);
-                val = tok[this.MessageMap.KeyPath].ToString();
-            }
+            if (this.MessageMap == null)
+                this.MessageMap = new MessageProperties("NONE", "Id");
+            
+            JToken tok = JToken.FromObject(cntx.Message);
+            
+            string val = tok[this.MessageMap.KeyPath].ToString();
+                
             var collector = new DataCollector();
             PopulationResult rs = await collector.GetDataFromEndpoints(
+                Name.ToLower(),
                 val,
                 this.ServiceName,
                 FluentOlapConfiguration.ServiceDefinitions,

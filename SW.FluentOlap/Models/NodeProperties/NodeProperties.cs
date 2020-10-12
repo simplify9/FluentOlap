@@ -11,6 +11,22 @@ namespace SW.FluentOlap.Models
     }
     public class InternalType
     {
+        private sealed class TypeStringEqualityComparer : IEqualityComparer<InternalType>
+        {
+            public bool Equals(InternalType x, InternalType y)
+            {
+                if (x.GetType() != y.GetType()) return false;
+                return x.typeString == y.typeString;
+            }
+
+            public int GetHashCode(InternalType obj)
+            {
+                return (obj.typeString != null ? obj.typeString.GetHashCode() : 0);
+            }
+        }
+
+        public static IEqualityComparer<InternalType> TypeStringComparer { get; } = new TypeStringEqualityComparer();
+
         public string typeString { get; }
         public InternalType() {}
         public InternalType(string typeString)
