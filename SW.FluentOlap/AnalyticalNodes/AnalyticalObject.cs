@@ -65,11 +65,6 @@ namespace SW.FluentOlap.AnalyticalNode
             }
         }
 
-        public AnalyticalObject<T> GetUsingSql(string sqlStatement, params string[] parameters)
-        {
-            return this;
-        }
-        
         private IEnumerable<string> InitTypeMap(Type typeToInit = null, string prefix = null, string preferredName = null, string directParentName = null, IList<string> selfRefEntries = null )
         {
             typeToInit ??= this.AnalyzedType;
