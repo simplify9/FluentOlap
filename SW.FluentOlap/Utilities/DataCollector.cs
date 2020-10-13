@@ -52,7 +52,14 @@ namespace SW.FluentOlap.Utilities
             if (services == null)
                 throw new Exception("No service definitions found.");
 
-            string baseUrl = metadata == null? services[rootServiceName].BaseUrl : metadata.BaseUrl;
+            if (rootServiceName == null)
+                throw new Exception("No service declared for root object.");
+            
+            if(!services.ContainsKey(rootServiceName))
+                throw new Exception($"Service with name {rootServiceName} not found.");
+            
+            string baseUrl = services[rootServiceName].BaseUrl;
+            
             string endpoint = services[rootServiceName].Endpoint.StartsWith('/')? services[rootServiceName].Endpoint : '/' + services[rootServiceName].Endpoint ;
             string fullUrl = (baseUrl.EndsWith("/") ? baseUrl.Substring(0, baseUrl.Length - 1) : baseUrl) 
                              + (endpoint.EndsWith("/") ? endpoint : endpoint + '/') + rootValue;
