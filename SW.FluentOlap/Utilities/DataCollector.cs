@@ -13,13 +13,49 @@ namespace SW.FluentOlap.Utilities
 {
     internal class DataCollector
     {
-        public DataCollector()
+
+        private async Task<PopulationResult> CallService(IService focusedService, object serviceInput)
         {
+
+            switch (focusedService.Type)
+            {
+                case ServiceType.DatabaseCall:
+                    break;
+                case ServiceType.HttpCall:
+
+                    if (!(focusedService is HttpService service))
+                        throw new Exception($"Invalid HttpService defined for service {serviceName}");
+                    
+                    HttpResponse result = await service.InvokeAsync(serviceInput as HttpServiceOptions);
+
+                    break;
+            }
         }
 
-        public async Task<PopulationResult> CollectData<T>(AnalyticalObject<T> focusedObject)
-        {
-            var focusedService = 
+    public async Task<PopulationResult> CollectData<T>(AnalyticalObject<T> focusedObject, object serviceInput)
+    {
+
+            IService focusedService = FluentOlapConfiguration.ServiceDefinitions[focusedObject.ServiceName];
+            PopulationResult rootResult = await CallService(focusedService, serviceInput);
+            
+            foreach (var expandable in focusedObject.ExpandableChildren)
+            {
+                string expandableKey = rootResult[expandable.Key.Split('_').Last().ToLower()]?.ToString();
+                IService expandableService = FluentOlapConfiguration.ServiceDefinitions[expandable.Value.ServiceName];
+                IService
+
+                switch (expandableService.Type)
+                {
+                    case ServiceType.HttpCall:
+                        
+                }
+                
+                PopulationResult expandableResponse = await CallService(expandableService, )
+
+
+            }
+                    
+            
         }
 
         // public async Task<PopulationResult> GetDataFromEndpoints<T>(AnalyticalObject<T> analyticalObject, string rootValue,
