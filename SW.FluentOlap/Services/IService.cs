@@ -12,15 +12,39 @@ namespace SW.FluentOlap.Models
         DatabaseCall
     }
 
+    /// <summary>
+    /// Marker interface
+    /// </summary>
+    public interface IServiceInput
+    {
+    }
+
+    /// <summary>
+    /// Marker interface
+    /// </summary>
+    public interface IServiceOutput
+    {
+    }
+
+    /// <summary>
+    /// Interface used for references of a service
+    /// </summary>
     public interface IService
     {
-        public ServiceType Type { get ; }
+        public ServiceType Type { get; }
     }
-    
-    public abstract class Service<TIn, TOut> : IService
-    {
 
-        public Service(ServiceType type)
+    /// <summary>
+    /// Parent abstract class of all services.
+    /// </summary>
+    /// <typeparam name="TIn">Input going to invocation</typeparam>
+    /// <typeparam name="TOut">Return of invocation</typeparam>
+    public abstract class Service<TIn, TOut> : IService
+        where TIn : IServiceInput
+        where TOut : IServiceOutput
+
+    {
+        protected Service(ServiceType type)
         {
             Type = type;
         }
@@ -28,24 +52,8 @@ namespace SW.FluentOlap.Models
         /// <summary>
         /// How this service is used
         /// </summary>
-        public Func<TIn, Task<TOut>> InvokeAsync { get;}
-        
-        public ServiceType Type { get ; }
+        public Func<TIn, Task<TOut>> InvokeAsync { get; }
 
+        public ServiceType Type { get; }
     }
-
-
-
-    public class DatabaseService : IService<>
-    {
-        
-        /// <summary>
-        /// Select statement using SQL Parameters (eg @Id)
-        /// </summary>
-        public string Select { get; set; }
-
-        public ServiceType Type => ServiceType.DatabaseCall;
-    }
-    
-    
 }
