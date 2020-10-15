@@ -19,7 +19,7 @@ namespace SW.FluentOlap.AnalyticalNode
     public class AnalyticalObject<T> : IAnalyticalNode
     {
         public static Type OriginType { get; private set; }
-        private static TypeMap FinalTypeMap { get; set; } = new TypeMap();
+        private static TypeMap FinalTypeMap { get; set; } 
         public TypeMap TypeMap { get; protected set; }
         public string ServiceName { get; set; }
         public static IDictionary<string, byte> SelfReferencingDepths { get; set; } = new Dictionary<string, byte>();
@@ -27,6 +27,9 @@ namespace SW.FluentOlap.AnalyticalNode
         public MessageProperties MessageMap { get; set; }
         public string Name { get; set; }
         public Type AnalyzedType { get; set; }
+
+        public Dictionary<string, NodeProperties> ExpandableChildren =>
+            new Dictionary<string, NodeProperties>(TypeMap.Where(n => n.Value.ServiceName != null));
         public AnalyticalObject()
         {
             this.TypeMap = new TypeMap();
@@ -209,17 +212,14 @@ namespace SW.FluentOlap.AnalyticalNode
             return this;
         }
 
-        public async Task<PopulationResult> PopulateAsync<TM>(PopulationContext<TM> cntx)
+        public async Task<PopulationResult> PopulateAsync<TInput>(PopulationContext<TInput> cntx)
         {
-            if (this.MessageMap == null)
+            if (this.MessageMap == null)            
+
                 this.MessageMap = new MessageProperties("NONE", "Id");
             
-            JToken tok = JToken.FromObject(cntx.Message);
-            
-            string val = tok[this.MessageMap.KeyPath].ToString();
-                
             var collector = new DataCollector();
-            PopulationResult rs = await collector.GetDataFromEndpoints(this, val);
+            PopulationResult rs = await collector.CollectData(this, cntx.Input);
             rs.TargetTable = this.GetType().Name;
             return rs;
         }
