@@ -215,7 +215,6 @@ namespace SW.FluentOlap.AnalyticalNode
         public async Task<PopulationResultCollection> PopulateAsync<TInput>(PopulationContext<TInput> cntx) where TInput : IServiceInput
         {
             if (this.MessageMap == null)            
-
                 this.MessageMap = new MessageProperties("NONE", "Id");
             
             var collector = new DataCollector();
