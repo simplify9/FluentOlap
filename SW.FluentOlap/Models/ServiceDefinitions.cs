@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace SW.FluentOlap.Models
 {
-    public class ServiceDefinitions : IDictionary<string, Service>
+    public class ServiceDefinitions : IDictionary<string, IService>
     {
-        private readonly IDictionary<string, Service> _services = new Dictionary<string, Service>();
-        public Service this[string key] { get => _services[key.ToLower()]; set => _services[key.ToLower()] = value; }
+        private readonly IDictionary<string, IService> _services = new Dictionary<string, IService>();
+        public IService this[string key] { get => _services[key.ToLower()]; set => _services[key.ToLower()] = value; }
 
         public ICollection<string> Keys => _services.Keys;
 
-        public ICollection<Service> Values => _services.Values;
+        public ICollection<IService> Values => _services.Values;
 
         public int Count => _services.Count;
 
