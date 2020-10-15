@@ -23,6 +23,7 @@ namespace SW.FluentOlap.Models
     {
         public string Content { get; set; }
         public string ContentType { get; set; }
+        public string RawOutput => Content;
     }
     public class HttpServiceOptions : IServiceInput
     {
@@ -110,6 +111,13 @@ namespace SW.FluentOlap.Models
                     };
             }
         }
+        
+        public IEnumerable<string> RequiredParameters => 
+            Regex.Match(
+                templatedUrl,
+                "" + "{\\w*\\}")
+                .Captures
+                .Select(c => c.Value);
 
         /// <summary>
         /// Fills in the JSON paths in a Uri using Parameters from HttpRequestOptions
@@ -121,13 +129,8 @@ namespace SW.FluentOlap.Models
             string formattedUrl = null;
             
             //All values between curly braces are treated as variables
-            var valuesToReplace = Regex.Match(
-                templatedUrl,
-                "" + "{\\w*\\}")
-                .Captures
-                .Select(c => c.Value);
             
-            foreach (string capture in valuesToReplace)
+            foreach (string capture in RequiredParameters)
             {
                 JToken token = JToken.FromObject(parameters);
 

@@ -24,6 +24,7 @@ namespace SW.FluentOlap.Models
     /// </summary>
     public interface IServiceOutput
     {
+        public string RawOutput { get; }
     }
 
     /// <summary>
@@ -31,6 +32,7 @@ namespace SW.FluentOlap.Models
     /// </summary>
     public interface IService
     {
+        public string ServiceName { get; }
         public ServiceType Type { get; }
     }
 
