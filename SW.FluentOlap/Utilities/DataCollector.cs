@@ -11,58 +11,43 @@ using SW.FluentOlap.AnalyticalNode;
 
 namespace SW.FluentOlap.Utilities
 {
-    public class DataCollectionRequest
-    {
-        public string RootValue { get; set; }
-        public string RootName { get; set; }
-        public AnalyticalMetadata Metadata { get; set; }
-        public ServiceDefinitions Services { get; set; }
-        public TypeMap TypeMap { get; set; }
-    }
     internal class DataCollector
     {
-        public DataCollector() {}
-
-        private Uri GetFullUri(string baseUrl, string endPoint, params string[] routeArguements)
+        public DataCollector()
         {
-            string finalRoute = 
-                endPoint + '/'
-                + string.Join(
-                    '/', 
-                    routeArguements
-                        .Select(r => r.Replace("/", "")
-                        )
-                    );
-            Uri uri = new Uri(new Uri(baseUrl), finalRoute);
-            return uri;
         }
 
-        public async Task<PopulationResult> GetDataFromEndpoints<T>(AnalyticalObject<T> analyticalObject, string rootValue,
-            IHttpClientFactory httpClientFactory = null)
+        public async Task<PopulationResult> CollectData<T>(AnalyticalObject<T> focusedObject)
         {
-            return await 
-                GetDataFromEndpoints(analyticalObject.Name.ToLower(),
-                rootValue, analyticalObject.ServiceName,
-                FluentOlapConfiguration.ServiceDefinitions, 
-                analyticalObject.TypeMap, 
-                FluentOlapConfiguration.Metadata, 
-                httpClientFactory);
+            var focusedService = 
         }
 
-
-        public async Task<PopulationResult> GetDataFromEndpoints(string rootObjectName, string rootValue,
-            string rootServiceName, ServiceDefinitions services, TypeMap typeMap, AnalyticalMetadata metadata = null,
-            IHttpClientFactory httpClientFactory = null)
-        {
-            return await GetDataFromEndpoints(
-                rootObjectName,
-                new string[] {rootValue},
-                rootServiceName, services,
-                typeMap, metadata, httpClientFactory
-            );
-        }
-
-
+        // public async Task<PopulationResult> GetDataFromEndpoints<T>(AnalyticalObject<T> analyticalObject, string rootValue,
+        //     IHttpClientFactory httpClientFactory = null)
+        // {
+        //     return await 
+        //         GetDataFromEndpoints(analyticalObject.Name.ToLower(),
+        //         rootValue, analyticalObject.ServiceName,
+        //         FluentOlapConfiguration.ServiceDefinitions, 
+        //         analyticalObject.TypeMap, 
+        //         FluentOlapConfiguration.Metadata, 
+        //         httpClientFactory);
+        // }
+        //
+        //
+        // public async Task<PopulationResult> GetDataFromEndpoints(string rootObjectName, string rootValue,
+        //     string rootServiceName, ServiceDefinitions services, TypeMap typeMap, AnalyticalMetadata metadata = null,
+        //     IHttpClientFactory httpClientFactory = null)
+        // {
+        //     return await GetDataFromEndpoints(
+        //         rootObjectName,
+        //         new string[] {rootValue},
+        //         rootServiceName, services,
+        //         typeMap, metadata, httpClientFactory
+        //     );
+        // }
+        //
+        //
         /// <summary>
         /// Gets data using service and returns it in a flattened dictionary
         /// </summary>
@@ -72,47 +57,47 @@ namespace SW.FluentOlap.Utilities
         /// <param name="services">ServiceDefinitions from DI</param>
         /// <param name="typeMap">TypeMap of the root object</param>
         /// <returns>Flattened and denormalized Dictionary of the root object and its children</returns>
-        public async Task<PopulationResult> GetDataFromEndpoints(string rootObjectName, string[] rootValue, string rootServiceName, ServiceDefinitions services, TypeMap typeMap, AnalyticalMetadata metadata = null, IHttpClientFactory httpClientFactory = null)
-        {
-            if (services == null)
-                throw new Exception("No service definitions found.");
-
-            if (rootServiceName == null)
-                throw new Exception("No service declared for root object.");
-            
-            if(!services.ContainsKey(rootServiceName))
-                throw new Exception($"Service with name {rootServiceName} not found.");
-
-            Uri fullUrl = GetFullUri(services[rootServiceName].BaseUrl, services[rootServiceName].Endpoint, rootValue);
-            
-            IDictionary<string, object> objects = new Dictionary<string, object>();
-
-            using(HttpClient httpClient = httpClientFactory != null? httpClientFactory.CreateClient() : new HttpClient())
-            {
-                string rootObjectRs = await httpClient.GetStringAsync(fullUrl);
-                IDictionary<string, object> rootObject = JsonHelper.DeserializeAndFlatten(rootObjectRs);;
-
-                foreach(KeyValuePair<string, object> childEntry in rootObject)
-                    objects.Add(rootObjectName.Replace("/", "") + "_" + childEntry.Key, childEntry.Value);
-
-                foreach (KeyValuePair<string, NodeProperties> map in typeMap) {
-                    string serviceName = map.Value.ServiceName;
-                    if (serviceName == null) continue;
-                    string key = map.Key.Split('_').Last().ToLower();
-                    string nodeName = map.Value.NodeName;
-
-                    string childBaseUrl = services[serviceName].BaseUrl ?? metadata.BaseUrl;
-                    string childFullUrl = childBaseUrl + services[serviceName].Endpoint + '/' +rootObject[key];
-                    string childRs = await httpClient.GetStringAsync(childFullUrl);
-
-                    IDictionary<string, object> childObject = JsonHelper.DeserializeAndFlatten(childRs);
-                    foreach(KeyValuePair<string, object> childEntry in childObject)
-                        if(!objects.ContainsKey(nodeName + '_' + childEntry.Key))
-                            objects.Add(nodeName + '_' + childEntry.Key, childEntry.Value);
-                }
-            }
-            return new PopulationResult(typeMap, objects);
-
-        }
+        //     public async Task<PopulationResult> GetDataFromEndpoints(string rootObjectName, string[] rootValue, string rootServiceName, ServiceDefinitions services, TypeMap typeMap, AnalyticalMetadata metadata = null, IHttpClientFactory httpClientFactory = null)
+        //     {
+        //         if (services == null)
+        //             throw new Exception("No service definitions found.");
+        //
+        //         if (rootServiceName == null)
+        //             throw new Exception("No service declared for root object.");
+        //         
+        //         if(!services.ContainsKey(rootServiceName))
+        //             throw new Exception($"Service with name {rootServiceName} not found.");
+        //
+        //         Uri fullUrl = GetFullUri(services[rootServiceName].BaseUrl, services[rootServiceName].Endpoint, rootValue);
+        //         
+        //         IDictionary<string, object> objects = new Dictionary<string, object>();
+        //
+        //         using(HttpClient httpClient = httpClientFactory != null? httpClientFactory.CreateClient() : new HttpClient())
+        //         {
+        //             string rootObjectRs = await httpClient.GetStringAsync(fullUrl);
+        //             IDictionary<string, object> rootObject = JsonHelper.DeserializeAndFlatten(rootObjectRs);;
+        //
+        //             foreach(KeyValuePair<string, object> childEntry in rootObject)
+        //                 objects.Add(rootObjectName.Replace("/", "") + "_" + childEntry.Key, childEntry.Value);
+        //
+        //             foreach (KeyValuePair<string, NodeProperties> map in typeMap) {
+        //                 string serviceName = map.Value.ServiceName;
+        //                 if (serviceName == null) continue;
+        //                 string key = map.Key.Split('_').Last().ToLower();
+        //                 string nodeName = map.Value.NodeName;
+        //
+        //                 string childBaseUrl = services[serviceName].BaseUrl ?? metadata.BaseUrl;
+        //                 string childFullUrl = childBaseUrl + services[serviceName].Endpoint + '/' +rootObject[key];
+        //                 string childRs = await httpClient.GetStringAsync(childFullUrl);
+        //
+        //                 IDictionary<string, object> childObject = JsonHelper.DeserializeAndFlatten(childRs);
+        //                 foreach(KeyValuePair<string, object> childEntry in childObject)
+        //                     if(!objects.ContainsKey(nodeName + '_' + childEntry.Key))
+        //                         objects.Add(nodeName + '_' + childEntry.Key, childEntry.Value);
+        //             }
+        //         }
+        //         return new PopulationResult(typeMap, objects);
+        //
+        //     }
     }
 }
