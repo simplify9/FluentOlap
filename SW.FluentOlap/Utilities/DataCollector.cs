@@ -21,8 +21,20 @@ namespace SW.FluentOlap.Utilities
     }
     internal class DataCollector
     {
-        public DataCollector()
+        public DataCollector() {}
+
+        private Uri GetFullUri(string baseUrl, string endPoint, params string[] routeArguements)
         {
+            string finalRoute = 
+                endPoint + '/'
+                + string.Join(
+                    '/', 
+                    routeArguements
+                        .Select(r => r.Replace("/", "")
+                        )
+                    );
+            Uri uri = new Uri(new Uri(baseUrl), finalRoute);
+            return uri;
         }
 
         public async Task<PopulationResult> GetDataFromEndpoints<T>(AnalyticalObject<T> analyticalObject, string rootValue,
@@ -38,6 +50,19 @@ namespace SW.FluentOlap.Utilities
         }
 
 
+        public async Task<PopulationResult> GetDataFromEndpoints(string rootObjectName, string rootValue,
+            string rootServiceName, ServiceDefinitions services, TypeMap typeMap, AnalyticalMetadata metadata = null,
+            IHttpClientFactory httpClientFactory = null)
+        {
+            return await GetDataFromEndpoints(
+                rootObjectName,
+                new string[] {rootValue},
+                rootServiceName, services,
+                typeMap, metadata, httpClientFactory
+            );
+        }
+
+
         /// <summary>
         /// Gets data using service and returns it in a flattened dictionary
         /// </summary>
@@ -47,7 +72,7 @@ namespace SW.FluentOlap.Utilities
         /// <param name="services">ServiceDefinitions from DI</param>
         /// <param name="typeMap">TypeMap of the root object</param>
         /// <returns>Flattened and denormalized Dictionary of the root object and its children</returns>
-        public async Task<PopulationResult> GetDataFromEndpoints(string rootObjectName, string rootValue, string rootServiceName, ServiceDefinitions services, TypeMap typeMap, AnalyticalMetadata metadata = null, IHttpClientFactory httpClientFactory = null)
+        public async Task<PopulationResult> GetDataFromEndpoints(string rootObjectName, string[] rootValue, string rootServiceName, ServiceDefinitions services, TypeMap typeMap, AnalyticalMetadata metadata = null, IHttpClientFactory httpClientFactory = null)
         {
             if (services == null)
                 throw new Exception("No service definitions found.");
@@ -57,12 +82,9 @@ namespace SW.FluentOlap.Utilities
             
             if(!services.ContainsKey(rootServiceName))
                 throw new Exception($"Service with name {rootServiceName} not found.");
+
+            Uri fullUrl = GetFullUri(services[rootServiceName].BaseUrl, services[rootServiceName].Endpoint, rootValue);
             
-            string baseUrl = services[rootServiceName].BaseUrl;
-            
-            string endpoint = services[rootServiceName].Endpoint.StartsWith('/')? services[rootServiceName].Endpoint : '/' + services[rootServiceName].Endpoint ;
-            string fullUrl = (baseUrl.EndsWith("/") ? baseUrl.Substring(0, baseUrl.Length - 1) : baseUrl) 
-                             + (endpoint.EndsWith("/") ? endpoint : endpoint + '/') + rootValue;
             IDictionary<string, object> objects = new Dictionary<string, object>();
 
             using(HttpClient httpClient = httpClientFactory != null? httpClientFactory.CreateClient() : new HttpClient())
