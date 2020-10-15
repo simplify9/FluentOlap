@@ -18,11 +18,6 @@ namespace SW.FluentOlap.Models
 
         public void Add(PopulationResult item)
         {
-            if(OriginTypeMap == null) OriginTypeMap = item.OriginTypeMap;
-            if (TargetTable == null) TargetTable = item.TargetTable;
-            if(TargetTable != item.TargetTable) throw new Exception("Target tables do not match.");
-            if (Hashing.HashTypeMaps(item.OriginTypeMap) != Hashing.HashTypeMaps(OriginTypeMap)) throw new Exception("Type maps do not match.");
-
             inner.Add(item);
         }
 

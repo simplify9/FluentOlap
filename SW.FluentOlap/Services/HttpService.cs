@@ -73,7 +73,7 @@ namespace SW.FluentOlap.Models
         /// that will be filled in by incoming parameters from the HttpServiceOptions
         /// </param>
         /// <param name="factory"></param>
-        public HttpService(string templatedUrl, IHttpClientFactory factory = null) : base(ServiceType.HttpCall)
+        public HttpService(string name, string templatedUrl, IHttpClientFactory factory = null) : base(ServiceType.HttpCall, name)
         {
             this.templatedUrl = templatedUrl;
             this.factory = factory;

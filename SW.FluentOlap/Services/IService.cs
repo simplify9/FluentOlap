@@ -46,8 +46,9 @@ namespace SW.FluentOlap.Models
         where TOut : IServiceOutput
 
     {
-        protected Service(ServiceType type)
+        protected Service(ServiceType type, string name)
         {
+            ServiceName = name;
             Type = type;
         }
 
@@ -56,6 +57,7 @@ namespace SW.FluentOlap.Models
         /// </summary>
         public Func<TIn, Task<TOut>> InvokeAsync { get; }
 
+        public string ServiceName { get; }
         public ServiceType Type { get; }
     }
 }

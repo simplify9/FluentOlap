@@ -212,15 +212,14 @@ namespace SW.FluentOlap.AnalyticalNode
             return this;
         }
 
-        public async Task<PopulationResult> PopulateAsync<TInput>(PopulationContext<TInput> cntx)
+        public async Task<PopulationResultCollection> PopulateAsync<TInput>(PopulationContext<TInput> cntx) where TInput : IServiceInput
         {
             if (this.MessageMap == null)            
 
                 this.MessageMap = new MessageProperties("NONE", "Id");
             
             var collector = new DataCollector();
-            PopulationResult rs = await collector.CollectData(this, cntx.Input);
-            rs.TargetTable = this.GetType().Name;
+            PopulationResultCollection rs = await collector.CollectData(this, cntx.Input);
             return rs;
         }
 
