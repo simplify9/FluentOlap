@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SW.FluentOlap.Models
 {
@@ -18,13 +16,13 @@ namespace SW.FluentOlap.Models
 
         public bool IsReadOnly => _services.IsReadOnly;
 
-        public void Add(string key, Service value)
+        public void Add(string key, IService value)
         {
             _services.Add(key.ToLower(), value);
         }
 
 
-        public void Add(KeyValuePair<string, Service> item)
+        public void Add(KeyValuePair<string, IService> item)
         {
             _services.Add(item);
         }
@@ -34,7 +32,7 @@ namespace SW.FluentOlap.Models
             _services.Clear();
         }
 
-        public bool Contains(KeyValuePair<string, Service> item)
+        public bool Contains(KeyValuePair<string, IService> item)
         {
             return _services.Contains(item);
         }
@@ -44,12 +42,12 @@ namespace SW.FluentOlap.Models
             return _services.ContainsKey(key.ToLower());
         }
 
-        public void CopyTo(KeyValuePair<string, Service>[] array, int arrayIndex)
+        public void CopyTo(KeyValuePair<string, IService>[] array, int arrayIndex)
         {
             _services.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<KeyValuePair<string, Service>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, IService>> GetEnumerator()
         {
             return _services.GetEnumerator();
         }
@@ -59,12 +57,12 @@ namespace SW.FluentOlap.Models
             return _services.Remove(key.ToLower());
         }
 
-        public bool Remove(KeyValuePair<string, Service> item)
+        public bool Remove(KeyValuePair<string, IService> item)
         {
             return _services.Remove(item);
         }
 
-        public bool TryGetValue(string key, out Service value)
+        public bool TryGetValue(string key, out IService value)
         {
             return _services.TryGetValue(key.ToLower(), out value);
         }
