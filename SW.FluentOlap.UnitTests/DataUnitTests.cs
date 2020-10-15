@@ -132,23 +132,6 @@ namespace UtilityUnitTests
         public void PopulateTest()
         {
 
-            FluentOlapConfiguration.ServiceDefinitions = new ServiceDefinitions
-            {
-                ["postService"] = new Service
-                {
-                    Endpoint = "/posts",
-                    BaseUrl = "https://jsonplaceholder.typicode.com"
-                }
-            };
-            
-            var analyzed = new PostAnalyzer();
-            analyzed.GetFromService("postService");
-            var result = analyzed.PopulateAsync(new PopulationContext<PostMessage>(new PostMessage
-            {
-                Id = "1"
-            })).Result;
-            
-            Assert.AreEqual(string.Join(',', result.Keys), string.Join(',', analyzed.TypeMap.Keys));
         }
 
     }
