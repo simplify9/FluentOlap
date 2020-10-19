@@ -22,6 +22,7 @@ namespace SW.FluentOlap.Models
     public class HttpResponse : IServiceOutput
     {
         public string Content { get; set; }
+        public string FormattedUrlCalled { get; set; }
         public string ContentType { get; set; }
         public string RawOutput => Content;
     }
@@ -111,26 +112,40 @@ namespace SW.FluentOlap.Models
                     };
             }
         }
-        
-        public IEnumerable<string> RequiredParameters => 
-            Regex.Match(
+
+        private string FormatParameter(string parameter) => new Regex("[\\{\\}]").Replace(parameter, "");
+
+        /// <summary>
+        /// Retrieves parameters from templated url.
+        /// </summary>
+        public IEnumerable<string> GetRequiredParameters(bool format = true)
+        {
+            IEnumerable<string> parameters = 
+            Regex.Matches(
                 templatedUrl,
                 "" + "{\\w*\\}")
-                .Captures
-                .Select(c => c.Value);
+                .Select(c => 
+                    c.Value
+                );
+            if (!format)
+                return parameters;
+            else
+                return parameters.Select(FormatParameter);
+        }
 
         /// <summary>
         /// Fills in the JSON paths in a Uri using Parameters from HttpRequestOptions
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        private Uri FormattedUri(object parameters)
+        protected Uri FormatUri(object parameters)
         {
             string formattedUrl = null;
             
             //All values between curly braces are treated as variables
-            
-            foreach (string capture in RequiredParameters)
+
+            var requiredParameters = GetRequiredParameters(false);
+            foreach (string capture in requiredParameters)
             {
                 JToken token = JToken.FromObject(parameters);
 
@@ -138,7 +153,7 @@ namespace SW.FluentOlap.Models
                 // If a dot is contained, it will be treated as a multi-level json retrieval.
                 if (!capture.Contains('.'))
                 {
-                    string val = token[capture]?.Value<string>();
+                    string val = token[FormatParameter(capture)]?.Value<string>();
                     formattedUrl = templatedUrl.Replace(capture, val);
 
                 }
@@ -156,19 +171,21 @@ namespace SW.FluentOlap.Models
         public new Func<HttpServiceOptions, Task<HttpResponse>> InvokeAsync =>
             async options =>
             {
-                using HttpClient client = factory.CreateClient();
+                using HttpClient client = factory != null? factory.CreateClient() : new HttpClient();
 
-
-                Uri uri = FormattedUri(options.Parameters);
+                Uri uri = FormatUri(options.Parameters);
                 HttpRequestMessage request =
                     GetRequestMessage(uri, options.Verb, options.Parameters);
                 
                 HttpResponseMessage response = await client.SendAsync(request);
 
+
                 return new HttpResponse
                 {
                     Content = await response.Content.ReadAsStringAsync(),
-                    ContentType = response.Headers.GetValues("Content-Type").FirstOrDefault()?? "application/json"
+                    //TODO implement dynamic typing
+                    ContentType = "application/json",
+                    FormattedUrlCalled = uri.OriginalString
                 };
             };
     }
