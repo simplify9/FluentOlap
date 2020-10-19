@@ -6,7 +6,15 @@ namespace SW.FluentOlap.Models
     public class ServiceDefinitions : IDictionary<string, IService>
     {
         private readonly IDictionary<string, IService> _services = new Dictionary<string, IService>();
-        public IService this[string key] { get => _services[key.ToLower()]; set => _services[key.ToLower()] = value; }
+        public IService this[string key]
+        {
+            get => _services[key.ToLower()];
+            set
+            {
+                value.ServiceName = key;
+                _services[key.ToLower()] = value;
+            }
+        }
 
         public ICollection<string> Keys => _services.Keys;
 
@@ -24,6 +32,7 @@ namespace SW.FluentOlap.Models
 
         public void Add(KeyValuePair<string, IService> item)
         {
+            item.Value.ServiceName = item.Key;
             _services.Add(item);
         }
 
