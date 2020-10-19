@@ -32,7 +32,7 @@ namespace SW.FluentOlap.Models
     /// </summary>
     public interface IService
     {
-        public string ServiceName { get; }
+        public string ServiceName { get; set; }
         public ServiceType Type { get; }
     }
 
@@ -57,7 +57,7 @@ namespace SW.FluentOlap.Models
         /// </summary>
         public Func<TIn, Task<TOut>> InvokeAsync { get; }
 
-        public string ServiceName { get; }
+        public string ServiceName { get; set; }
         public ServiceType Type { get; }
     }
 }
