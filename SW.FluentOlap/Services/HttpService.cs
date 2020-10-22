@@ -152,6 +152,8 @@ namespace SW.FluentOlap.Models
             //All values between curly braces are treated as variables
 
             var requiredParameters = GetRequiredParameters(false);
+            if (requiredParameters.Count() == 0) return new Uri(templatedUrl);
+                
             foreach (string capture in requiredParameters)
             {
                 JToken token = JToken.FromObject(parameters);
@@ -187,7 +189,6 @@ namespace SW.FluentOlap.Models
                 HttpResponseMessage response = await client.SendAsync(request);
 
                 string raw = await response.Content.ReadAsStringAsync();
-
 
                 return new HttpResponse
                 {

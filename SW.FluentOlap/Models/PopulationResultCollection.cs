@@ -16,6 +16,11 @@ namespace SW.FluentOlap.Models
         public PopulationResult Sample => inner.Peek()?? null;
         public bool IsReadOnly => true;
 
+        public new PopulationResult Dequeue()
+        {
+            return inner.Dequeue();
+        }
+
         public void Add(PopulationResult item)
         {
             inner.Enqueue(item);
