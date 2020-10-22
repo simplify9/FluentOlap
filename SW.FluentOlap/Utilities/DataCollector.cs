@@ -42,6 +42,9 @@ namespace SW.FluentOlap.Utilities
             if (focusedObject.ServiceName == null)
                 throw new Exception("Root analyzer object must have a service defined.");
             
+            if(!FluentOlapConfiguration.ServiceDefinitions.ContainsKey(focusedObject.ServiceName))
+                throw new Exception($"Service {focusedObject.ServiceName} not defined.");
+            
             IService focusedService = FluentOlapConfiguration.ServiceDefinitions[focusedObject.ServiceName];
             PopulationResultCollection results = new PopulationResultCollection();
 
@@ -50,7 +53,14 @@ namespace SW.FluentOlap.Utilities
 
             foreach (var expandable in focusedObject.ExpandableChildren)
             {
-                string expandableKey = rootResult[expandable.Key.Split('_').Last().ToLower()]?.ToString();
+                string expandableKey = rootResult[expandable.Key]?.ToString();
+                
+                if (expandable.Value.ServiceName == null)
+                    throw new Exception("Child analyzer object must have a service defined.");
+                
+                if(!FluentOlapConfiguration.ServiceDefinitions.ContainsKey(expandable.Value.ServiceName))
+                    throw new Exception($"Service {expandable.Value.ServiceName} not defined.");
+                
                 IService expandableService = FluentOlapConfiguration.ServiceDefinitions[expandable.Value.ServiceName];
 
                 IServiceInput input = null;
@@ -68,6 +78,7 @@ namespace SW.FluentOlap.Utilities
 
                         input = new HttpServiceOptions
                         {
+                            ChildKey = expandable.Value.NodeName,
                             Parameters = parameters
                         };
 

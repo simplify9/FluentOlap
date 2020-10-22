@@ -14,6 +14,13 @@ namespace UtilityUnitTests.Models
         public string Body { get; set; }
     }
 
+    public class User
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Phone { get; set; }
+    }
+
     public class PostAnalyzer : AnalyticalObject<Post>
     {
         public PostAnalyzer()
