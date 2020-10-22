@@ -86,8 +86,8 @@ namespace UtilityUnitTests
                     }
                 }));
             
-            foreach (string key in rs.Keys)
-                Assert.IsTrue(analyzer.TypeMap.Keys.Contains(key));
+            foreach (string key in analyzer.TypeMap.Keys)
+                Assert.IsTrue(rs.Keys.Contains(key));
         }
     }
 }
