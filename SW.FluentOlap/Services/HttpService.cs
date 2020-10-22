@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SW.FluentOlap.Utilities;
 
 namespace SW.FluentOlap.Models
 {
@@ -24,6 +25,8 @@ namespace SW.FluentOlap.Models
         public string Content { get; set; }
         public string FormattedUrlCalled { get; set; }
         public string ContentType { get; set; }
+        public string ChildKey { get; set; }
+        public PopulationResult PopulationResult { get; set; }
         public string RawOutput => Content;
     }
     public class HttpServiceOptions : IServiceInput
@@ -51,6 +54,8 @@ namespace SW.FluentOlap.Models
         {
             get => _templateParametersType;
         }
+
+        public string ChildKey { get; set; }
     }
     /// <summary>
     /// Service that retrieves information using Http calls.
@@ -67,19 +72,21 @@ namespace SW.FluentOlap.Models
         /// Example: https://someUrl.com/{Id}/comments/{comment.Id}
         /// </summary>
         private readonly string templatedUrl;
-        
+
         /// <summary>
         /// </summary>
+        /// <param name="name">Will be set automatically if adding through ServiceDefinitions</param>
         /// <param name="templatedUrl">Url with Json Paths in curly braces {}
         /// that will be filled in by incoming parameters from the HttpServiceOptions
         /// </param>
         /// <param name="factory"></param>
-        public HttpService(string name, string templatedUrl, IHttpClientFactory factory = null) : base(ServiceType.HttpCall, name)
+        public HttpService(string templatedUrl, string name = null, IHttpClientFactory factory = null) : base(ServiceType.HttpCall, name)
         {
             this.templatedUrl = templatedUrl;
             this.factory = factory;
             
         }
+        
 
         /// <summary>
         /// Convert parameters into a Microsoft HttpRequestMessage
@@ -179,13 +186,19 @@ namespace SW.FluentOlap.Models
                 
                 HttpResponseMessage response = await client.SendAsync(request);
 
+                string raw = await response.Content.ReadAsStringAsync();
+
 
                 return new HttpResponse
                 {
-                    Content = await response.Content.ReadAsStringAsync(),
+                    Content = raw,
+                    
                     //TODO implement dynamic typing
                     ContentType = "application/json",
-                    FormattedUrlCalled = uri.OriginalString
+                    
+                    FormattedUrlCalled = uri.OriginalString,
+                    
+                    PopulationResult = new PopulationResult(raw, options.ChildKey?? "")
                 };
             };
     }

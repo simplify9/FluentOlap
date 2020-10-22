@@ -212,14 +212,35 @@ namespace SW.FluentOlap.AnalyticalNode
             return this;
         }
 
-        public async Task<PopulationResultCollection> PopulateAsync<TInput>(PopulationContext<TInput> cntx) where TInput : IServiceInput
+        private PopulationResult MergeIntoAggregate(PopulationResultCollection resultCollection)
         {
-            if (this.MessageMap == null)            
-                this.MessageMap = new MessageProperties("NONE", "Id");
+            IDictionary<string, object> merged = new Dictionary<string, object>();
+
+            PopulationResult root = resultCollection.Dequeue();
+            foreach (KeyValuePair<string, object> kv in root)
+                merged.Add(kv);
             
-            var collector = new DataCollector();
-            PopulationResultCollection rs = await collector.CollectData(this, cntx.Input);
-            return rs;
+            for (int _ = 0; _ < resultCollection.Count; ++_)
+            {
+                PopulationResult current = resultCollection.Dequeue();
+                foreach (KeyValuePair<string, object> kv in current)
+                    merged.Add(kv);
+            }
+            
+            
+            
+            return new PopulationResult(merged);
+        }
+
+        public async Task<PopulationResult> PopulateAsync<TInput>(PopulationContext<TInput> cntx) where TInput : IServiceInput
+        {
+            if (MessageMap == null)            
+                MessageMap = new MessageProperties("NONE", "Id");
+            
+            PopulationResultCollection rs = await DataCollector.CollectData(this, cntx.Input);
+            
+            PopulationResult merged =  MergeIntoAggregate(rs);
+            return merged;
         }
 
 

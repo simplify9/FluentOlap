@@ -6,49 +6,41 @@ using System.Text;
 
 namespace SW.FluentOlap.Models
 {
-    public class PopulationResultCollection : ICollection<PopulationResult>
+    public class PopulationResultCollection : Queue<PopulationResult>
     {
-        List<PopulationResult> inner = new List<PopulationResult>();
+        Queue<PopulationResult> inner = new Queue<PopulationResult>();
         public TypeMap OriginTypeMap { get; private set; }
         public string TargetTable { get; private set; }
         public int Count => inner.Count;
 
-        public PopulationResult Sample => inner[0]?? null;
+        public PopulationResult Sample => inner.Peek()?? null;
         public bool IsReadOnly => true;
 
         public void Add(PopulationResult item)
         {
-            inner.Add(item);
+            inner.Enqueue(item);
         }
 
-        public void Clear()
+        public new void Clear()
         {
             inner.Clear();
         }
 
-        public bool Contains(PopulationResult item)
+        public new bool Contains(PopulationResult item)
         {
             return inner.Contains(item);
         }
 
-        public void CopyTo(PopulationResult[] array, int arrayIndex)
+        public new void CopyTo(PopulationResult[] array, int arrayIndex)
         {
             inner.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<PopulationResult> GetEnumerator()
+        public new IEnumerator<PopulationResult> GetEnumerator()
         {
             return inner.GetEnumerator();
         }
 
-        public bool Remove(PopulationResult item)
-        {
-            return inner.Remove(item);
-        }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return inner.GetEnumerator();
-        }
     }
 }

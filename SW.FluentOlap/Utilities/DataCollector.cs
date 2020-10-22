@@ -11,9 +11,9 @@ using SW.FluentOlap.AnalyticalNode;
 
 namespace SW.FluentOlap.Utilities
 {
-    internal class DataCollector
+    public static class DataCollector
     {
-        private async Task<PopulationResult> CallService(IService focusedService, IServiceInput serviceInput)
+        private static async Task<PopulationResult> CallService(IService focusedService, IServiceInput serviceInput, string expandableKey = null)
         {
             IServiceOutput output = null;
 
@@ -28,15 +28,20 @@ namespace SW.FluentOlap.Utilities
 
                     output = await service.InvokeAsync(serviceInput as HttpServiceOptions);
 
+                    if (expandableKey != null) output.ChildKey = expandableKey;
+
                     break;
             }
 
-            return new PopulationResult(output.RawOutput);
+            return output.PopulationResult;
         }
 
-        public async Task<PopulationResultCollection> CollectData<T>(AnalyticalObject<T> focusedObject,
+        public static async Task<PopulationResultCollection> CollectData<T>(AnalyticalObject<T> focusedObject,
             IServiceInput serviceInput)
         {
+            if (focusedObject.ServiceName == null)
+                throw new Exception("Root analyzer object must have a service defined.");
+            
             IService focusedService = FluentOlapConfiguration.ServiceDefinitions[focusedObject.ServiceName];
             PopulationResultCollection results = new PopulationResultCollection();
 
@@ -65,6 +70,8 @@ namespace SW.FluentOlap.Utilities
                         {
                             Parameters = parameters
                         };
+
+                        await expandableHttpService.InvokeAsync((HttpServiceOptions) input);
 
                         break;
                 }

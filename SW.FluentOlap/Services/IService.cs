@@ -17,6 +17,7 @@ namespace SW.FluentOlap.Models
     /// </summary>
     public interface IServiceInput
     {
+        public string ChildKey { get; set; }
     }
 
     /// <summary>
@@ -24,6 +25,8 @@ namespace SW.FluentOlap.Models
     /// </summary>
     public interface IServiceOutput
     {
+        public string ChildKey { get; set; }
+        public PopulationResult PopulationResult { get; set; }
         public string RawOutput { get; }
     }
 
