@@ -277,13 +277,13 @@ namespace SW.FluentOlap.AnalyticalNode
         }
 
         ~AnalyticalObject(){
-            lock (AnalyticalObject<T>.FinalTypeMap)
-            {
-                if(AnalyticalObject<T>.FinalTypeMap.Count == 0)
-                {
-                    AnalyticalObject<T>.FinalTypeMap = this.TypeMap;
-                }
-            }
+            // lock (AnalyticalObject<T>.FinalTypeMap)
+            // {
+            //     if (AnalyticalObject<T>.FinalTypeMap.Count == 0)
+            //     {
+            //         AnalyticalObject<T>.FinalTypeMap = this.TypeMap;
+            //     }
+            // }
         }
     }
 }
