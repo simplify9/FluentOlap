@@ -25,7 +25,7 @@ namespace SW.FluentOlap.Models
         public string Content { get; set; }
         public string FormattedUrlCalled { get; set; }
         public string ContentType { get; set; }
-        public string ChildKey { get; set; }
+        public string KeyPrefix { get; set; }
         public PopulationResult PopulationResult { get; set; }
         public string RawOutput => Content;
     }
@@ -120,6 +120,11 @@ namespace SW.FluentOlap.Models
             }
         }
 
+        /// <summary>
+        /// Removes any extra markings around parameter
+        /// </summary>
+        /// <param name="parameter">Parameter in template url.</param>
+        /// <returns></returns>
         private string FormatParameter(string parameter) => new Regex("[\\{\\}]").Replace(parameter, "");
 
         /// <summary>
@@ -134,10 +139,7 @@ namespace SW.FluentOlap.Models
                 .Select(c => 
                     c.Value
                 );
-            if (!format)
-                return parameters;
-            else
-                return parameters.Select(FormatParameter);
+            return !format ? parameters : parameters.Select(FormatParameter);
         }
 
         /// <summary>
@@ -145,7 +147,7 @@ namespace SW.FluentOlap.Models
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        protected Uri FormatUri(object parameters)
+        private Uri FormatUri(object parameters)
         {
             string formattedUrl = null;
             
@@ -177,6 +179,11 @@ namespace SW.FluentOlap.Models
             return new Uri(formattedUrl);
         }
 
+        /// <summary>
+        /// Returns a delegate to make an HTTP call,
+        /// Creates an HttpRequestMessage using parameters,
+        /// Saves raw response as string and flattened dictionary
+        /// </summary>
         public override Func<HttpServiceOptions, Task<HttpResponse>> InvokeAsync =>
             async options =>
             {

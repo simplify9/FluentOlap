@@ -25,7 +25,10 @@ namespace SW.FluentOlap.Models
     /// </summary>
     public interface IServiceOutput
     {
-        public string ChildKey { get; set; }
+        /// <summary>
+        /// The prefix that will be placed before each key in the flattened dictionary
+        /// </summary>
+        public string KeyPrefix { get; set; }
         public PopulationResult PopulationResult { get; set; }
         public string RawOutput { get; }
     }

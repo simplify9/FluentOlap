@@ -55,7 +55,7 @@ namespace UtilityUnitTests
         {
             HttpService service1 = new HttpService("https://jsonplaceholder.typicode.com/posts/{PostId}", "PostsService");
 
-            HttpResponse invokation = await service1.InvokeAsync(new HttpServiceOptions
+            HttpResponse invocation = await service1.InvokeAsync(new HttpServiceOptions
             {
                 Parameters = new
                 {
@@ -63,8 +63,8 @@ namespace UtilityUnitTests
                 }
             });
 
-            JToken rs = JToken.Parse(invokation.Content);
-            Assert.AreEqual(rs["id"].ToString(), "1" );
+            JToken rs = JToken.Parse(invocation.Content);
+            Assert.AreEqual(rs["id"]?.ToString(), "1" );
             
         }
     }
