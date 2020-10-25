@@ -28,7 +28,7 @@ namespace SW.FluentOlap.Utilities
 
                     output = await service.InvokeAsync(serviceInput as HttpServiceOptions);
 
-                    if (expandableKey != null) output.ChildKey = expandableKey;
+                    if (expandableKey != null) output.KeyPrefix = expandableKey;
 
                     break;
             }
