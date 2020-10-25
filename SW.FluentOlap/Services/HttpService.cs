@@ -177,7 +177,7 @@ namespace SW.FluentOlap.Models
             return new Uri(formattedUrl);
         }
 
-        public new Func<HttpServiceOptions, Task<HttpResponse>> InvokeAsync =>
+        public override Func<HttpServiceOptions, Task<HttpResponse>> InvokeAsync =>
             async options =>
             {
                 using HttpClient client = factory != null? factory.CreateClient() : new HttpClient();
