@@ -58,7 +58,7 @@ namespace SW.FluentOlap.Models
         /// <summary>
         /// How this service is used
         /// </summary>
-        public Func<TIn, Task<TOut>> InvokeAsync { get; }
+        public abstract Func<TIn, Task<TOut>> InvokeAsync { get; }
 
         public string ServiceName { get; set; }
         public ServiceType Type { get; }
