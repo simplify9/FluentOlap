@@ -55,7 +55,7 @@ namespace SW.FluentOlap.Models
             get => _templateParametersType;
         }
 
-        public string ChildKey { get; set; }
+        public string PrefixKey { get; set; }
     }
     /// <summary>
     /// Service that retrieves information using Http calls.
@@ -206,7 +206,7 @@ namespace SW.FluentOlap.Models
                     
                     FormattedUrlCalled = uri.OriginalString,
                     
-                    PopulationResult = new PopulationResult(raw, options.ChildKey?? "")
+                    PopulationResult = new PopulationResult(raw, options.PrefixKey?? "")
                 };
             };
     }

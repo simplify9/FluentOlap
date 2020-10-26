@@ -24,7 +24,7 @@ namespace UtilityUnitTests
 
             PopulationResultCollection rs = await DataCollector.CollectData(analyzer, new HttpServiceOptions
             {
-                ChildKey = "post",
+                PrefixKey = "post",
                 Parameters = new
                 {
                     PostId = 1

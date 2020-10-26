@@ -53,8 +53,6 @@ namespace SW.FluentOlap.Utilities
 
             foreach (var expandable in focusedObject.ExpandableChildren)
             {
-                string expandableKey = rootResult[expandable.Key]?.ToString();
-                
                 if (expandable.Value.ServiceName == null)
                     throw new Exception("Child analyzer object must have a service defined.");
                 
@@ -78,7 +76,7 @@ namespace SW.FluentOlap.Utilities
 
                         input = new HttpServiceOptions
                         {
-                            ChildKey = expandable.Value.NodeName,
+                            PrefixKey = expandable.Value.NodeName,
                             Parameters = parameters
                         };
 
