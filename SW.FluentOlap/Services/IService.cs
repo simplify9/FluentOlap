@@ -17,7 +17,7 @@ namespace SW.FluentOlap.Models
     /// </summary>
     public interface IServiceInput
     {
-        public string ChildKey { get; set; }
+        public string PrefixKey { get; set; }
     }
 
     /// <summary>

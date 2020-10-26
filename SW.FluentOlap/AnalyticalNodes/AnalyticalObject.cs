@@ -237,7 +237,6 @@ namespace SW.FluentOlap.AnalyticalNode
             if (MessageMap == null)            
                 MessageMap = new MessageProperties("NONE", "Id");
 
-            cntx.Input.ChildKey = Name.ToLower();
             PopulationResultCollection rs = await DataCollector.CollectData(this, cntx.Input);
             
             PopulationResult merged =  MergeIntoAggregate(rs);
