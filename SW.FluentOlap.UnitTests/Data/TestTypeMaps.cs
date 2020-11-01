@@ -96,26 +96,28 @@ namespace UtilityUnitTests.Data
         {
             ["parcelselfreference_id"] = new NodeProperties
             {
-                InternalType = InternalType.STRING
+                InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_deeperselfreference_id"] = new NodeProperties
+            ["parcelselfreference_selfreference_id"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_parcelselfreference_id"] = new NodeProperties
-            {
-                InternalType = InternalType.STRING
-            },
-            ["parcelselfreference_parcelselfreference_deeperselfreference_id"] = new NodeProperties
+            ["parcelselfreference_selfreference_deeper_id"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_parcelselfreference_parcelselfreference_deeperselfreference_id"] = new NodeProperties
+            ["parcelselfreference_selfreference_deeper_selfreference_id"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
-            }
-            
-            
+            },
+            ["parcelselfreference_deeper_id"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference_deeper_selfreference_id"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
             
         };
 
