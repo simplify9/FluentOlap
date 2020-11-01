@@ -6,7 +6,6 @@ namespace UtilityUnitTests.Models
     {
         public int Number { get; set; }
         public DeeperSelfReference DeeperSelfRef{ get; set; }
-        //public ParcelSelfReference ParcelSelfRef{ get; set; }
     }
     public class ParcelSelfReference
     {
@@ -14,13 +13,21 @@ namespace UtilityUnitTests.Models
         public ParcelSelfReference SelfRef { get; set; }
         public DeeperSelfReference Deeper  { get; set; }
     }
-
-
-    public class WideParcelSelfReference : AnalyticalObject<ParcelSelfReference>
+    
+    public class DeeperSelfReference2
     {
-        public WideParcelSelfReference()
-        {
-                
-        }
+        public int Number { get; set; }
+        public DeeperSelfReference2 DeeperSelfRef{ get; set; }
+        public ParcelSelfReference2 ParcelSelfRef { get; set; }
     }
+    public class ParcelSelfReference2
+    {
+        public int Id { get; set; }
+        public ParcelSelfReference2 SelfRef { get; set; }
+        public DeeperSelfReference2 Deeper  { get; set; }
+    }
+
+
+    public class WideParcelSelfReferenceDeep : AnalyticalObject<ParcelSelfReference2> { }
+    public class WideParcelSelfReference : AnalyticalObject<ParcelSelfReference> { }
 }

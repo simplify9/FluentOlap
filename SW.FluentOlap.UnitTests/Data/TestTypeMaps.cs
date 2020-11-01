@@ -4,7 +4,8 @@ namespace UtilityUnitTests.Data
 {
     public static class TestTypeMaps
     {
-        public readonly static TypeMap P1TypeMap = new TypeMap {
+        public readonly static TypeMap P1TypeMap = new TypeMap
+        {
             ["parcel1level_id"] = new NodeProperties
             {
                 InternalType = InternalType.STRING
@@ -23,7 +24,8 @@ namespace UtilityUnitTests.Data
             }
         };
 
-        public readonly static TypeMap P2TypeMap = new TypeMap {
+        public readonly static TypeMap P2TypeMap = new TypeMap
+        {
             ["parcel2level_id"] = new NodeProperties
             {
                 InternalType = InternalType.STRING
@@ -118,9 +120,35 @@ namespace UtilityUnitTests.Data
             {
                 InternalType = InternalType.INTEGER
             },
-            
         };
 
 
+        public readonly static TypeMap SelfReferenceTestDeep = new TypeMap
+        {
+            ["parcelselfreference_id"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference_selfref_id"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference_selfref_deeper_number"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference_selfref_deeper_deeperselfref_number"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference_deeper_number"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference_deeper_deeperselfref_number"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+        };
     }
 }

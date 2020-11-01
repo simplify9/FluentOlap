@@ -139,7 +139,19 @@ namespace UtilityUnitTests
         [TestMethod]
         public void DeepSelfRefTest()
         {
+            var analyzed = new WideParcelSelfReferenceDeep();
+            var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
+            var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.SelfReferenceTestDeep);
+            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.SelfReferenceTest, new List<DifferenceType>
+            {
+                DifferenceType.ChangedColumnOrder
+            });
+
+            var test = string.Empty;
+            test += analyzed.TypeMap.ToString() + "\n\n\n\n\n\n\n\n\n";
+            test += TestTypeMaps.SelfReferenceTest.ToString();
             
+            Assert.AreEqual(analyzedHash, analyzedCurrentHash);
         }
 
 
