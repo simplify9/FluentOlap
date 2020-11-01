@@ -59,7 +59,7 @@ namespace UtilityUnitTests
                 }));
             
             foreach (string key in rs.Keys)
-                Assert.IsTrue(analyzer.TypeMap.Keys.Contains(key));
+                Assert.IsTrue(analyzer.TypeMap.Keys.Count >= rs.Keys.Count());
             
         }
 
@@ -87,7 +87,7 @@ namespace UtilityUnitTests
                 }));
             
             foreach (string key in analyzer.TypeMap.Keys)
-                Assert.IsTrue(rs.Keys.Contains(key));
+                Assert.IsTrue(rs.Keys.Count() >= analyzer.TypeMap.Count());
         }
     }
 }

@@ -73,7 +73,7 @@ namespace SW.FluentOlap.AnalyticalNode
             typeToInit ??= this.AnalyzedType;
             prefix ??= this.AnalyzedType.Name;
             preferredName ??= typeToInit.Name;
-            directParentName ??= typeToInit.Name;
+            directParentName ??= preferredName;
             
             if(selfRefEntries == null) selfRefEntries = new List<string>();
             
@@ -275,14 +275,9 @@ namespace SW.FluentOlap.AnalyticalNode
 
         }
 
-        ~AnalyticalObject(){
-            // lock (AnalyticalObject<T>.FinalTypeMap)
-            // {
-            //     if (AnalyticalObject<T>.FinalTypeMap.Count == 0)
-            //     {
-            //         AnalyticalObject<T>.FinalTypeMap = this.TypeMap;
-            //     }
-            // }
-        }
+        // ~AnalyticalObject(){
+        //     if (FinalTypeMap.Count == 0)
+        //         FinalTypeMap = TypeMap;
+        // }
     }
 }
