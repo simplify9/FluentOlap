@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -109,7 +110,10 @@ namespace UtilityUnitTests
             var analyzed = new IgnoreMapAnalyzer();
             var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
             var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.IgnoreTestMap);
-            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.IgnoreTestMap);
+            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.IgnoreTestMap, new List<DifferenceType>
+            {
+                DifferenceType.ChangedColumnOrder
+            });
             Assert.AreEqual(analyzedHash, analyzedCurrentHash);
             
         }
@@ -120,7 +124,10 @@ namespace UtilityUnitTests
             var analyzed = new WideParcelSelfReference();
             var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
             var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.SelfReferenceTest);
-            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.SelfReferenceTest);
+            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.SelfReferenceTest, new List<DifferenceType>
+            {
+                DifferenceType.ChangedColumnOrder
+            });
 
             var test = string.Empty;
             test += analyzed.TypeMap.ToString() + "\n\n\n\n\n\n\n\n\n";

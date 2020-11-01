@@ -1,5 +1,6 @@
 ﻿using SW.FluentOlap.Utilities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
@@ -22,10 +23,13 @@ namespace SW.FluentOlap.AnalyticalNode
         private static TypeMap FinalTypeMap { get; set; } 
         public TypeMap TypeMap { get; protected set; }
         public string ServiceName { get; set; }
-        public static IDictionary<string, byte> SelfReferencingDepths { get; set; } = new Dictionary<string, byte>();
-        public static byte SelfReferencingLimit { get; set; } = 1;
+
+
+        public static byte SelfReferencingLimit { get => 1; }
+
         public MessageProperties MessageMap { get; set; }
         public string Name { get; set; }
+        private IEnumerable<IEnumerable<Type>> TypeChains { get; set; }
         public Type AnalyzedType { get; set; }
 
         public Dictionary<string, NodeProperties> ExpandableChildren =>
@@ -35,39 +39,41 @@ namespace SW.FluentOlap.AnalyticalNode
             this.TypeMap = new TypeMap();
             this.AnalyzedType = typeof(T);
             this.Name = AnalyzedType.Name;
-            PostInitCleanUp(InitTypeMap());
-            
+            this.
+            InitTypeMap();
+
         }
 
-        protected void PostInitCleanUp(IEnumerable<string> selfRefEntries)
-        {
-            foreach (var entry in selfRefEntries)
-            {
-                OwnExistingTypeMap(entry);
-            }
-        }
+        // protected void PostInitCleanUp(IEnumerable<string> selfRefEntries)
+        // {
+        //     foreach (var entry in selfRefEntries)
+        //     {
+        //         OwnExistingTypeMap(entry);
+        //     }
+        // }
 
         public AnalyticalObject(TypeMap existing)
         {
-            this.TypeMap = existing;
+            TypeMap = existing;
         }
 
-        private void OwnExistingTypeMap(string key)
-        {
-            // Make a new enumerable to avoid modifying collection loop is iterating over
-            TypeMap tmp = new TypeMap();
-            foreach (var entry in TypeMap)
-                if (entry.Key.Contains($"{key.ToLower()}_"))
-                {
-                    tmp.Add(entry);
-                }
-            
-            foreach (var entry in tmp)
-            {
-                PopulateTypeMaps(entry.Value.InternalType, $"{Name}_{entry.Key}");
-            }
-        }
+        // private void OwnExistingTypeMap(string key)
+        // {
+        //     // Make a new enumerable to avoid modifying collection loop is iterating over
+        //     TypeMap tmp = new TypeMap();
+        //     foreach (var entry in TypeMap)
+        //         if (entry.Key.Contains($"{key.ToLower()}_"))
+        //         {
+        //             tmp.Add(entry);
+        //         }
+        //
+        //     foreach (var entry in tmp)
+        //     {
+        //         PopulateTypeMaps(entry.Value.InternalType, $"{Name}_{entry.Key}");
+        //     }
+        // }
 
+        private List<string> initDefinitionChain = new List<string>();
         private IEnumerable<string> InitTypeMap(Type typeToInit = null, string prefix = null, string preferredName = null, string directParentName = null, IList<string> selfRefEntries = null )
         {
             typeToInit ??= this.AnalyzedType;
@@ -76,28 +82,32 @@ namespace SW.FluentOlap.AnalyticalNode
             directParentName ??= preferredName;
             
             if(selfRefEntries == null) selfRefEntries = new List<string>();
-            
+
             if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType))
+            {
                 PopulateTypeMaps(internalType, $"{prefix}_{preferredName}");
+            }
             else 
             {
                     if (prefix != directParentName) prefix = $"{prefix}_{directParentName}";
-                    foreach (var prop in typeToInit.GetProperties())
+                    foreach (PropertyInfo prop in typeToInit.GetProperties())
                     {
                         if (prop.GetCustomAttribute(typeof(IgnoreAttribute)) != null) continue;
-                        if (prop.PropertyType == typeToInit)
+
+                        // If there is a reference to a type that exists previously in the chain
+                        // Make sure the reference count is not more than the predefined limit
+                        // If it is, skip the definition.
+                        // Else proceed as normal
+                        if (initDefinitionChain.Contains(prop.PropertyType.FullName)) // A reference to a (grand)parent of the same type
                         {
-                            if (!SelfReferencingDepths.ContainsKey(prop.PropertyType.Name))
-                               SelfReferencingDepths[prop.PropertyType.Name] = 0;
-                            
-                            if (SelfReferencingDepths[prop.PropertyType.Name] <= SelfReferencingLimit)
-                            {
-                                SelfReferencingDepths[prop.PropertyType.Name] += 1;
-                                selfRefEntries.Add($"{prop.PropertyType.Name}");
-                            }
+                            int occurenceCount = initDefinitionChain.Count(v => v == prop.PropertyType.FullName);
+                            if (occurenceCount > SelfReferencingLimit) continue;
                         }
-                        else InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name, null, selfRefEntries);
+                        
+                        initDefinitionChain.Add(typeToInit.FullName);
+                        InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name, null, selfRefEntries);
                     }
+                    initDefinitionChain.Clear();
             }
 
             return selfRefEntries;
