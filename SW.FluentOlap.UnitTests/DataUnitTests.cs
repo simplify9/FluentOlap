@@ -89,6 +89,7 @@ namespace UtilityUnitTests
         {
             var analyzed = new Parcel2LevelAnalyzer();
             analyzed.Ignore(p => p.Shipper);
+            analyzed.Ignore(p => p.Shipper2);
             var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
 
             foreach(var pair in TestTypeMaps.P2TypeMap)
@@ -108,7 +109,7 @@ namespace UtilityUnitTests
             var analyzed = new IgnoreMapAnalyzer();
             var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
             var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.IgnoreTestMap);
-            
+            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.IgnoreTestMap);
             Assert.AreEqual(analyzedHash, analyzedCurrentHash);
             
         }

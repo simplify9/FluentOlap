@@ -40,6 +40,14 @@ namespace UtilityUnitTests.Data
             {
                 InternalType = InternalType.STRING
             },
+            ["parcel2level_shipper2_name"] = new NodeProperties
+            {
+                InternalType = InternalType.STRING
+            },
+            ["parcel2level_shipper2_origincountry"] = new NodeProperties
+            {
+                InternalType = InternalType.STRING
+            },
             ["parcel2level_supplier_name"] = new NodeProperties
             {
                 InternalType = InternalType.STRING
@@ -74,7 +82,7 @@ namespace UtilityUnitTests.Data
 
         public readonly static TypeMap IgnoreTestMap = new TypeMap
         {
-            ["ignoretestmap_complexobj2samename_name2"] = new NodeProperties
+            ["ignoretestmap_co2sm_name2"] = new NodeProperties
             {
                 InternalType = InternalType.STRING
             },
