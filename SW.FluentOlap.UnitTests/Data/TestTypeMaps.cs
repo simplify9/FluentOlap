@@ -98,23 +98,23 @@ namespace UtilityUnitTests.Data
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_selfreference_id"] = new NodeProperties
+            ["parcelselfreference_selfref_id"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_selfreference_deeper_id"] = new NodeProperties
+            ["parcelselfreference_selfref_deeper_number"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_selfreference_deeper_selfreference_id"] = new NodeProperties
+            ["parcelselfreference_selfref_deeper_deeperselfref_number"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_deeper_id"] = new NodeProperties
+            ["parcelselfreference_deeper_number"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_deeper_selfreference_id"] = new NodeProperties
+            ["parcelselfreference_deeper_deeperselfref_number"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },

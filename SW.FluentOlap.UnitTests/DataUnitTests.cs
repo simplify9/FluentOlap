@@ -136,6 +136,12 @@ namespace UtilityUnitTests
             Assert.AreEqual(analyzedHash, analyzedCurrentHash);
         }
 
+        [TestMethod]
+        public void DeepSelfRefTest()
+        {
+            
+        }
+
 
     }
 }
