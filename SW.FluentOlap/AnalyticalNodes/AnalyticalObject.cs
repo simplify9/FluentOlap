@@ -36,53 +36,25 @@ namespace SW.FluentOlap.AnalyticalNode
             new Dictionary<string, NodeProperties>(TypeMap.Where(n => n.Value.ServiceName != null));
         public AnalyticalObject()
         {
-            this.TypeMap = new TypeMap();
-            this.AnalyzedType = typeof(T);
-            this.Name = AnalyzedType.Name;
-            this.
+            TypeMap = new TypeMap();
+            AnalyzedType = typeof(T);
+            Name = AnalyzedType.Name;
             InitTypeMap();
 
         }
-
-        // protected void PostInitCleanUp(IEnumerable<string> selfRefEntries)
-        // {
-        //     foreach (var entry in selfRefEntries)
-        //     {
-        //         OwnExistingTypeMap(entry);
-        //     }
-        // }
 
         public AnalyticalObject(TypeMap existing)
         {
             TypeMap = existing;
         }
 
-        // private void OwnExistingTypeMap(string key)
-        // {
-        //     // Make a new enumerable to avoid modifying collection loop is iterating over
-        //     TypeMap tmp = new TypeMap();
-        //     foreach (var entry in TypeMap)
-        //         if (entry.Key.Contains($"{key.ToLower()}_"))
-        //         {
-        //             tmp.Add(entry);
-        //         }
-        //
-        //     foreach (var entry in tmp)
-        //     {
-        //         PopulateTypeMaps(entry.Value.InternalType, $"{Name}_{entry.Key}");
-        //     }
-        // }
-
-        private List<string> initDefinitionChain = new List<string>();
-        private IEnumerable<string> InitTypeMap(Type typeToInit = null, string prefix = null, string preferredName = null, string directParentName = null, IList<string> selfRefEntries = null )
+        private void InitTypeMap(Type typeToInit = null, string prefix = null, string preferredName = null, string directParentName = null)
         {
             typeToInit ??= this.AnalyzedType;
             prefix ??= this.AnalyzedType.Name;
             preferredName ??= typeToInit.Name;
             directParentName ??= preferredName;
             
-            if(selfRefEntries == null) selfRefEntries = new List<string>();
-
             if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType))
             {
                 PopulateTypeMaps(internalType, $"{prefix}_{preferredName}");
@@ -90,6 +62,7 @@ namespace SW.FluentOlap.AnalyticalNode
             else 
             {
                     if (prefix != directParentName) prefix = $"{prefix}_{directParentName}";
+                    List<string> initDefinitionChain = new List<string>{typeToInit.FullName};
                     foreach (PropertyInfo prop in typeToInit.GetProperties())
                     {
                         if (prop.GetCustomAttribute(typeof(IgnoreAttribute)) != null) continue;
@@ -98,19 +71,18 @@ namespace SW.FluentOlap.AnalyticalNode
                         // Make sure the reference count is not more than the predefined limit
                         // If it is, skip the definition.
                         // Else proceed as normal
-                        if (initDefinitionChain.Contains(prop.PropertyType.FullName)) // A reference to a (grand)parent of the same type
+                        if (initDefinitionChain.Contains(typeToInit.FullName)) // A reference to a (grand)parent of the same type
                         {
-                            int occurenceCount = initDefinitionChain.Count(v => v == prop.PropertyType.FullName);
+                            int occurenceCount = initDefinitionChain.Count(v => v == typeToInit.FullName);
                             if (occurenceCount > SelfReferencingLimit) continue;
                         }
                         
                         initDefinitionChain.Add(typeToInit.FullName);
-                        InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name, null, selfRefEntries);
+                        InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name, null);
                     }
                     initDefinitionChain.Clear();
             }
 
-            return selfRefEntries;
         }
 
         /// <summary>
