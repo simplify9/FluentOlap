@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 
 namespace SW.FluentOlap.Models
@@ -9,10 +10,17 @@ namespace SW.FluentOlap.Models
     public class TypeMapDifferences : IEnumerable<TypeMapDifference>
     {
         private IList<TypeMapDifference> typeMapDifferences;
+        private IEnumerable<DifferenceType> ignoredDifferenceTypes;
 
         public IEnumerator<TypeMapDifference> GetEnumerator()
         {
             return typeMapDifferences.GetEnumerator();
+        }
+
+        private void AddDifference(TypeMapDifference difference)
+        {
+            if (!ignoredDifferenceTypes.Contains(difference.DifferenceType))
+                typeMapDifferences.Add(difference);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -23,31 +31,32 @@ namespace SW.FluentOlap.Models
         public bool AreAllSimple() =>
             typeMapDifferences.All(tmd => tmd.DifferenceType != DifferenceType.DataTypeChange);
 
-        public TypeMapDifferences(TypeMap first, TypeMap second)
+        public TypeMapDifferences(TypeMap first, TypeMap second, IEnumerable<DifferenceType> ignoredDifferenceTypes = null)
         {
             typeMapDifferences = new List<TypeMapDifference>();
+            this.ignoredDifferenceTypes = ignoredDifferenceTypes?? new List<DifferenceType>();
             foreach (var entry in first)
             {
                 if (second.ContainsKey(entry.Key))
                 {
                     if (entry.Value.InternalType.ToString() != second[entry.Key].InternalType.ToString())
                     {
-                        var difference =
+                        TypeMapDifference difference =
                             new TypeMapDifference(entry.Key,
                                 DifferenceType.DataTypeChange,
                                 second.FirstOrDefault(e => e.Key == entry.Key),
                                 entry);
-                        typeMapDifferences.Add(difference);
+                        AddDifference(difference);
                     }
                 }
                 else
                 {
-                    var difference =
+                    TypeMapDifference difference =
                         new TypeMapDifference(entry.Key,
                             DifferenceType.RemovedColumn,
                             second.FirstOrDefault(e => e.Key == entry.Key),
                             entry);
-                    typeMapDifferences.Add(difference);
+                    AddDifference(difference);
                 }
             }
 
@@ -60,7 +69,7 @@ namespace SW.FluentOlap.Models
                         first.FirstOrDefault(e => e.Key == entry.Key));
 
                 if (!first.ContainsKey(entry.Key))
-                    typeMapDifferences.Add(difference);
+                    AddDifference(difference);
             }
 
             var secondInOrder = second.AsEnumerable().ToArray();
@@ -75,11 +84,12 @@ namespace SW.FluentOlap.Models
                     bool keyInOrder = atIndex.Key == entry.Key;
                     if (!keyInOrder)
                     {
-                        typeMapDifferences.Add(new TypeMapDifference(entry.Key,
+                        TypeMapDifference difference = new TypeMapDifference(entry.Key,
                             DifferenceType.ChangedColumnOrder,
                             entry,
                             atIndex
-                        ));
+                        );
+                        AddDifference(difference);
                     }
                 }
             }
