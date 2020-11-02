@@ -50,7 +50,6 @@ namespace SW.FluentOlap.Models
                 _templateParametersType = value.GetType();
             }
         }
-        public IEnumerable<KeyValuePair<string, string>> Headers { get; set; }
         private Type TemplateParametersType
         {
             get => _templateParametersType;
@@ -82,9 +81,10 @@ namespace SW.FluentOlap.Models
         /// that will be filled in by incoming parameters from the HttpServiceOptions
         /// </param>
         /// <param name="factory"></param>
-        public HttpService(string templatedUrl, string name = null, IHttpClientFactory factory = null) : base(ServiceType.HttpCall, name)
+        public HttpService(string templatedUrl, string name = null, IEnumerable<KeyValuePair<string, string>> headers = null, IHttpClientFactory factory = null) : base(ServiceType.HttpCall, name)
         {
             this.templatedUrl = templatedUrl;
+            this.headers = headers ?? new KeyValuePair<string, string>[0];
             this.factory = factory;
             
         }
@@ -198,7 +198,6 @@ namespace SW.FluentOlap.Models
             async options =>
             {
                 using HttpClient client = factory != null? factory.CreateClient() : new HttpClient();
-
                 Uri uri = FormatUri(options.Parameters);
                 HttpRequestMessage request =
                     GetRequestMessage(uri, options.Verb, options.Parameters);
