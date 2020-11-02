@@ -50,6 +50,7 @@ namespace SW.FluentOlap.Models
                 _templateParametersType = value.GetType();
             }
         }
+        public IEnumerable<KeyValuePair<string, string>> Headers { get; set; }
         private Type TemplateParametersType
         {
             get => _templateParametersType;
@@ -64,6 +65,7 @@ namespace SW.FluentOlap.Models
     {
         
         private readonly IHttpClientFactory factory;
+        private readonly IEnumerable<KeyValuePair<string, string>> headers;
 
         /// <summary>
         /// All strings between curly braces {} will be treated as Json Paths
@@ -97,10 +99,11 @@ namespace SW.FluentOlap.Models
         /// <returns></returns>
         private HttpRequestMessage GetRequestMessage(Uri uri, HttpVerb verb, object body)
         {
+            HttpRequestMessage message;
             switch (verb)
             {
                 case HttpVerb.Post:
-                    return new HttpRequestMessage
+                    message= new HttpRequestMessage
                     {
                         Method = HttpMethod.Post,
                         RequestUri = uri,
@@ -110,14 +113,21 @@ namespace SW.FluentOlap.Models
                             "application/json"
                         )
                     };
+                    break;
                 case HttpVerb.Get:
                 default:
-                    return new HttpRequestMessage
+                    message = new HttpRequestMessage
                     {
                         Method = HttpMethod.Get,
                         RequestUri = uri
                     };
+                    break;
             }
+
+            foreach(KeyValuePair<string, string> header in headers)
+                message.Headers.Add(header.Key, header.Value);
+            
+            return message;
         }
 
         /// <summary>
