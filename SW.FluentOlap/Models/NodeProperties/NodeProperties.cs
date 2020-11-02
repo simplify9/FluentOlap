@@ -51,11 +51,14 @@ namespace SW.FluentOlap.Models
             get => new InternalType("DATETIME");
         }
 
-        public override bool Equals(object obj)
+        protected bool Equals(InternalType other)
         {
-            InternalType t = (InternalType)obj;
-            if (t.typeString == this.typeString) return true;
-            else return false;
+            return typeString == other.typeString;
+        }
+
+        public override int GetHashCode()
+        {
+            return (typeString != null ? typeString.GetHashCode() : 0);
         }
 
         public override string ToString()
