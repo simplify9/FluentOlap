@@ -27,7 +27,6 @@ namespace SW.FluentOlap.AnalyticalNode
 
         public MessageProperties MessageMap { get; set; }
         public string Name { get; set; }
-        private IEnumerable<IEnumerable<Type>> TypeChains { get; set; }
         public Type AnalyzedType { get; set; }
 
         public Dictionary<string, NodeProperties> ExpandableChildren =>
@@ -44,7 +43,8 @@ namespace SW.FluentOlap.AnalyticalNode
             TypeMap = new TypeMap();
             AnalyzedType = typeof(T);
             Name = AnalyzedType.Name;
-            InitTypeMap();
+            ApplySettings(settings);
+            InitTypeMap(AnalyzedType, AnalyzedType.Name, AnalyzedType.Name);
         }
 
         public AnalyticalObject(TypeMap existing)
@@ -52,15 +52,8 @@ namespace SW.FluentOlap.AnalyticalNode
             TypeMap = existing;
         }
 
-        private void InitTypeMap(Type typeToInit = null, string prefix = null, string preferredName = null,
-            string directParentName = null, List<string> branchChain = null)
+        private void InitTypeMap(Type typeToInit, string prefix, string preferredName,  List<string> branchChain = null)
         {
-            typeToInit ??= this.AnalyzedType;
-            prefix ??= this.AnalyzedType.Name;
-            preferredName ??= typeToInit.Name;
-            directParentName ??= preferredName;
-            
-
             // If there is a reference to a type that exists previously in the chain
             // Make sure the reference count is not more than the predefined limit
             // If it is, skip the definition.
@@ -79,15 +72,16 @@ namespace SW.FluentOlap.AnalyticalNode
             {
                 PopulateTypeMaps(internalType, $"{prefix}_{preferredName}");
             }
-            else
+            else // this is a complex type
             {
-                if (prefix != directParentName) prefix = $"{prefix}_{directParentName}";
+                if (prefix != preferredName) prefix = $"{prefix}_{preferredName}";
                 foreach (PropertyInfo prop in typeToInit.GetProperties())
                 {
                     if (prop.GetCustomAttribute(typeof(IgnoreAttribute)) != null) continue;
 
-                    InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name, null, branchChain);
-                    //Clone
+                    InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name, branchChain);
+                    
+                    //Clone the original stem of this branch to ensure unique chains for each property 
                     branchChain = branchOrigin.Select(v => v).ToList();
                 }
             }
