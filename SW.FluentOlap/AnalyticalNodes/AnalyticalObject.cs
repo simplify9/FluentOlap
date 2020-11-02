@@ -39,7 +39,7 @@ namespace SW.FluentOlap.AnalyticalNode
             if (settings == null) return;
             initializationSettings.ReferenceLoopDepthLimit = settings.ReferenceLoopDepthLimit;
         }
-        public AnalyticalObject(AnalyticalObjectInitializationSettings<T> settings) 
+        public AnalyticalObject(AnalyticalObjectInitializationSettings<T> settings = null) 
         {
             TypeMap = new TypeMap();
             AnalyzedType = typeof(T);
