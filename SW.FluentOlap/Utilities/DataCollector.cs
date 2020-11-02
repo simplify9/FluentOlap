@@ -11,86 +11,84 @@ using SW.FluentOlap.AnalyticalNode;
 
 namespace SW.FluentOlap.Utilities
 {
-    public class DataCollectionRequest
+    public static class DataCollector
     {
-        public string RootValue { get; set; }
-        public string RootName { get; set; }
-        public AnalyticalMetadata Metadata { get; set; }
-        public ServiceDefinitions Services { get; set; }
-        public TypeMap TypeMap { get; set; }
-    }
-    internal class DataCollector
-    {
-        public DataCollector()
+        private static async Task<PopulationResult> CallService(IService focusedService, IServiceInput serviceInput, string expandableKey = null)
         {
-        }
+            IServiceOutput output = null;
 
-        public async Task<PopulationResult> GetDataFromEndpoints<T>(AnalyticalObject<T> analyticalObject, string rootValue,
-            IHttpClientFactory httpClientFactory = null)
-        {
-            return await 
-                GetDataFromEndpoints(analyticalObject.Name.ToLower(),
-                rootValue, analyticalObject.ServiceName,
-                FluentOlapConfiguration.ServiceDefinitions, 
-                analyticalObject.TypeMap, 
-                FluentOlapConfiguration.Metadata, 
-                httpClientFactory);
-        }
-
-
-        /// <summary>
-        /// Gets data using service and returns it in a flattened dictionary
-        /// </summary>
-        /// <param name="rootValue">ID of root object</param>
-        /// <param name="metadata">AnalyticalMetaData from MasterTypeMaps</param>
-        /// <param name="rootServiceName"></param>
-        /// <param name="services">ServiceDefinitions from DI</param>
-        /// <param name="typeMap">TypeMap of the root object</param>
-        /// <returns>Flattened and denormalized Dictionary of the root object and its children</returns>
-        public async Task<PopulationResult> GetDataFromEndpoints(string rootObjectName, string rootValue, string rootServiceName, ServiceDefinitions services, TypeMap typeMap, AnalyticalMetadata metadata = null, IHttpClientFactory httpClientFactory = null)
-        {
-            if (services == null)
-                throw new Exception("No service definitions found.");
-
-            if (rootServiceName == null)
-                throw new Exception("No service declared for root object.");
-            
-            if(!services.ContainsKey(rootServiceName))
-                throw new Exception($"Service with name {rootServiceName} not found.");
-            
-            string baseUrl = services[rootServiceName].BaseUrl;
-            
-            string endpoint = services[rootServiceName].Endpoint.StartsWith('/')? services[rootServiceName].Endpoint : '/' + services[rootServiceName].Endpoint ;
-            string fullUrl = (baseUrl.EndsWith("/") ? baseUrl.Substring(0, baseUrl.Length - 1) : baseUrl) 
-                             + (endpoint.EndsWith("/") ? endpoint : endpoint + '/') + rootValue;
-            IDictionary<string, object> objects = new Dictionary<string, object>();
-
-            using(HttpClient httpClient = httpClientFactory != null? httpClientFactory.CreateClient() : new HttpClient())
+            switch (focusedService.Type)
             {
-                string rootObjectRs = await httpClient.GetStringAsync(fullUrl);
-                IDictionary<string, object> rootObject = JsonHelper.DeserializeAndFlatten(rootObjectRs);;
+                case ServiceType.DatabaseCall:
+                    break;
+                case ServiceType.HttpCall:
 
-                foreach(KeyValuePair<string, object> childEntry in rootObject)
-                    objects.Add(rootObjectName.Replace("/", "") + "_" + childEntry.Key, childEntry.Value);
+                    if (!(focusedService is HttpService service))
+                        throw new Exception($"Invalid HttpService defined for service {focusedService.ServiceName}");
 
-                foreach (KeyValuePair<string, NodeProperties> map in typeMap) {
-                    string serviceName = map.Value.ServiceName;
-                    if (serviceName == null) continue;
-                    string key = map.Key.Split('_').Last().ToLower();
-                    string nodeName = map.Value.NodeName;
+                    output = await service.InvokeAsync(serviceInput as HttpServiceOptions);
 
-                    string childBaseUrl = services[serviceName].BaseUrl ?? metadata.BaseUrl;
-                    string childFullUrl = childBaseUrl + services[serviceName].Endpoint + '/' +rootObject[key];
-                    string childRs = await httpClient.GetStringAsync(childFullUrl);
+                    if (expandableKey != null) output.KeyPrefix = expandableKey;
 
-                    IDictionary<string, object> childObject = JsonHelper.DeserializeAndFlatten(childRs);
-                    foreach(KeyValuePair<string, object> childEntry in childObject)
-                        if(!objects.ContainsKey(nodeName + '_' + childEntry.Key))
-                            objects.Add(nodeName + '_' + childEntry.Key, childEntry.Value);
-                }
+                    break;
             }
-            return new PopulationResult(typeMap, objects);
 
+            return output.PopulationResult;
+        }
+
+        public static async Task<PopulationResultCollection> CollectData<T>(AnalyticalObject<T> focusedObject,
+            IServiceInput serviceInput)
+        {
+            if (focusedObject.ServiceName == null)
+                throw new Exception("Root analyzer object must have a service defined.");
+            
+            if(!FluentOlapConfiguration.ServiceDefinitions.ContainsKey(focusedObject.ServiceName))
+                throw new Exception($"Service {focusedObject.ServiceName} not defined.");
+            
+            IService focusedService = FluentOlapConfiguration.ServiceDefinitions[focusedObject.ServiceName];
+            PopulationResultCollection results = new PopulationResultCollection();
+
+            PopulationResult rootResult = await CallService(focusedService, serviceInput);
+            results.Add(rootResult);
+
+            foreach (var expandable in focusedObject.ExpandableChildren)
+            {
+                if (expandable.Value.ServiceName == null)
+                    throw new Exception("Child analyzer object must have a service defined.");
+                
+                if(!FluentOlapConfiguration.ServiceDefinitions.ContainsKey(expandable.Value.ServiceName))
+                    throw new Exception($"Service {expandable.Value.ServiceName} not defined.");
+                
+                IService expandableService = FluentOlapConfiguration.ServiceDefinitions[expandable.Value.ServiceName];
+
+                IServiceInput input = null;
+
+                switch (expandableService.Type)
+                {
+                    case ServiceType.HttpCall:
+                        HttpService expandableHttpService = expandableService as HttpService;
+                        IDictionary<string, string> parameters = new Dictionary<string, string>();
+                        foreach (string innerParam in expandableHttpService.GetRequiredParameters())
+                        {
+                            JToken parsedRoot = JToken.Parse(rootResult.Raw);
+                            parameters.Add(innerParam, parsedRoot[innerParam].Value<string>());
+                        }
+
+                        input = new HttpServiceOptions
+                        {
+                            PrefixKey = expandable.Value.NodeName,
+                            Parameters = parameters
+                        };
+
+                        await expandableHttpService.InvokeAsync((HttpServiceOptions) input);
+
+                        break;
+                }
+
+                results.Add(await CallService(expandableService, input));
+            }
+
+            return results;
         }
     }
 }

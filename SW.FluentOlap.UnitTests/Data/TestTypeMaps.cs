@@ -4,7 +4,8 @@ namespace UtilityUnitTests.Data
 {
     public static class TestTypeMaps
     {
-        public readonly static TypeMap P1TypeMap = new TypeMap {
+        public readonly static TypeMap P1TypeMap = new TypeMap
+        {
             ["parcel1level_id"] = new NodeProperties
             {
                 InternalType = InternalType.STRING
@@ -23,7 +24,8 @@ namespace UtilityUnitTests.Data
             }
         };
 
-        public readonly static TypeMap P2TypeMap = new TypeMap {
+        public readonly static TypeMap P2TypeMap = new TypeMap
+        {
             ["parcel2level_id"] = new NodeProperties
             {
                 InternalType = InternalType.STRING
@@ -37,6 +39,14 @@ namespace UtilityUnitTests.Data
                 InternalType = InternalType.STRING
             },
             ["parcel2level_shipper_origincountry"] = new NodeProperties
+            {
+                InternalType = InternalType.STRING
+            },
+            ["parcel2level_shipper2_name"] = new NodeProperties
+            {
+                InternalType = InternalType.STRING
+            },
+            ["parcel2level_shipper2_origincountry"] = new NodeProperties
             {
                 InternalType = InternalType.STRING
             },
@@ -74,7 +84,7 @@ namespace UtilityUnitTests.Data
 
         public readonly static TypeMap IgnoreTestMap = new TypeMap
         {
-            ["ignoretestmap_complexobj2samename_name2"] = new NodeProperties
+            ["ignoretestmap_co2sm_name2"] = new NodeProperties
             {
                 InternalType = InternalType.STRING
             },
@@ -88,29 +98,69 @@ namespace UtilityUnitTests.Data
         {
             ["parcelselfreference_id"] = new NodeProperties
             {
-                InternalType = InternalType.STRING
+                InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_deeperselfreference_id"] = new NodeProperties
+            ["parcelselfreference_selfref_id"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_parcelselfreference_id"] = new NodeProperties
-            {
-                InternalType = InternalType.STRING
-            },
-            ["parcelselfreference_parcelselfreference_deeperselfreference_id"] = new NodeProperties
+            ["parcelselfreference_selfref_deeper_number"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_parcelselfreference_parcelselfreference_deeperselfreference_id"] = new NodeProperties
+            ["parcelselfreference_selfref_deeper_deeperselfref_number"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
-            }
-            
-            
-            
+            },
+            ["parcelselfreference_deeper_number"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference_deeper_deeperselfref_number"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
         };
 
 
+        public readonly static TypeMap SelfReferenceTestDeep = new TypeMap
+        {
+            ["parcelselfreference2_id"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference2_selfref_id"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference2_selfref_deeper_number"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference2_selfref_deeper_deeperselfref_number"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference2_deeper_number"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference2_deeper_deeperselfref_number"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference2_deeper_deeperselfref_parcelselfref_id"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference2_deeper_parcelselfref_id"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference2_deeper_parcelselfref_deeper_number"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+        };
     }
 }
