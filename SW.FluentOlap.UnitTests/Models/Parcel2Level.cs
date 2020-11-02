@@ -31,6 +31,7 @@ namespace UtilityUnitTests.Models
         public int Count { get; set; }
 
         public Shipper Shipper { get; set; }
+        public Shipper Shipper2 { get; set; }
         public Supplier Supplier { get; set; }
 
     }

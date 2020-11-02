@@ -7,11 +7,11 @@ namespace SW.FluentOlap.Utilities
 {
     internal class JsonHelper
     {
-        public static Dictionary<string, object> DeserializeAndFlatten(string json)
+        public static Dictionary<string, object> DeserializeAndFlatten(string json, string prefix = "")
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
             JToken token = JToken.Parse(json);
-            FillDictionaryFromJToken(dict, token, "");
+            FillDictionaryFromJToken(dict, token, prefix);
             return dict;
         }
 

@@ -7,12 +7,10 @@ namespace SW.FluentOlap.Models
 {
     public class PopulationContext<T>
     {
-        public IHttpClientFactory HttpClientFactory { get; set; }
-        public T Message { get; set; }
-        public PopulationContext(T message, IHttpClientFactory httpClientFactory = null)
+        public T Input { get; set; }
+        public PopulationContext(T input)
         {
-            HttpClientFactory = httpClientFactory;
-            Message = message;
+            Input = input;
         }
         
     }

@@ -93,7 +93,7 @@ namespace SW.FluentOlap.AnalyticalNode
         
         public new void Ignore<TProperty>(Expression<Func<T, TProperty>> propertyExpression)
         {
-            var parentChain = GetParentChain() + '_' + childType.Name;
+            var parentChain = GetParentChain() + '_' + Name;
             var expression = (MemberExpression)propertyExpression.Body;
             string name = parentChain + '_' + expression.Member.Name;
             

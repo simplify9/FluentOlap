@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -89,6 +90,7 @@ namespace UtilityUnitTests
         {
             var analyzed = new Parcel2LevelAnalyzer();
             analyzed.Ignore(p => p.Shipper);
+            analyzed.Ignore(p => p.Shipper2);
             var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
 
             foreach(var pair in TestTypeMaps.P2TypeMap)
@@ -108,7 +110,10 @@ namespace UtilityUnitTests
             var analyzed = new IgnoreMapAnalyzer();
             var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
             var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.IgnoreTestMap);
-            
+            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.IgnoreTestMap, new List<DifferenceType>
+            {
+                DifferenceType.ChangedColumnOrder
+            });
             Assert.AreEqual(analyzedHash, analyzedCurrentHash);
             
         }
@@ -119,7 +124,10 @@ namespace UtilityUnitTests
             var analyzed = new WideParcelSelfReference();
             var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
             var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.SelfReferenceTest);
-            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.SelfReferenceTest);
+            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.SelfReferenceTest, new List<DifferenceType>
+            {
+                DifferenceType.ChangedColumnOrder
+            });
 
             var test = string.Empty;
             test += analyzed.TypeMap.ToString() + "\n\n\n\n\n\n\n\n\n";
@@ -129,27 +137,23 @@ namespace UtilityUnitTests
         }
 
         [TestMethod]
-        public void PopulateTest()
+        public void DeepSelfRefTest()
         {
+            var analyzed = new WideParcelSelfReferenceDeep();
+            var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
+            var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.SelfReferenceTestDeep);
+            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.SelfReferenceTest, new List<DifferenceType>
+            {
+                DifferenceType.ChangedColumnOrder
+            });
 
-            FluentOlapConfiguration.ServiceDefinitions = new ServiceDefinitions
-            {
-                ["postService"] = new Service
-                {
-                    Endpoint = "/posts",
-                    BaseUrl = "https://jsonplaceholder.typicode.com"
-                }
-            };
+            var test = string.Empty;
+            test += analyzed.TypeMap.ToString() + "\n\n\n\n\n\n\n\n\n";
+            test += TestTypeMaps.SelfReferenceTest.ToString();
             
-            var analyzed = new PostAnalyzer();
-            analyzed.GetFromService("postService");
-            var result = analyzed.PopulateAsync(new PopulationContext<PostMessage>(new PostMessage
-            {
-                Id = "1"
-            })).Result;
-            
-            Assert.AreEqual(string.Join(',', result.Keys), string.Join(',', analyzed.TypeMap.Keys));
+            Assert.AreEqual(analyzedHash, analyzedCurrentHash);
         }
+
 
     }
 }
