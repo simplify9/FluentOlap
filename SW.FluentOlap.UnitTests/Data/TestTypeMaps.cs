@@ -125,27 +125,39 @@ namespace UtilityUnitTests.Data
 
         public readonly static TypeMap SelfReferenceTestDeep = new TypeMap
         {
-            ["parcelselfreference_id"] = new NodeProperties
+            ["parcelselfreference2_id"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_selfref_id"] = new NodeProperties
+            ["parcelselfreference2_selfref_id"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_selfref_deeper_number"] = new NodeProperties
+            ["parcelselfreference2_selfref_deeper_number"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_selfref_deeper_deeperselfref_number"] = new NodeProperties
+            ["parcelselfreference2_selfref_deeper_deeperselfref_number"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_deeper_number"] = new NodeProperties
+            ["parcelselfreference2_deeper_number"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_deeper_deeperselfref_number"] = new NodeProperties
+            ["parcelselfreference2_deeper_deeperselfref_number"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference2_deeper_deeperselfref_parcelselfref_id"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference2_deeper_parcelselfref_id"] = new NodeProperties
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcelselfreference2_deeper_parcelselfref_deeper_number"] = new NodeProperties
             {
                 InternalType = InternalType.INTEGER
             },

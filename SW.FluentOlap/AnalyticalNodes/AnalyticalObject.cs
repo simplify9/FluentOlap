@@ -20,12 +20,15 @@ namespace SW.FluentOlap.AnalyticalNode
     public class AnalyticalObject<T> : IAnalyticalNode
     {
         public static Type OriginType { get; private set; }
-        private static TypeMap FinalTypeMap { get; set; } 
+        private static TypeMap FinalTypeMap { get; set; }
         public TypeMap TypeMap { get; protected set; }
         public string ServiceName { get; set; }
 
 
-        public static byte SelfReferencingLimit { get => 1; }
+        public static byte SelfReferencingLimit
+        {
+            get => 1;
+        }
 
         public MessageProperties MessageMap { get; set; }
         public string Name { get; set; }
@@ -34,13 +37,13 @@ namespace SW.FluentOlap.AnalyticalNode
 
         public Dictionary<string, NodeProperties> ExpandableChildren =>
             new Dictionary<string, NodeProperties>(TypeMap.Where(n => n.Value.ServiceName != null));
+
         public AnalyticalObject()
         {
             TypeMap = new TypeMap();
             AnalyzedType = typeof(T);
             Name = AnalyzedType.Name;
             InitTypeMap();
-
         }
 
         public AnalyticalObject(TypeMap existing)
@@ -48,41 +51,45 @@ namespace SW.FluentOlap.AnalyticalNode
             TypeMap = existing;
         }
 
-        private void InitTypeMap(Type typeToInit = null, string prefix = null, string preferredName = null, string directParentName = null)
+        private void InitTypeMap(Type typeToInit = null, string prefix = null, string preferredName = null,
+            string directParentName = null, List<string> branchChain = null)
         {
             typeToInit ??= this.AnalyzedType;
             prefix ??= this.AnalyzedType.Name;
             preferredName ??= typeToInit.Name;
             directParentName ??= preferredName;
             
+
+            // If there is a reference to a type that exists previously in the chain
+            // Make sure the reference count is not more than the predefined limit
+            // If it is, skip the definition.
+            // Else proceed as normal
+            branchChain ??= new List<string>();
+            if (branchChain.Contains(typeToInit.FullName)) // A reference to a (grand)parent of the same type
+            {
+                int occurenceCount = branchChain.Count(v => v == typeToInit.FullName);
+                if (occurenceCount > SelfReferencingLimit) return;
+            }
+
+            branchChain.Add(typeToInit.FullName);
+
+            List<string> branchOrigin = branchChain.Select(v => v).ToList();
             if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType))
             {
                 PopulateTypeMaps(internalType, $"{prefix}_{preferredName}");
             }
-            else 
+            else
             {
-                    if (prefix != directParentName) prefix = $"{prefix}_{directParentName}";
-                    List<string> initDefinitionChain = new List<string>{typeToInit.FullName};
-                    foreach (PropertyInfo prop in typeToInit.GetProperties())
-                    {
-                        if (prop.GetCustomAttribute(typeof(IgnoreAttribute)) != null) continue;
+                if (prefix != directParentName) prefix = $"{prefix}_{directParentName}";
+                foreach (PropertyInfo prop in typeToInit.GetProperties())
+                {
+                    if (prop.GetCustomAttribute(typeof(IgnoreAttribute)) != null) continue;
 
-                        // If there is a reference to a type that exists previously in the chain
-                        // Make sure the reference count is not more than the predefined limit
-                        // If it is, skip the definition.
-                        // Else proceed as normal
-                        if (initDefinitionChain.Contains(typeToInit.FullName)) // A reference to a (grand)parent of the same type
-                        {
-                            int occurenceCount = initDefinitionChain.Count(v => v == typeToInit.FullName);
-                            if (occurenceCount > SelfReferencingLimit) continue;
-                        }
-                        
-                        initDefinitionChain.Add(typeToInit.FullName);
-                        InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name, null);
-                    }
-                    initDefinitionChain.Clear();
+                    InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name, null, branchChain);
+                    //Clone
+                    branchChain = branchOrigin.Select(v => v).ToList();
+                }
             }
-
         }
 
         /// <summary>
@@ -139,11 +146,10 @@ namespace SW.FluentOlap.AnalyticalNode
             if (isPrimitive)
             {
                 this.TypeMap.Remove(childName.ToLower());
-                
             }
             else
             {
-                foreach(var entry in this.TypeMap)
+                foreach (var entry in this.TypeMap)
                 {
                     string toRemove = childName.ToLower() + '_';
                     if (entry.Key.Contains(toRemove))
@@ -180,10 +186,11 @@ namespace SW.FluentOlap.AnalyticalNode
             this.MessageMap = new MessageProperties(messageName, keyPath);
             return this;
         }
+
         public AnalyticalObject<T> Handles<M>(Expression<Func<M, object>> propertyExpression)
         {
             string messageName = typeof(M).Name;
-            var expression = (MemberExpression)propertyExpression.Body;
+            var expression = (MemberExpression) propertyExpression.Body;
             string keyPath = expression.Member.Name;
             return this.Handles(messageName, keyPath);
         }
@@ -201,27 +208,27 @@ namespace SW.FluentOlap.AnalyticalNode
             PopulationResult root = resultCollection.Dequeue();
             foreach (KeyValuePair<string, object> kv in root)
                 merged.Add(kv);
-            
+
             for (int _ = 0; _ < resultCollection.Count; ++_)
             {
                 PopulationResult current = resultCollection.Dequeue();
                 foreach (KeyValuePair<string, object> kv in current)
                     merged.Add(kv);
             }
-            
-            
-            
+
+
             return new PopulationResult(merged);
         }
 
-        public async Task<PopulationResult> PopulateAsync<TInput>(PopulationContext<TInput> cntx) where TInput : IServiceInput
+        public async Task<PopulationResult> PopulateAsync<TInput>(PopulationContext<TInput> cntx)
+            where TInput : IServiceInput
         {
-            if (MessageMap == null)            
+            if (MessageMap == null)
                 MessageMap = new MessageProperties("NONE", "Id");
 
             PopulationResultCollection rs = await DataCollector.CollectData(this, cntx.Input);
-            
-            PopulationResult merged =  MergeIntoAggregate(rs);
+
+            PopulationResult merged = MergeIntoAggregate(rs);
             return merged;
         }
 
@@ -234,9 +241,10 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="propertyExpression"></param>
         /// <param name="directParent">Direct parent, this should not be set by the user</param>
         /// <returns></returns>
-        public AnalyticalChild<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> propertyExpression, AnalyticalObject<T> directParent = null)
+        public AnalyticalChild<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> propertyExpression,
+            AnalyticalObject<T> directParent = null)
         {
-            var expression = (MemberExpression)propertyExpression.Body;
+            var expression = (MemberExpression) propertyExpression.Body;
             string name = expression.Member.Name;
             Type childType = propertyExpression.ReturnType;
             AnalyticalChild<T, TProperty> child;
@@ -247,14 +255,13 @@ namespace SW.FluentOlap.AnalyticalNode
 
         public void Ignore<TProperty>(Expression<Func<T, TProperty>> propertyExpression)
         {
-            var expression = (MemberExpression)propertyExpression.Body;
+            var expression = (MemberExpression) propertyExpression.Body;
             string name = expression.Member.Name;
 
             string toRemove = Name + '_' + name;
             if (typeof(TProperty).IsPrimitive || typeof(TProperty) == typeof(string))
                 DeleteFromTypeMap(toRemove, true);
             else DeleteFromTypeMap(toRemove, false);
-
         }
 
         // ~AnalyticalObject(){
