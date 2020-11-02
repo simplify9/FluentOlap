@@ -19,16 +19,11 @@ namespace SW.FluentOlap.AnalyticalNode
     /// <typeparam name="T">Type of object ot be analyzed</typeparam>
     public class AnalyticalObject<T> : IAnalyticalNode
     {
-        public static Type OriginType { get; private set; }
-        private static TypeMap FinalTypeMap { get; set; }
         public TypeMap TypeMap { get; protected set; }
         public string ServiceName { get; set; }
 
 
-        public static byte SelfReferencingLimit
-        {
-            get => 1;
-        }
+        private AnalyticalObjectInitializationSettings<T> initializationSettings;
 
         public MessageProperties MessageMap { get; set; }
         public string Name { get; set; }
@@ -38,7 +33,13 @@ namespace SW.FluentOlap.AnalyticalNode
         public Dictionary<string, NodeProperties> ExpandableChildren =>
             new Dictionary<string, NodeProperties>(TypeMap.Where(n => n.Value.ServiceName != null));
 
-        public AnalyticalObject()
+        public void ApplySettings(AnalyticalObjectInitializationSettings<T> settings)
+        {
+            initializationSettings = new AnalyticalObjectInitializationSettings<T>();
+            if (settings == null) return;
+            initializationSettings.ReferenceLoopDepthLimit = settings.ReferenceLoopDepthLimit;
+        }
+        public AnalyticalObject(AnalyticalObjectInitializationSettings<T> settings) 
         {
             TypeMap = new TypeMap();
             AnalyzedType = typeof(T);
@@ -68,7 +69,7 @@ namespace SW.FluentOlap.AnalyticalNode
             if (branchChain.Contains(typeToInit.FullName)) // A reference to a (grand)parent of the same type
             {
                 int occurenceCount = branchChain.Count(v => v == typeToInit.FullName);
-                if (occurenceCount > SelfReferencingLimit) return;
+                if (occurenceCount > initializationSettings.ReferenceLoopDepthLimit) return;
             }
 
             branchChain.Add(typeToInit.FullName);
@@ -264,9 +265,5 @@ namespace SW.FluentOlap.AnalyticalNode
             else DeleteFromTypeMap(toRemove, false);
         }
 
-        // ~AnalyticalObject(){
-        //     if (FinalTypeMap.Count == 0)
-        //         FinalTypeMap = TypeMap;
-        // }
     }
 }
