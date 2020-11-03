@@ -36,7 +36,6 @@ namespace UtilityUnitTests
             {
                 Assert.IsTrue(analyzer.TypeMap.Keys.Contains(key));
             }
-            
         }
 
         [TestMethod]
@@ -49,18 +48,17 @@ namespace UtilityUnitTests
 
             PostAnalyzer analyzer = new PostAnalyzer();
             analyzer.ServiceName = "PostsService";
-            PopulationResult rs = await analyzer.PopulateAsync(new PopulationContext<HttpServiceOptions>(
-                new HttpServiceOptions
+            PopulationResult rs = await analyzer.PopulateAsync(new HttpServiceOptions
                 {
                     Parameters = new
                     {
                         PostId = 1
                     }
-                }));
-            
+                }
+            );
+
             foreach (string key in rs.Keys)
                 Assert.IsTrue(analyzer.TypeMap.Keys.Count >= rs.Keys.Count());
-            
         }
 
         [TestMethod]
@@ -68,24 +66,24 @@ namespace UtilityUnitTests
         {
             PostAnalyzer analyzer = new PostAnalyzer();
             analyzer.ServiceName = "PostsService";
-            
+
             FluentOlapConfiguration.ServiceDefinitions = new ServiceDefinitions
             {
                 ["PostsService"] = new HttpService("https://jsonplaceholder.typicode.com/posts/{PostId}"),
                 ["UsersService"] = new HttpService("https://jsonplaceholder.typicode.com/users/{userId}"),
             };
             analyzer.Property(p => p.userId).GetFromService("UsersService", new AnalyticalObject<User>());
-            
-            
-            PopulationResult rs = await analyzer.PopulateAsync(new PopulationContext<HttpServiceOptions>(
-                new HttpServiceOptions
+
+
+            PopulationResult rs = await analyzer.PopulateAsync(new HttpServiceOptions
                 {
                     Parameters = new
                     {
                         PostId = 1
                     }
-                }));
-            
+                }
+            );
+
             foreach (string key in analyzer.TypeMap.Keys)
                 Assert.IsTrue(rs.Keys.Count() >= analyzer.TypeMap.Count());
         }
