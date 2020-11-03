@@ -218,13 +218,13 @@ namespace SW.FluentOlap.AnalyticalNode
             return new PopulationResult(merged);
         }
 
-        public async Task<PopulationResult> PopulateAsync<TInput>(PopulationContext<TInput> cntx)
+        public async Task<PopulationResult> PopulateAsync<TInput>(TInput input)
             where TInput : IServiceInput
         {
             if (MessageMap == null)
                 MessageMap = new MessageProperties("NONE", "Id");
 
-            PopulationResultCollection rs = await DataCollector.CollectData(this, cntx.Input);
+            PopulationResultCollection rs = await DataCollector.CollectData(this, input);
 
             PopulationResult merged = MergeIntoAggregate(rs);
             return merged;
