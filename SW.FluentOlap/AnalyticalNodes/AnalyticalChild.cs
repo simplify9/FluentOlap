@@ -127,7 +127,7 @@ namespace SW.FluentOlap.AnalyticalNode
         /// </summary>
         /// <param name="sqlType"></param>
         /// <returns></returns>
-        public AnalyticalChild<TParent, T> HasSqlType(InternalType sqlType)
+        public AnalyticalChild<TParent, T> HasInternalType(InternalType sqlType)
         {
             PopulateTypeMaps(sqlType, Name);
             return this;
