@@ -1,4 +1,5 @@
 using SW.FluentOlap.AnalyticalNode;
+using SW.FluentOlap.Models;
 
 namespace UtilityUnitTests.Models
 {
@@ -24,7 +25,14 @@ namespace UtilityUnitTests.Models
 
     public class IgnoreMapAnalyzer : AnalyticalObject<IgnoreTestMap>
     {
-        public IgnoreMapAnalyzer()
+        public IgnoreMapAnalyzer() : base(new AnalyticalObjectInitializationSettings<IgnoreTestMap>
+        {
+            PreInit = a =>
+            {
+                a.Ignore(p => p.Co2sm.Name);
+                a.Ignore(p => p.Complex.IntProp);
+            }
+        })
         {
             Property(p => p.Co2sm).Ignore(c => c.Name);
             Property(p => p.Complex).Ignore(c => c.IntProp);

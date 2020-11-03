@@ -137,6 +137,7 @@ namespace SW.FluentOlap.AnalyticalNode
         /// Specify that this property is unique
         /// </summary>
         /// <returns></returns>
+        [Obsolete("Function no longer usable", true)]
         public AnalyticalChild<TParent, T> IsUnique()
         {
             isUnique = true;
