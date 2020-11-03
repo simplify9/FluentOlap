@@ -47,7 +47,7 @@ namespace SW.FluentOlap.AnalyticalNode
             InitTypeMap(AnalyzedType, AnalyzedType.Name, AnalyzedType.Name);
         }
 
-        public AnalyticalObject(TypeMap existing)
+        protected AnalyticalObject(TypeMap existing)
         {
             TypeMap = existing;
         }
