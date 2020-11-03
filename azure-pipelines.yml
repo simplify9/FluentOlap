@@ -8,7 +8,7 @@ resources:
 
 variables:
   buildConfiguration: 'Release'
-  major: 2
+  major: 3
   minor: 0
   version: $[format('{0}.{1}.{2}', variables['major'], variables['minor'], counter(format('{0}.{1}', variables['major'], variables['minor']), 0))]
   
