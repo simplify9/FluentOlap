@@ -21,21 +21,22 @@ namespace UtilityUnitTests.Models
     {
         public ComplexObj2SameName Co2sm { get; set; }
         public Complex Complex { get; set; }
+        public Complex Complex2 { get; set; }
     }
 
     public class IgnoreMapAnalyzer : AnalyticalObject<IgnoreTestMap>
     {
-        public IgnoreMapAnalyzer() : base(new AnalyticalObjectInitializationSettings<IgnoreTestMap>
-        {
-            PreInit = a =>
+        public IgnoreMapAnalyzer() : base(a =>
             {
                 a.Ignore(p => p.Co2sm.Name);
                 a.Ignore(p => p.Complex.IntProp);
+                a.Ignore(p => p.Complex2);
+                
             }
-        })
+        )
         {
-            Property(p => p.Co2sm).Ignore(c => c.Name);
-            Property(p => p.Complex).Ignore(c => c.IntProp);
+            //Property(p => p.Co2sm).Ignore(c => c.Name);
+            //Property(p => p.Complex).Ignore(c => c.IntProp);
         }
     }
 }
