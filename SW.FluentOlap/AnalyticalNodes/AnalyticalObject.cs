@@ -23,7 +23,7 @@ namespace SW.FluentOlap.AnalyticalNode
         public string ServiceName { get; set; }
 
 
-        private AnalyticalObjectInitializationSettings<T> initializationSettings;
+        private AnalyticalObjectInitSettings<T> initSettings;
 
         public MessageProperties MessageMap { get; set; }
         public string Name { get; set; }
@@ -32,18 +32,17 @@ namespace SW.FluentOlap.AnalyticalNode
         public Dictionary<string, NodeProperties> ExpandableChildren =>
             new Dictionary<string, NodeProperties>(TypeMap.Where(n => n.Value.ServiceName != null));
 
-        public void ApplySettings(AnalyticalObjectInitializationSettings<T> settings)
+        public AnalyticalObject(Action<AnalyticalObjectInitSettings<T>> settings = null) 
         {
-            initializationSettings = new AnalyticalObjectInitializationSettings<T>();
-            if (settings == null) return;
-            initializationSettings.ReferenceLoopDepthLimit = settings.ReferenceLoopDepthLimit;
-        }
-        public AnalyticalObject(AnalyticalObjectInitializationSettings<T> settings = null) 
-        {
+            initSettings = new AnalyticalObjectInitSettings<T>();
+            
+            settings?.Invoke(initSettings);
+            
+            
             TypeMap = new TypeMap();
             AnalyzedType = typeof(T);
             Name = AnalyzedType.Name;
-            ApplySettings(settings);
+            
             InitTypeMap(AnalyzedType, AnalyzedType.Name, AnalyzedType.Name);
         }
 
@@ -62,23 +61,26 @@ namespace SW.FluentOlap.AnalyticalNode
             if (branchChain.Contains(typeToInit.FullName)) // A reference to a (grand)parent of the same type
             {
                 int occurenceCount = branchChain.Count(v => v == typeToInit.FullName);
-                if (occurenceCount > initializationSettings.ReferenceLoopDepthLimit) return;
+                if (occurenceCount > initSettings.ReferenceLoopDepthLimit) return;
             }
 
             branchChain.Add(typeToInit.FullName);
 
-            List<string> branchOrigin = branchChain.Select(v => v).ToList();
             if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType))
             {
                 PopulateTypeMaps(internalType, $"{prefix}_{preferredName}");
             }
             else // this is a complex type
             {
+                List<string> branchOrigin = branchChain.Select(v => v).ToList();
+                // Concatenate parent
                 if (prefix != preferredName) prefix = $"{prefix}_{preferredName}";
                 foreach (PropertyInfo prop in typeToInit.GetProperties())
                 {
+                    string key = (prefix + '_' + prop.Name).ToLower();
+                    if (initSettings.IgnoreList.Contains(key)) continue;
                     if (prop.GetCustomAttribute(typeof(IgnoreAttribute)) != null) continue;
-
+                    
                     InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name, branchChain);
                     
                     //Clone the original stem of this branch to ensure unique chains for each property 
@@ -120,6 +122,7 @@ namespace SW.FluentOlap.AnalyticalNode
         /// </summary>
         /// <param name="isUnique"></param>
         /// <param name="childName"></param>
+        [Obsolete("No longer usable.", true)]
         protected virtual void IsUnique(bool isUnique, string childName)
         {
             string key = childName;
