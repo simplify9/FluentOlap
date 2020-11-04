@@ -53,38 +53,41 @@ namespace SW.FluentOlap.AnalyticalNode
 
         private void InitTypeMap(Type typeToInit, string prefix, string preferredName,  List<string> branchChain = null)
         {
-            // If there is a reference to a type that exists previously in the chain
-            // Make sure the reference count is not more than the predefined limit
-            // If it is, skip the definition.
-            // Else proceed as normal
+            // Create the stem/branch if it does not exist
             branchChain ??= new List<string>();
-            if (branchChain.Contains(typeToInit.FullName)) // A reference to a (grand)parent of the same type
-            {
-                int occurenceCount = branchChain.Count(v => v == typeToInit.FullName);
-                if (occurenceCount > initSettings.ReferenceLoopDepthLimit) return;
-            }
+            
+            // Make sure occurrences of this type in the current branch do not exceed the limit
+            int occurrences = branchChain.Count(v => v == typeToInit.FullName);
+            if (occurrences > initSettings.ReferenceLoopDepthLimit) return;
 
+            // Extend the branch
             branchChain.Add(typeToInit.FullName);
 
-            if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType))
-            {
+            // Add the type to the typemap if it is primitive
+            if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType)) // Primitive type
                 PopulateTypeMaps(internalType, $"{prefix}_{preferredName}");
-            }
+            
             else // this is a complex type
             {
+                // Keep track of the branch state as an origin point for the current complex type
                 List<string> branchOrigin = branchChain.Select(v => v).ToList();
+                
                 // Concatenate parent
                 if (prefix != preferredName) prefix = $"{prefix}_{preferredName}";
+                
+                // Recursively init each property
                 foreach (PropertyInfo prop in typeToInit.GetProperties())
                 {
+                    // TODO: Create a more efficient ignore algorithm.
                     string key = (prefix + '_' + prop.Name).ToLower();
                     if (initSettings.IgnoreList.Contains(key)) continue;
                     if (prop.GetCustomAttribute(typeof(IgnoreAttribute)) != null) continue;
                     
+                    // Passing the branch to extend it for the properties down the chain.
                     InitTypeMap(prop.PropertyType, $"{prefix}", prop.Name, branchChain);
                     
-                    //Clone the original stem of this branch to ensure unique chains for each property 
-                    branchChain = branchOrigin.Select(v => v).ToList();
+                    // Effectively cutting off the branch once we are done with defining that property.
+                    branchChain = branchOrigin.ToList();
                 }
             }
         }
