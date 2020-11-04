@@ -63,11 +63,11 @@ namespace SW.FluentOlap.AnalyticalNode
             // Extend the branch
             branchChain.Add(typeToInit.FullName);
 
-            // Add the type to the typemap if it is primitive
+            // End of a branch.
             if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType)) // Primitive type
                 PopulateTypeMaps(internalType, $"{prefix}_{preferredName}");
             
-            else // this is a complex type
+            else // This will have inner branches
             {
                 // Keep track of the branch state as an origin point for the current complex type
                 List<string> branchOrigin = branchChain.Select(v => v).ToList();
