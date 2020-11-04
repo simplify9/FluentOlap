@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace SW.FluentOlap.Models
 {
-    public class ServiceDefinitions : IDictionary<string, IService>
+    public class ServiceDefinitions : IDictionary<string, IService<IServiceInput, IServiceOutput>>
     {
-        private readonly IDictionary<string, IService> _services = new Dictionary<string, IService>();
-        public IService this[string key]
+        private readonly IDictionary<string, IService<IServiceInput, IServiceOutput>> _services = new Dictionary<string, IService<IServiceInput, IServiceOutput>>();
+        public IService<IServiceInput, IServiceOutput> this[string key]
         {
             get => _services[key.ToLower()];
             set
@@ -18,19 +18,19 @@ namespace SW.FluentOlap.Models
 
         public ICollection<string> Keys => _services.Keys;
 
-        public ICollection<IService> Values => _services.Values;
+        public ICollection<IService<IServiceInput, IServiceOutput>> Values => _services.Values;
 
         public int Count => _services.Count;
 
         public bool IsReadOnly => _services.IsReadOnly;
 
-        public void Add(string key, IService value)
+        public void Add(string key, IService<IServiceInput, IServiceOutput> value)
         {
             _services.Add(key.ToLower(), value);
         }
 
 
-        public void Add(KeyValuePair<string, IService> item)
+        public void Add(KeyValuePair<string, IService<IServiceInput, IServiceOutput>> item)
         {
             item.Value.ServiceName = item.Key;
             _services.Add(item);
@@ -41,7 +41,7 @@ namespace SW.FluentOlap.Models
             _services.Clear();
         }
 
-        public bool Contains(KeyValuePair<string, IService> item)
+        public bool Contains(KeyValuePair<string, IService<IServiceInput, IServiceOutput>> item)
         {
             return _services.Contains(item);
         }
@@ -51,12 +51,12 @@ namespace SW.FluentOlap.Models
             return _services.ContainsKey(key.ToLower());
         }
 
-        public void CopyTo(KeyValuePair<string, IService>[] array, int arrayIndex)
+        public void CopyTo(KeyValuePair<string, IService<IServiceInput, IServiceOutput>>[] array, int arrayIndex)
         {
             _services.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<KeyValuePair<string, IService>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, IService<IServiceInput, IServiceOutput>>> GetEnumerator()
         {
             return _services.GetEnumerator();
         }
@@ -66,12 +66,12 @@ namespace SW.FluentOlap.Models
             return _services.Remove(key.ToLower());
         }
 
-        public bool Remove(KeyValuePair<string, IService> item)
+        public bool Remove(KeyValuePair<string, IService<IServiceInput, IServiceOutput>> item)
         {
             return _services.Remove(item);
         }
 
-        public bool TryGetValue(string key, out IService value)
+        public bool TryGetValue(string key, out IService<IServiceInput, IServiceOutput> value)
         {
             return _services.TryGetValue(key.ToLower(), out value);
         }
