@@ -36,10 +36,11 @@ namespace SW.FluentOlap.Models
     /// <summary>
     /// Interface used for references of a service
     /// </summary>
-    public interface IService
+    public interface IService<TIn, TOut>
     {
         public string ServiceName { get; set; }
         public ServiceType Type { get; }
+        public Func<TIn, Task<TOut>> InvokeAsync { get; }
     }
 
     /// <summary>
@@ -47,9 +48,7 @@ namespace SW.FluentOlap.Models
     /// </summary>
     /// <typeparam name="TIn">Input going to invocation</typeparam>
     /// <typeparam name="TOut">Return of invocation</typeparam>
-    public abstract class Service<TIn, TOut> : IService
-        where TIn : IServiceInput
-        where TOut : IServiceOutput
+    public abstract class Service<TIn, TOut> : IService<IServiceInput, IServiceOutput>
 
     {
         protected Service(ServiceType type, string name)
@@ -61,8 +60,8 @@ namespace SW.FluentOlap.Models
         /// <summary>
         /// How this service is used
         /// </summary>
-        public abstract Func<TIn, Task<TOut>> InvokeAsync { get; }
 
+        public abstract Func<IServiceInput, Task<IServiceOutput>> InvokeAsync { get; }
         public string ServiceName { get; set; }
         public ServiceType Type { get; }
     }

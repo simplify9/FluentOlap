@@ -60,7 +60,7 @@ namespace SW.FluentOlap.Models
     /// <summary>
     /// Service that retrieves information using Http calls.
     /// </summary>
-    public class HttpService : Service<HttpServiceOptions, HttpResponse >
+    public class HttpService : Service<HttpServiceOptions, HttpResponse>
     {
         
         private readonly IHttpClientFactory factory;
@@ -189,14 +189,18 @@ namespace SW.FluentOlap.Models
             return new Uri(formattedUrl);
         }
 
+
         /// <summary>
         /// Returns a delegate to make an HTTP call,
         /// Creates an HttpRequestMessage using parameters,
         /// Saves raw response as string and flattened dictionary
         /// </summary>
-        public override Func<HttpServiceOptions, Task<HttpResponse>> InvokeAsync =>
-            async options =>
+        public override Func<IServiceInput, Task<IServiceOutput>> InvokeAsync =>
+            async input =>
             {
+                if (!(input is HttpServiceOptions options))
+                    throw new ArgumentNullException(nameof(options));
+                
                 using HttpClient client = factory != null? factory.CreateClient() : new HttpClient();
                 Uri uri = FormatUri(options.Parameters);
                 HttpRequestMessage request =

@@ -13,7 +13,7 @@ namespace SW.FluentOlap.Utilities
 {
     public static class DataCollector
     {
-        private static async Task<PopulationResult> CallService(IService focusedService, IServiceInput serviceInput, string expandableKey = null)
+        private static async Task<PopulationResult> CallService(IService<IServiceInput, IServiceOutput> focusedService, IServiceInput serviceInput, string expandableKey = null)
         {
             IServiceOutput output = null;
 
@@ -45,7 +45,7 @@ namespace SW.FluentOlap.Utilities
             if(!FluentOlapConfiguration.ServiceDefinitions.ContainsKey(focusedObject.ServiceName))
                 throw new Exception($"Service {focusedObject.ServiceName} not defined.");
             
-            IService focusedService = FluentOlapConfiguration.ServiceDefinitions[focusedObject.ServiceName];
+            IService<IServiceInput, IServiceOutput> focusedService = FluentOlapConfiguration.ServiceDefinitions[focusedObject.ServiceName];
             PopulationResultCollection results = new PopulationResultCollection();
 
             PopulationResult rootResult = await CallService(focusedService, serviceInput);
@@ -59,7 +59,7 @@ namespace SW.FluentOlap.Utilities
                 if(!FluentOlapConfiguration.ServiceDefinitions.ContainsKey(expandable.Value.ServiceName))
                     throw new Exception($"Service {expandable.Value.ServiceName} not defined.");
                 
-                IService expandableService = FluentOlapConfiguration.ServiceDefinitions[expandable.Value.ServiceName];
+                IService<IServiceInput, IServiceOutput> expandableService = FluentOlapConfiguration.ServiceDefinitions[expandable.Value.ServiceName];
 
                 IServiceInput input = null;
 

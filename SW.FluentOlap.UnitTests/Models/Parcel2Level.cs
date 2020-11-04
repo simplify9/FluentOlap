@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using SW.FluentOlap.Attributes;
+using SW.FluentOlap.Models;
 
 namespace UtilityUnitTests.Models
 {
@@ -38,7 +39,10 @@ namespace UtilityUnitTests.Models
 
     public class Parcel2LevelAnalyzer : AnalyticalObject<Parcel2Level>
     {
-        public Parcel2LevelAnalyzer()
+        public Parcel2LevelAnalyzer() : base(a =>
+        {
+            a.ReferenceLoopDepthLimit = 2;
+        })
         {
             Property(p => p.Id);
             Property(p => p.Location);

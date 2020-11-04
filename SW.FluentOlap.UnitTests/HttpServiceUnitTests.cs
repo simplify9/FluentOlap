@@ -44,7 +44,7 @@ namespace UtilityUnitTests
                 {
                     PostId = 1
                 }
-            });
+            }) as HttpResponse;
             
             
             Assert.AreEqual(invokation.FormattedUrlCalled, "https://jsonplaceholder.typicode.com/posts/1" );
@@ -61,7 +61,7 @@ namespace UtilityUnitTests
                 {
                     PostId = 1
                 }
-            });
+            }) as HttpResponse;
 
             JToken rs = JToken.Parse(invocation.Content);
             Assert.AreEqual(rs["id"]?.ToString(), "1" );
