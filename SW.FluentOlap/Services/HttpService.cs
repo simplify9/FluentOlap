@@ -159,13 +159,13 @@ namespace SW.FluentOlap.Models
         /// <returns></returns>
         private Uri FormatUri(object parameters)
         {
-            string formattedUrl = null;
-            
+            string formattedUrl = templatedUrl;
+
             //All values between curly braces are treated as variables
 
             var requiredParameters = GetRequiredParameters(false);
             if (requiredParameters.Count() == 0) return new Uri(templatedUrl);
-                
+
             foreach (string capture in requiredParameters)
             {
                 JToken token = JToken.FromObject(parameters);
@@ -175,7 +175,7 @@ namespace SW.FluentOlap.Models
                 if (!capture.Contains('.'))
                 {
                     string val = token[FormatParameter(capture)]?.Value<string>();
-                    formattedUrl = templatedUrl.Replace(capture, val);
+                    formattedUrl = formattedUrl.Replace(capture, val);
 
                 }
                 else
@@ -183,7 +183,7 @@ namespace SW.FluentOlap.Models
                     JToken val = null;
                     foreach (string depthKey in capture.Split('.'))
                         val = token[depthKey];
-                    formattedUrl = templatedUrl.Replace(capture, val!.Value<string>());
+                    formattedUrl = formattedUrl.Replace(capture, val!.Value<string>());
                 }
             }
             return new Uri(formattedUrl);
