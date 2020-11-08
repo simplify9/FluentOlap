@@ -8,6 +8,9 @@ using SW.FluentOlap.Utilities;
 
 namespace SW.FluentOlap.Models
 {
+    /// <summary>
+    /// Dictionary containing the results of a service
+    /// </summary>
     public class PopulationResult : IReadOnlyDictionary<string, object>
     {
         public string Raw { get; }
@@ -27,12 +30,15 @@ namespace SW.FluentOlap.Models
             inner = flattened;
         }
 
+        /// <summary>
+        /// Automatically de-normalize json.
+        /// </summary>
+        /// <param name="raw"></param>
+        /// <param name="prefix"></param>
         public PopulationResult(string raw, string prefix = "")
         {
             Raw = raw;
             inner = JsonHelper.DeserializeAndFlatten(raw, prefix);
-            
-            
         }
     }
 }
