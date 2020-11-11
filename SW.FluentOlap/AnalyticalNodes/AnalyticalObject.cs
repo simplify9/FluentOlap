@@ -114,10 +114,7 @@ namespace SW.FluentOlap.AnalyticalNode
             }
         }
 
-        public virtual AnalyticalObject<T> GetDirectParent()
-        {
-            return null;
-        }
+        public virtual AnalyticalObject<T> GetDirectParent() => null;
 
         /// <summary>
         /// Add a new map  by setting it to unique
@@ -201,7 +198,7 @@ namespace SW.FluentOlap.AnalyticalNode
             this.ServiceName = serviceName;
             return this;
         }
-
+        
         private PopulationResult MergeIntoAggregate(PopulationResultCollection resultCollection)
         {
             IDictionary<string, object> merged = new Dictionary<string, object>();
@@ -253,7 +250,7 @@ namespace SW.FluentOlap.AnalyticalNode
 
             return child;
         }
-
+        
         public void Ignore<TProperty>(Expression<Func<T, TProperty>> propertyExpression)
         {
             var expression = (MemberExpression) propertyExpression.Body;
@@ -263,6 +260,11 @@ namespace SW.FluentOlap.AnalyticalNode
             if (typeof(TProperty).IsPrimitive || typeof(TProperty) == typeof(string))
                 DeleteFromTypeMap(toRemove, true);
             else DeleteFromTypeMap(toRemove, false);
+        }
+
+        public AnalyticalChild<T, TType> Property<TType>(string title, AnalyticalObject<TType> analyticalObject)
+        {
+            return new AnalyticalChild<T, TType>(this, analyticalObject.Name, analyticalObject.AnalyzedType, this.TypeMap);
         }
 
     }

@@ -80,8 +80,6 @@ namespace SW.FluentOlap.Utilities
                             Parameters = parameters
                         };
 
-                        await expandableHttpService.InvokeAsync((HttpServiceOptions) input);
-
                         break;
                 }
 
