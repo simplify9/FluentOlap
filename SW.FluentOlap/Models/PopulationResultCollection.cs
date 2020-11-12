@@ -10,7 +10,6 @@ namespace SW.FluentOlap.Models
     {
         Queue<PopulationResult> inner = new Queue<PopulationResult>();
         public TypeMap OriginTypeMap { get; private set; }
-        public string TargetTable { get; private set; }
         public new int Count => inner.Count;
 
         public PopulationResult Sample => inner.Peek()?? null;

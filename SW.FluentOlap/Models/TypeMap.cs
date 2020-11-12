@@ -8,6 +8,11 @@ namespace SW.FluentOlap.Models
 {
     public class TypeMap : IDictionary<string, NodeProperties>
     {
+        public TypeMap() { }
+        internal TypeMap(string name)
+        {
+            Name = name;
+        }
         private readonly IDictionary<string, NodeProperties> _typeMap = new Dictionary<string, NodeProperties>();
         public NodeProperties this[string key] { get => _typeMap[key.ToLower()]; set => _typeMap[key.ToLower()] = value; }
 
@@ -15,6 +20,7 @@ namespace SW.FluentOlap.Models
 
         public ICollection<NodeProperties> Values => _typeMap.Values;
 
+        public string Name { get; }
         public TypeMapDifferences GetDifferences(TypeMap other) => new TypeMapDifferences(this, other);
 
         public int Count => _typeMap.Count;

@@ -15,7 +15,6 @@ namespace SW.FluentOlap.Models
     {
         public string Raw { get; }
         private readonly IDictionary<string, object> inner;
-        public string TargetTable { get; set; }
         public object this[string key] => inner[key];
         public IEnumerable<string> Keys => inner.Keys;
         public IEnumerable<object> Values => inner.Values;
