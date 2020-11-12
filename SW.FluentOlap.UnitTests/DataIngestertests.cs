@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -42,6 +43,14 @@ namespace UtilityUnitTests
                     ["basicinsertclass_test2"] = "hello"
                 }, new AnalyticalObject<BasicInsertClass>().TypeMap),
                 new MySqlConnection(config.GetConnectionString("TestConnection")));
+
+            var connection = new MySqlConnection(config.GetConnectionString("TestConnection"));
+
+            string test2Val = await connection.RunCommandGetString("select * from BasicInsertClass", "basicinsertclass_test2");
+            
+            Assert.AreEqual(test2Val, "hello");
+
+
         }
         
     }

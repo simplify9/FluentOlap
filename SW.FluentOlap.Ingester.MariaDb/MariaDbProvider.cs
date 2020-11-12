@@ -59,7 +59,7 @@ namespace SW.FluentOlap.Ingester.MariaDb
                 sqlCreate += Column(map);
 
             sqlCreate = sqlCreate.Substring(0, sqlCreate.Length - 2) + "\n)";
-            sqlCreate += " ENGINE=InnoDB";
+            sqlCreate += " ENGINE=InnoDb";
 
             await con.RunCommandAsync(sqlCreate);
         }
