@@ -215,7 +215,7 @@ namespace SW.FluentOlap.AnalyticalNode
             }
 
 
-            return new PopulationResult(merged);
+            return new PopulationResult(merged, TypeMap);
         }
 
         public async Task<PopulationResult> PopulateAsync<TInput>(TInput input)
