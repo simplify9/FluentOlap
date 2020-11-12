@@ -24,10 +24,12 @@ namespace SW.FluentOlap.Models
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => inner.GetEnumerator();
         public bool TryGetValue(string key, out object value) => inner.TryGetValue(key, out value);
         IEnumerator IEnumerable.GetEnumerator() => inner.GetEnumerator();
+        public TypeMap OriginTypeMap { get; }
 
-        public PopulationResult(IDictionary<string, object> flattened)
+        public PopulationResult(IDictionary<string, object> flattened, TypeMap typeMap)
         {
             inner = flattened;
+            OriginTypeMap = typeMap;
         }
 
         /// <summary>
