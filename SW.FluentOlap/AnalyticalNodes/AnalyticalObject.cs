@@ -39,9 +39,9 @@ namespace SW.FluentOlap.AnalyticalNode
             settings?.Invoke(initSettings);
             
             
-            TypeMap = new TypeMap();
             AnalyzedType = typeof(T);
             Name = AnalyzedType.Name;
+            TypeMap = new TypeMap(Name);
             
             InitTypeMap(AnalyzedType, AnalyzedType.Name, AnalyzedType.Name);
         }
