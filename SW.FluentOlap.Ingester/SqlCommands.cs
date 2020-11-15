@@ -17,7 +17,7 @@ namespace SW.FluentOlap.Ingester
             await con.OpenAsync();
             DbCommand command = con.CreateCommand();
             command.CommandText = commandTxt;
-            var rs = await command.ExecuteNonQueryAsync();
+            int rs = await command.ExecuteNonQueryAsync();
             await con.CloseAsync();
             return rs;
         }

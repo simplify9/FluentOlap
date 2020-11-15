@@ -25,10 +25,17 @@ namespace SW.FluentOlap.Models
         IEnumerator IEnumerable.GetEnumerator() => inner.GetEnumerator();
         public TypeMap OriginTypeMap { get; }
 
+        /// <summary>
+        /// Used for the final population result.
+        /// </summary>
+        /// <param name="flattened"></param>
+        /// <param name="typeMap"></param>
         public PopulationResult(IDictionary<string, object> flattened, TypeMap typeMap)
         {
             inner = flattened;
             OriginTypeMap = typeMap;
+
+            inner = new Dictionary<string, object>(inner.Where(v => OriginTypeMap.ContainsKey(v.Key)));
         }
 
         /// <summary>

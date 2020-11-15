@@ -15,13 +15,16 @@ namespace SW.FluentOlap.Ingester.MariaDb
         InnoDB,
         ColumnStore,
     }
+
     public class MariaDbProvider : IDbProvider
     {
         private readonly MariaDbTableEngine engine;
+
         public MariaDbProvider(MariaDbTableEngine engine)
         {
             this.engine = engine;
         }
+
         private readonly Dictionary<string, string> translatedTypes = new Dictionary<string, string>()
         {
             ["STRING"] = "TEXT",
@@ -32,7 +35,7 @@ namespace SW.FluentOlap.Ingester.MariaDb
         };
 
         public IReadOnlyDictionary<string, string> TypeDictionary => translatedTypes;
-        
+
         public async Task AddOrUpdateConsistencyRecord(DbConnection con, string tableName, string hash)
         {
             string command = $"INSERT INTO AnalyzedModelHashes (TableName, Hash) VALUES ('{tableName}', '{hash}');";
@@ -62,6 +65,8 @@ namespace SW.FluentOlap.Ingester.MariaDb
         public async Task CreateTableFromTypeMap(DbConnection con, string tableName, TypeMap typeMap)
         {
             var sqlMaps = SqlTranslator.SqlMapsFromTypeMaps(typeMap, this);
+
+            if (typeMap == null || typeMap.Count == 0) throw new Exception("Type Map null or empty");
 
             string sqlCreate = $"CREATE TABLE {tableName} (\n";
 
@@ -98,8 +103,6 @@ namespace SW.FluentOlap.Ingester.MariaDb
                 //EXCEPTION IF CHANGE COLUMN TYPE
                 return false;
             }
-
-
         }
 
         public async Task InsertData(DbConnection con, string tableName, PopulationResult populationResult)
@@ -119,11 +122,10 @@ namespace SW.FluentOlap.Ingester.MariaDb
         //TODO: Support true bulk
         public async Task InsertData(DbConnection ctx, string tableName, PopulationResultCollection populationResult)
         {
-            foreach(PopulationResult rs in populationResult)
+            foreach (PopulationResult rs in populationResult)
             {
                 await InsertData(ctx, tableName, populationResult);
             }
         }
     }
-
 }

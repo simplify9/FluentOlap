@@ -25,18 +25,17 @@ namespace UtilityUnitTests
             config = builder.Build();
         }
 
-        [TestMethod]
-        public void Instantiation()
-        {
-            DataIngester ingester = new DataIngester(new MariaDbProvider(MariaDbTableEngine.InnoDB));
-            ingester.InsertIntoDb(new PopulationResult(new Dictionary<string, object>(), new TypeMap()),
-                new MySqlConnection(config.GetConnectionString("TestConnection")));
-        }
 
         [TestMethod]
         public async Task Insertion()
         {
+            var connection = new MySqlConnection(config.GetConnectionString("TestConnection"));
+            
+            await connection.RunCommandAsync("DROP TABLE IF EXISTS BasicInsertClass");
+            await connection.RunCommandAsync("DROP TABLE IF EXISTS AnalyzedModelHashes");
+            
             DataIngester ingester = new DataIngester(new MariaDbProvider(MariaDbTableEngine.InnoDB));
+            
             await ingester.InsertIntoDb(new PopulationResult(new Dictionary<string, object>()
                 {
                     ["basicinsertclass_test1"] = 1,
@@ -44,11 +43,9 @@ namespace UtilityUnitTests
                 }, new AnalyticalObject<BasicInsertClass>().TypeMap),
                 new MySqlConnection(config.GetConnectionString("TestConnection")));
 
-            var connection = new MySqlConnection(config.GetConnectionString("TestConnection"));
 
             string test2Val = await connection.RunCommandGetString("select * from BasicInsertClass", "basicinsertclass_test2");
 
-            await connection.RunCommandAsync("DROP TABLE BasicInsertClass");
             
             Assert.AreEqual(test2Val, "hello");
             

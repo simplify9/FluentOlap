@@ -13,7 +13,7 @@ using UtilityUnitTests.Utilities;
 namespace UtilityUnitTests
 {
     [TestClass]
-    public class DataUnitTests
+    public class AnalyticalObjectTests
     {
         [TestMethod]
         public void HashTest()

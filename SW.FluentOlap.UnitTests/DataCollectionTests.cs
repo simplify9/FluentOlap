@@ -11,6 +11,8 @@ namespace UtilityUnitTests
     [TestClass]
     public class DataCollectionTests
     {
+        
+        
         [TestMethod]
         public async Task BasicCollection()
         {

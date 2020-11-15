@@ -224,6 +224,8 @@ namespace SW.FluentOlap.AnalyticalNode
             if (MessageMap == null)
                 MessageMap = new MessageProperties("NONE", "Id");
 
+            input.PrefixKey = Name;
+
             PopulationResultCollection rs = await DataCollector.CollectData(this, input);
 
             PopulationResult merged = MergeIntoAggregate(rs);
