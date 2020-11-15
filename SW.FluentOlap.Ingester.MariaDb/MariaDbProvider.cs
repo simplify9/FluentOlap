@@ -10,8 +10,18 @@ using System.Threading.Tasks;
 
 namespace SW.FluentOlap.Ingester.MariaDb
 {
+    public enum MariaDbTableEngine
+    {
+        InnoDB,
+        ColumnStore,
+    }
     public class MariaDbProvider : IDbProvider
     {
+        private readonly MariaDbTableEngine engine;
+        public MariaDbProvider(MariaDbTableEngine engine)
+        {
+            this.engine = engine;
+        }
         private readonly Dictionary<string, string> translatedTypes = new Dictionary<string, string>()
         {
             ["STRING"] = "TEXT",
@@ -22,7 +32,7 @@ namespace SW.FluentOlap.Ingester.MariaDb
         };
 
         public IReadOnlyDictionary<string, string> TypeDictionary => translatedTypes;
-
+        
         public async Task AddOrUpdateConsistencyRecord(DbConnection con, string tableName, string hash)
         {
             string command = $"INSERT INTO AnalyzedModelHashes (TableName, Hash) VALUES ('{tableName}', '{hash}');";
@@ -59,7 +69,7 @@ namespace SW.FluentOlap.Ingester.MariaDb
                 sqlCreate += Column(map);
 
             sqlCreate = sqlCreate.Substring(0, sqlCreate.Length - 2) + "\n)";
-            sqlCreate += " ENGINE=InnoDb";
+            sqlCreate += $" ENGINE={engine}";
 
             await con.RunCommandAsync(sqlCreate);
         }

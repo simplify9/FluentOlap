@@ -28,7 +28,7 @@ namespace UtilityUnitTests
         [TestMethod]
         public void Instantiation()
         {
-            DataIngester ingester = new DataIngester(new MariaDbProvider());
+            DataIngester ingester = new DataIngester(new MariaDbProvider(MariaDbTableEngine.InnoDB));
             ingester.InsertIntoDb(new PopulationResult(new Dictionary<string, object>(), new TypeMap()),
                 new MySqlConnection(config.GetConnectionString("TestConnection")));
         }
@@ -36,7 +36,7 @@ namespace UtilityUnitTests
         [TestMethod]
         public async Task Insertion()
         {
-            DataIngester ingester = new DataIngester(new MariaDbProvider());
+            DataIngester ingester = new DataIngester(new MariaDbProvider(MariaDbTableEngine.InnoDB));
             await ingester.InsertIntoDb(new PopulationResult(new Dictionary<string, object>()
                 {
                     ["basicinsertclass_test1"] = 1,
@@ -47,8 +47,12 @@ namespace UtilityUnitTests
             var connection = new MySqlConnection(config.GetConnectionString("TestConnection"));
 
             string test2Val = await connection.RunCommandGetString("select * from BasicInsertClass", "basicinsertclass_test2");
+
+            await connection.RunCommandAsync("DROP TABLE BasicInsertClass");
             
             Assert.AreEqual(test2Val, "hello");
+            
+            
 
 
         }
