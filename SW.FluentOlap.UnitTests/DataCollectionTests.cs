@@ -89,5 +89,21 @@ namespace UtilityUnitTests
             foreach (string key in analyzer.TypeMap.Keys)
                 Assert.IsTrue(rs.Keys.Count() >= analyzer.TypeMap.Count());
         }
+
+        [TestMethod]
+        public async Task MultipleSameServiceTest()
+        {
+            
+            PostAnalyzer analyzer = new PostAnalyzer();
+            analyzer.ServiceName = "PostsService";
+
+            FluentOlapConfiguration.ServiceDefinitions = new ServiceDefinitions
+            {
+                ["PostsService"] = new HttpService("https://jsonplaceholder.typicode.com/posts/{PostId}"),
+                ["UsersService"] = new HttpService("https://jsonplaceholder.typicode.com/users/{userId}"),
+            };
+            analyzer.Property(p => p.userId).GetFromService("UsersService", new AnalyticalObject<User>());
+            analyzer.Property(p => p.Id).GetFromService("UsersService", new AnalyticalObject<User>());
+        }
     }
 }

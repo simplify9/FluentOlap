@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SW.FluentOlap", "SW.FluentO
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SW.FluentOlap.UnitTests", "SW.FluentOlap.UnitTests\SW.FluentOlap.UnitTests.csproj", "{D0714DEF-AF08-448A-8B62-28229569E739}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SW.FluentOlap.Extensions", "SW.FluentOlap.Extensions\SW.FluentOlap.Extensions.csproj", "{020220A1-F22F-468A-BED8-723D5B166B84}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SW.FluentOlap.Ingester", "SW.FluentOlap.Ingester\SW.FluentOlap.Ingester.csproj", "{1749AFD6-28DF-4341-991E-9D38BB41F054}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SW.FluentOlap.Ingester.MariaDb", "SW.FluentOlap.Ingester.MariaDb\SW.FluentOlap.Ingester.MariaDb.csproj", "{9F9B9CD1-9E57-4919-B938-72D69E2E4337}"
