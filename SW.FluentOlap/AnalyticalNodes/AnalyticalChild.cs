@@ -71,7 +71,7 @@ namespace SW.FluentOlap.AnalyticalNode
             PopulateServiceMaps(serviceName, parentName + "_" + Name, node.Name);
             foreach(var entry in node.TypeMap)
             {
-                this.TypeMap.Add(entry);
+                TypeMap.Add(new KeyValuePair<string, NodeProperties>(Name.ToLower() + "_" + entry.Key, entry.Value));
             }
             return this;
         }
