@@ -55,7 +55,7 @@ namespace UtilityUnitTests
         {
             // merge dictionaries (like GetFromService)
             foreach(var entry in TestTypeMaps.P2TypeMap)
-                TestTypeMaps.P3TypeMap.Add(entry);
+                TestTypeMaps.P3TypeMap.Add(new KeyValuePair<string, NodeProperties>("referencetoparcel2level" + "_" + entry.Key, entry.Value));
 
             var analyzed = new Parcel3LevelAnalyzer();
             var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
