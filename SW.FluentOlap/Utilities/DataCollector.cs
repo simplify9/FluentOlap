@@ -76,7 +76,7 @@ namespace SW.FluentOlap.Utilities
 
                         input = new HttpServiceOptions
                         {
-                            PrefixKey = expandable.Value.NodeName,
+                            PrefixKey = expandable.Value.Name + "_" + expandable.Value.NodeName,
                             Parameters = parameters
                         };
 

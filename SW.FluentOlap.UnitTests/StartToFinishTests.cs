@@ -56,7 +56,7 @@ namespace UtilityUnitTests
             await ingester.InsertIntoDb(result, connection);
             
             
-            string username = await connection.RunCommandGetString("select * from Post", "user_username");
+            string username = await connection.RunCommandGetString("select * from Post", "userid_user_username");
             
             Assert.AreEqual(username, "Bret");
 

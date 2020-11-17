@@ -65,7 +65,7 @@ namespace SW.FluentOlap.AnalyticalNode
 
             // End of a branch.
             if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType)) // Primitive type
-                PopulateTypeMaps(internalType, $"{prefix}_{preferredName}");
+                PopulateTypeMaps(internalType, prefix, preferredName);
             
             else // This will have inner branches
             {
@@ -98,46 +98,16 @@ namespace SW.FluentOlap.AnalyticalNode
         /// </summary>
         /// <param name="type">SQL type</param>
         /// <param name="childName"></param>
-        protected void PopulateTypeMaps(InternalType type, string childName)
+        protected void PopulateTypeMaps(InternalType type, string prefix, string childName)
         {
-            string key = childName;
-            if (!this.TypeMap.ContainsKey(key))
-            {
-                this.TypeMap[key] = new NodeProperties
-                {
-                    InternalType = type
-                };
-            }
-            else
-            {
-                this.TypeMap[key].InternalType = type;
-            }
+            string key = $"{prefix}_{childName}";
+            
+            if (!TypeMap.ContainsKey(key)) TypeMap[key] = new NodeProperties(childName);
+            
+            TypeMap[key].InternalType = type;
         }
 
         public virtual AnalyticalObject<T> GetDirectParent() => null;
-
-        /// <summary>
-        /// Add a new map  by setting it to unique
-        /// Or update the UNIQUE property if it exists
-        /// </summary>
-        /// <param name="isUnique"></param>
-        /// <param name="childName"></param>
-        [Obsolete("No longer usable.", true)]
-        protected virtual void IsUnique(bool isUnique, string childName)
-        {
-            string key = childName;
-            if (!this.TypeMap.ContainsKey(key))
-            {
-                this.TypeMap[key] = new NodeProperties
-                {
-                    Unique = isUnique
-                };
-            }
-            else
-            {
-                this.TypeMap[key].Unique = isUnique;
-            }
-        }
 
         protected void DeleteFromTypeMap(string childName, bool isPrimitive)
         {
@@ -161,22 +131,14 @@ namespace SW.FluentOlap.AnalyticalNode
         /// </summary>
         /// <param name="serviceKey"></param>
         /// <param name="serviceUrl"></param>
-        protected void PopulateServiceMaps(string serviceName, string childName, string nodeName)
+        protected void PopulateServiceMaps(string serviceName, string prefix, string childName, string nodeName)
         {
-            string key = childName;
-            if (!this.TypeMap.ContainsKey(key))
-            {
-                this.TypeMap[key] = new NodeProperties
-                {
-                    ServiceName = serviceName.ToLower(),
-                    NodeName = nodeName.ToLower(),
-                };
-            }
-            else
-            {
-                this.TypeMap[key].ServiceName = serviceName.ToLower();
-                this.TypeMap[key].NodeName = nodeName.ToLower();
-            }
+            string key = $"{prefix}_{childName}";
+            
+            if (!TypeMap.ContainsKey(key)) TypeMap[key] = new NodeProperties(childName);
+            
+            TypeMap[key].ServiceName = serviceName.ToLower();
+            TypeMap[key].NodeName = nodeName.ToLower();
         }
 
         public AnalyticalObject<T> Handles(string messageName, string keyPath)
