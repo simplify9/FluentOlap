@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SW.FluentOlap.Ingester", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SW.FluentOlap.Ingester.MariaDb", "SW.FluentOlap.Ingester.MariaDb\SW.FluentOlap.Ingester.MariaDb.csproj", "{9F9B9CD1-9E57-4919-B938-72D69E2E4337}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SW.FluentOlap.Extensions", "SW.FluentOlap.Extensions\SW.FluentOlap.Extensions.csproj", "{A8883259-61F7-4212-BD85-D545E1DF21C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{9F9B9CD1-9E57-4919-B938-72D69E2E4337}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F9B9CD1-9E57-4919-B938-72D69E2E4337}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F9B9CD1-9E57-4919-B938-72D69E2E4337}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8883259-61F7-4212-BD85-D545E1DF21C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8883259-61F7-4212-BD85-D545E1DF21C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8883259-61F7-4212-BD85-D545E1DF21C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8883259-61F7-4212-BD85-D545E1DF21C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
