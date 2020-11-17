@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SW.FluentOlap", "SW.FluentO
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SW.FluentOlap.UnitTests", "SW.FluentOlap.UnitTests\SW.FluentOlap.UnitTests.csproj", "{D0714DEF-AF08-448A-8B62-28229569E739}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SW.FluentOlap.Extensions", "SW.FluentOlap.Extensions\SW.FluentOlap.Extensions.csproj", "{020220A1-F22F-468A-BED8-723D5B166B84}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{D0714DEF-AF08-448A-8B62-28229569E739}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0714DEF-AF08-448A-8B62-28229569E739}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0714DEF-AF08-448A-8B62-28229569E739}.Release|Any CPU.Build.0 = Release|Any CPU
-		{020220A1-F22F-468A-BED8-723D5B166B84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{020220A1-F22F-468A-BED8-723D5B166B84}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{020220A1-F22F-468A-BED8-723D5B166B84}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{020220A1-F22F-468A-BED8-723D5B166B84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
