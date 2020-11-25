@@ -25,7 +25,7 @@ namespace UtilityUnitTests
         }
         
         [TestMethod]
-        public async Task Test1()
+        public async Task StartToFinish()
         {
             
             MySqlConnection connection = new MySqlConnection(config.GetConnectionString("TestConnection"));
