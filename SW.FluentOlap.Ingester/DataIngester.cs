@@ -80,7 +80,7 @@ namespace SW.FluentOlap.Ingester
         {
             await provider.EnsureConsistencyTableExists(con);
 
-            string hash = Hashing.HashTypeMaps(rs.OriginTypeMap);
+            string hash = rs.OriginTypeMap.EncodeToBase64();
 
             if (!await provider.HashesMatch(con, rs.OriginTypeMap.Name, rs.OriginTypeMap))
                 await provider.AddOrUpdateConsistencyRecord(con, rs.OriginTypeMap.Name, hash);

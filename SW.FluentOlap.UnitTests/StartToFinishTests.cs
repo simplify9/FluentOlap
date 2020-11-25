@@ -43,6 +43,8 @@ namespace UtilityUnitTests
             analyzer.GetFromService("PostsService");
             analyzer.Property(p => p.userId).GetFromService("UsersService", new AnalyticalObject<User>());
 
+            analyzer.Ignore(p => p.Body);
+
             PopulationResult result = await analyzer.PopulateAsync(new HttpServiceOptions
             {
                 Parameters = new
@@ -57,8 +59,33 @@ namespace UtilityUnitTests
             
             
             string username = await connection.RunCommandGetString("select * from Post", "userid_user_username");
-            
             Assert.AreEqual(username, "Bret");
+            
+            
+            analyzer.Property(p => p.Body);
+            PopulationResult result2 = await analyzer.PopulateAsync(new HttpServiceOptions
+            {
+                Parameters = new
+                {
+                    PostId = 1
+                }
+            });
+            
+                
+            await ingester.InsertIntoDb(result2, connection);
+            
+            string body = await connection.RunCommandGetString("select * from Post where Id=2", "post_body");
+            
+            
+            
+            string bodyFromApi =
+                "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto";
+            Assert.AreEqual(body, bodyFromApi);
+            
+            
+            
+            await connection.RunCommandAsync("DROP TABLE Post");
+            await connection.RunCommandAsync("DROP TABLE AnalyzedModelHashes");
 
         }
         

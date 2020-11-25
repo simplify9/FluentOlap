@@ -38,7 +38,8 @@ namespace SW.FluentOlap.Ingester.MariaDb
 
         public async Task AddOrUpdateConsistencyRecord(DbConnection con, string tableName, string hash)
         {
-            string command = $"INSERT INTO AnalyzedModelHashes (TableName, Hash) VALUES ('{tableName}', '{hash}');";
+            string command = $"INSERT INTO AnalyzedModelHashes (TableName, Hash) VALUES ('{tableName}', '{hash}') " +
+                             $"ON DUPLICATE KEY UPDATE Hash='{hash}';";
             await con.RunCommandAsync(command);
         }
 
@@ -70,6 +71,9 @@ namespace SW.FluentOlap.Ingester.MariaDb
 
             string sqlCreate = $"CREATE TABLE {tableName} (\n";
 
+            sqlCreate += "Id BIGINT AUTO_INCREMENT PRIMARY KEY,\n";
+                
+
             foreach (var map in sqlMaps)
                 sqlCreate += Column(map);
 
@@ -85,24 +89,47 @@ namespace SW.FluentOlap.Ingester.MariaDb
 
             string getHashRecord = $"select {HASH_COLUMN} from AnalyzedModelHashes where TableName='{tableName}'";
 
-            string rs = await con.RunCommandGetString(getHashRecord, HASH_COLUMN);
+            string existingHash = await con.RunCommandGetString(getHashRecord, HASH_COLUMN);
 
-            string hash = Hashing.HashTypeMaps(typeMap);
-            if (rs == hash)
-            {
-                return true;
-            }
-            else if (rs == string.Empty)
+            string newHash = typeMap.EncodeToBase64();
+            if (existingHash == newHash)  return true;
+            
+            if (existingHash == string.Empty)
             {
                 await CreateTableFromTypeMap(con, tableName, typeMap);
                 return false;
             }
-            else
+            
+            TypeMap existing = TypeMap.DecodeFromBase64(existingHash);
+            
+            TypeMapDifferences differences = existing.GetDifferences(typeMap);
+            foreach (TypeMapDifference difference in differences)
             {
-                //ALTER TABLE IF ADD COLUMN
-                //EXCEPTION IF CHANGE COLUMN TYPE
-                return false;
+                if (difference.DifferenceType == DifferenceType.DataTypeChange)
+                {
+                    throw new Exception($"Difference types {nameof(DifferenceType.DataTypeChange)}, " +
+                                        $" not supported. \n" +
+                                        $"Column:  {difference.ColumnKey}");
+                }
+
+                if (difference.DifferenceType == DifferenceType.ChangedColumnOrder)
+                {
+                    //TODO: Better handling.
+                    //ignore for now
+                }
+
+                if (difference.DifferenceType == DifferenceType.AddedColumn)
+                {
+                    NodeProperties node = typeMap[difference.ColumnKey];
+                    
+                    string alterState = $"ALTER TABLE {typeMap.Name} ADD COLUMN {difference.ColumnKey} {SqlTranslator.SqlTypeFromInternalType(node.InternalType, this).SqlType};";
+
+                    await con.RunCommandAsync(alterState);
+
+                }
+                
             }
+            return false;
         }
 
         public async Task InsertData(DbConnection con, string tableName, PopulationResult populationResult)

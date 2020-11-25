@@ -8,6 +8,16 @@ namespace SW.FluentOlap.Ingester
 {
     public static class SqlTranslator
     {
+
+        public static SqlTypeInformation SqlTypeFromInternalType(InternalType internalType, IDbProvider provider)
+        {
+            return new SqlTypeInformation
+               {
+                   SqlType = provider.TypeDictionary[internalType.typeString],
+                   IsUnique = false
+               };
+        }
+        
         /// <summary>
         /// Translating Internal Typemaps into an sql type
         /// </summary>
@@ -19,11 +29,7 @@ namespace SW.FluentOlap.Ingester
             IDictionary<string, SqlTypeInformation> sqlMaps = new Dictionary<string, SqlTypeInformation>();
             foreach (var map in typeMaps)
             {
-                sqlMaps[map.Key] = new SqlTypeInformation
-                {
-                    SqlType = provider.TypeDictionary[map.Value.InternalType.typeString],
-                    IsUnique = map.Value.Unique
-                };
+                sqlMaps[map.Key] = SqlTypeFromInternalType(map.Value.InternalType, provider);
             }
             return sqlMaps;
         }

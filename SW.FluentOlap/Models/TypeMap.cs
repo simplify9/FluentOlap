@@ -49,11 +49,13 @@ namespace SW.FluentOlap.Models
         public string EncodeToBase64()
         {
             byte[] mapBytes = Encoding.ASCII.GetBytes(this.ToString());
-            return Convert.ToBase64String(mapBytes);
+            string b64 =  Convert.ToBase64String(mapBytes);
+            return b64;
         }
 
         public static TypeMap DecodeFromBase64(string base64)
         {
+            //TODO FIX DECODING
             byte[] mapBytes = Convert.FromBase64String(base64);
             string typeMapString = Encoding.ASCII.GetString(mapBytes);
             return TypeMap.FromString(typeMapString);

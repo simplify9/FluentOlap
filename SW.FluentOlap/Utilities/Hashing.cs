@@ -17,22 +17,6 @@ namespace SW.FluentOlap.Utilities
 
             return sb.ToString();
         }
-        public static string HashString(string subject, string encoding = "")
-        {
-            byte[] hashedSelect;
-            using (var sha256 = SHA256.Create())
-            {
-                hashedSelect = sha256.ComputeHash(Encoding.UTF8.GetBytes(subject));
-            }
-            return byteArrToString(hashedSelect);
-        }
-
-        public static IDictionary<string, NodeProperties> DecodeTypeMaps(string hashedTypeMaps)
-        {
-            IDictionary<string, NodeProperties> typeMaps = new Dictionary<string, NodeProperties>();
-            Decoder decoder = Encoding.UTF8.GetDecoder();
-            return typeMaps;
-        }
         public static string HashTypeMaps(IDictionary<string, NodeProperties> typeMaps)
         {
             using (var sha256 = SHA256.Create())
