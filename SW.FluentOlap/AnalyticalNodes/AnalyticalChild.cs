@@ -101,7 +101,7 @@ namespace SW.FluentOlap.AnalyticalNode
             else DeleteFromTypeMap(name, false);
 
         }
-        
+
         /// <summary>
         /// Override default behavior to modify parent passing
         /// </summary>

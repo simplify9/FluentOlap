@@ -34,7 +34,6 @@ namespace SW.FluentOlap.Models
         {
             inner = flattened;
             OriginTypeMap = typeMap;
-
             inner = new Dictionary<string, object>(inner.Where(v => OriginTypeMap.ContainsKey(v.Key)));
         }
 

@@ -154,7 +154,6 @@ namespace SW.FluentOlap.AnalyticalNode
             string keyPath = expression.Member.Name;
             return this.Handles(messageName, keyPath);
         }
-        
 
         public AnalyticalObject<T> GetFromService(string serviceName)
         {
@@ -201,7 +200,6 @@ namespace SW.FluentOlap.AnalyticalNode
             var child = new AnalyticalChild<T, TProperty>(this, propertyName, type.AnalyzedType, this.TypeMap);
             return child;
         }
-
 
         /// <summary>
         /// Pass in a property by LINQ expression so that it can be defined by modifying the resulting AnalyticalChild

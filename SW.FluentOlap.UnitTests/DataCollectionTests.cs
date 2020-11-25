@@ -11,8 +11,11 @@ namespace UtilityUnitTests
     [TestClass]
     public class DataCollectionTests
     {
+<<<<<<< HEAD
         
         
+=======
+>>>>>>> master
         [TestMethod]
         public async Task BasicCollection()
         {
@@ -91,7 +94,11 @@ namespace UtilityUnitTests
         }
 
         [TestMethod]
+<<<<<<< HEAD
         public void MultipleSameServiceTest()
+=======
+        public async Task MultipleSameServiceTest()
+>>>>>>> master
         {
             
             PostAnalyzer analyzer = new PostAnalyzer();
