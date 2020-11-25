@@ -73,13 +73,13 @@ namespace UtilityUnitTests
         {
             // merge dictionaries (like GetFromService)
             foreach(var entry in TestTypeMaps.P2TypeMap)
-                TestTypeMaps.P3TypeMap.Add(new KeyValuePair<string, NodeProperties>("referencetoparcel2level" + "_" + entry.Key, entry.Value));
+                TestTypeMaps.P3TypeMapNoRef.Add(new KeyValuePair<string, NodeProperties>("referencetoparcel2level" + "_" + entry.Key, entry.Value));
 
             var analyzed = new Parcel3LevelAnalyzer();
             analyzed.Property("referencetoparcel2level", new AnalyticalObject<Parcel2Level>()).GetFromService("SomeService", new Parcel2LevelAnalyzer());
             var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
-            var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.P3TypeMap);
-            DictionaryAssert.KeysMatch(analyzed.TypeMap, TestTypeMaps.P3TypeMap);
+            var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.P3TypeMapNoRef);
+            DictionaryAssert.KeysMatch(analyzed.TypeMap, TestTypeMaps.P3TypeMapNoRef);
 
             TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.P3TypeMap, new List<DifferenceType>()
                 {

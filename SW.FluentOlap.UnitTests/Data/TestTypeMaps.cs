@@ -81,6 +81,23 @@ namespace UtilityUnitTests.Data
                 InternalType = InternalType.STRING
             }
         };
+        public readonly static TypeMap P3TypeMapNoRef = new TypeMap
+        {
+            ["parcel3level_id"] = new NodeProperties("")
+            {
+                InternalType = InternalType.INTEGER
+            },
+            ["parcel3level_reference"] = new NodeProperties("")
+            {
+                InternalType = InternalType.STRING
+            },
+            ["parcel3level_referencetoparcel2level"] = new NodeProperties("")
+            {
+                NodeName = "parcel2level",
+                ServiceName = "someservice",
+                InternalType = InternalType.STRING
+            }
+        };
 
         public readonly static TypeMap IgnoreTestMap = new TypeMap
         {
