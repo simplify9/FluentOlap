@@ -14,7 +14,6 @@ namespace SW.FluentOlap.AnalyticalNode
         readonly Type childType;
         public string parentName { get; set; }
         protected AnalyticalObject<TParent> DirectParent { get; set; }
-        private bool isUnique;
         private InternalType sqlType;
 
 
@@ -81,7 +80,7 @@ namespace SW.FluentOlap.AnalyticalNode
         /// </summary>
         /// <param name="type"></param>
         /// <param name="childName"></param>
-        public new void PopulateTypeMaps(InternalType type, string childName)
+        public void PopulateTypeMaps(InternalType type, string childName)
         {
             base.PopulateTypeMaps(type, parentName, childName);
         }
@@ -102,7 +101,7 @@ namespace SW.FluentOlap.AnalyticalNode
             else DeleteFromTypeMap(name, false);
 
         }
-
+        
         /// <summary>
         /// Override default behavior to modify parent passing
         /// </summary>

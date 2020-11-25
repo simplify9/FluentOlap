@@ -154,6 +154,7 @@ namespace SW.FluentOlap.AnalyticalNode
             string keyPath = expression.Member.Name;
             return this.Handles(messageName, keyPath);
         }
+        
 
         public AnalyticalObject<T> GetFromService(string serviceName)
         {
@@ -195,6 +196,13 @@ namespace SW.FluentOlap.AnalyticalNode
         }
 
 
+        public AnalyticalChild<T, TProperty> Property<TProperty>(string propertyName, AnalyticalObject<TProperty> type)
+        {
+            var child = new AnalyticalChild<T, TProperty>(this, propertyName, type.AnalyzedType, this.TypeMap);
+            return child;
+        }
+
+
         /// <summary>
         /// Pass in a property by LINQ expression so that it can be defined by modifying the resulting AnalyticalChild
         /// The AnalyticalChild constructor will try to guess the type.
@@ -209,8 +217,7 @@ namespace SW.FluentOlap.AnalyticalNode
             var expression = (MemberExpression) propertyExpression.Body;
             string name = expression.Member.Name;
             Type childType = propertyExpression.ReturnType;
-            AnalyticalChild<T, TProperty> child;
-            child = new AnalyticalChild<T, TProperty>(directParent ?? this, name, childType, this.TypeMap);
+            var child = new AnalyticalChild<T, TProperty>(directParent ?? this, name, childType, this.TypeMap);
 
             return child;
         }
@@ -224,11 +231,6 @@ namespace SW.FluentOlap.AnalyticalNode
             if (typeof(TProperty).IsPrimitive || typeof(TProperty) == typeof(string))
                 DeleteFromTypeMap(toRemove, true);
             else DeleteFromTypeMap(toRemove, false);
-        }
-
-        public AnalyticalChild<T, TType> Property<TType>(string title, AnalyticalObject<TType> analyticalObject)
-        {
-            return new AnalyticalChild<T, TType>(this, analyticalObject.Name, analyticalObject.AnalyzedType, this.TypeMap);
         }
 
     }

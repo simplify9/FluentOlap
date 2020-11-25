@@ -91,7 +91,7 @@ namespace UtilityUnitTests
         }
 
         [TestMethod]
-        public async Task MultipleSameServiceTest()
+        public void MultipleSameServiceTest()
         {
             
             PostAnalyzer analyzer = new PostAnalyzer();
