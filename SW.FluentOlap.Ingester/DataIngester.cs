@@ -19,7 +19,7 @@ namespace SW.FluentOlap.Ingester
         public DataIngester(params object[] constructorArgs) : base((T) Activator.CreateInstance(typeof(T), constructorArgs)) { }
         protected new async Task EnsureConsistency(PopulationResultCollection rs, DbConnection con)
         {
-            await base.EnsureConsistency(rs.Sample, con);
+            await base.EnsureScheme(rs.Sample, con);
         }
         /// <summary>
         /// Insuring that the existing schemas in the DB are ready to be inserted intp
@@ -30,17 +30,17 @@ namespace SW.FluentOlap.Ingester
         /// <returns></returns>
         protected new async Task EnsureConsistency(PopulationResult rs, DbConnection con)
         {
-            await base.EnsureConsistency(rs, con);
+            await base.EnsureScheme(rs, con);
 
         }
         public new async Task InsertIntoDb(PopulationResult rs, DbConnection con)
         {
-            await base.InsertIntoDb(rs, con);
+            await base.Insert(rs, con);
         }
 
         public new async Task InsertIntoDb(PopulationResultCollection rs, DbConnection con)
         {
-            await base.InsertIntoDb(rs, con);
+            await base.Insert(rs, con);
 
         }
 
@@ -65,9 +65,9 @@ namespace SW.FluentOlap.Ingester
         /// <param name="con"></param>
         /// <param name="sqlProvider"></param>
         /// <returns></returns>
-        protected async Task EnsureConsistency(PopulationResultCollection rs, DbConnection con)
+        protected async Task EnsureScheme(PopulationResultCollection rs, DbConnection con)
         {
-            await EnsureConsistency(rs.Sample, con);
+            await EnsureScheme(rs.Sample, con);
         }
         /// <summary>
         /// Insuring that the existing schemas in the DB are ready to be inserted intp
@@ -76,26 +76,26 @@ namespace SW.FluentOlap.Ingester
         /// <param name="con"></param>
         /// <param name="sqlProvider"></param>
         /// <returns></returns>
-        protected async Task EnsureConsistency(PopulationResult rs, DbConnection con)
+        protected async Task EnsureScheme(PopulationResult rs, DbConnection con)
         {
-            await provider.EnsureConsistencyTableExists(con);
+            await provider.EnsureModelTableExists(con);
 
             string hash = rs.OriginTypeMap.EncodeToBase64();
 
             if (!await provider.HashesMatch(con, rs.OriginTypeMap.Name, rs.OriginTypeMap))
-                await provider.AddOrUpdateConsistencyRecord(con, rs.OriginTypeMap.Name, hash);
+                await provider.AddOrUpdateSchemeRecord(con, rs.OriginTypeMap.Name, hash);
 
         }
-        public async Task InsertIntoDb(PopulationResult rs, DbConnection con)
+        public async Task Insert(PopulationResult rs, DbConnection con)
         {
-            await EnsureConsistency(rs, con);
-            await provider.InsertData(con, rs.OriginTypeMap.Name, rs);
+            await EnsureScheme(rs, con);
+            await provider.Write(con, rs.OriginTypeMap.Name, rs);
         }
 
-        public async Task InsertIntoDb(PopulationResultCollection rs, DbConnection con)
+        public async Task Insert(PopulationResultCollection rs, DbConnection con)
         {
-            await EnsureConsistency(rs, con);
-            await provider.InsertData(con, rs.OriginTypeMap.Name, rs);
+            await EnsureScheme(rs, con);
+            await provider.Write(con, rs.OriginTypeMap.Name, rs);
 
         }
 

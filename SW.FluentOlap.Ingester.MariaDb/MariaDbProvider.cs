@@ -36,14 +36,14 @@ namespace SW.FluentOlap.Ingester.MariaDb
 
         public IReadOnlyDictionary<string, string> TypeDictionary => translatedTypes;
 
-        public async Task AddOrUpdateConsistencyRecord(DbConnection con, string tableName, string hash)
+        public async Task AddOrUpdateSchemeRecord(DbConnection con, string tableName, string hash)
         {
             string command = $"INSERT INTO AnalyzedModelHashes (TableName, Hash) VALUES ('{tableName}', '{hash}') " +
                              $"ON DUPLICATE KEY UPDATE Hash='{hash}';";
             await con.RunCommandAsync(command);
         }
 
-        public async Task EnsureConsistencyTableExists(DbConnection con)
+        public async Task EnsureModelTableExists(DbConnection con)
         {
             string sqlCreate = "CREATE TABLE if not exists AnalyzedModelHashes(\n" +
                                "TableName VARCHAR(40) primary key,\n" +
@@ -132,7 +132,7 @@ namespace SW.FluentOlap.Ingester.MariaDb
             return false;
         }
 
-        public async Task InsertData(DbConnection con, string tableName, PopulationResult populationResult)
+        public async Task Write(DbConnection con, string tableName, PopulationResult populationResult)
         {
             string columns = string.Join(',', populationResult.Keys);
 
@@ -147,11 +147,11 @@ namespace SW.FluentOlap.Ingester.MariaDb
         }
 
         //TODO: Support true bulk
-        public async Task InsertData(DbConnection ctx, string tableName, PopulationResultCollection populationResult)
+        public async Task Write(DbConnection ctx, string tableName, PopulationResultCollection populationResult)
         {
             foreach (PopulationResult rs in populationResult)
             {
-                await InsertData(ctx, tableName, populationResult);
+                await Write(ctx, tableName, populationResult);
             }
         }
     }

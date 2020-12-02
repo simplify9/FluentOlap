@@ -36,7 +36,7 @@ namespace UtilityUnitTests
             
             DataIngester ingester = new DataIngester(new MariaDbProvider(MariaDbTableEngine.InnoDB));
             
-            await ingester.InsertIntoDb(new PopulationResult(new Dictionary<string, object>()
+            await ingester.Insert(new PopulationResult(new Dictionary<string, object>()
                 {
                     ["basicinsertclass_test1"] = 1,
                     ["basicinsertclass_test2"] = "hello"

@@ -14,11 +14,11 @@ namespace SW.FluentOlap.Ingester.Interfaces
     public interface IDbProvider
     {
         public IReadOnlyDictionary<string, string> TypeDictionary { get; }
-        public Task EnsureConsistencyTableExists(DbConnection ctx);
+        public Task EnsureModelTableExists(DbConnection ctx);
         public Task CreateTableFromTypeMap(DbConnection ctx, string tableName, TypeMap map);
-        public Task AddOrUpdateConsistencyRecord(DbConnection ctx, string messageName, string hash);
+        public Task AddOrUpdateSchemeRecord(DbConnection ctx, string messageName, string hash);
         public Task<bool> HashesMatch(DbConnection ctx, string messageName, TypeMap map);
-        public Task InsertData(DbConnection ctx, string tableName, PopulationResult populationResult);
-        public Task InsertData(DbConnection ctx, string tableName, PopulationResultCollection populationResult);
+        public Task Write(DbConnection ctx, string tableName, PopulationResult populationResult);
+        public Task Write(DbConnection ctx, string tableName, PopulationResultCollection populationResult);
     }
 }

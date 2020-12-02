@@ -20,7 +20,7 @@ namespace UtilityUnitTests
         public StartToFinishTests()
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder.AddJsonFile("/home/shaheen/dev/FluentOlap/SW.FluentOlap.UnitTests/testsettings.json");
+            builder.AddJsonFile("testsettings.json");
             config = builder.Build();
         }
         
@@ -44,7 +44,7 @@ namespace UtilityUnitTests
             analyzer.Property(p => p.userId).GetFromService("UsersService", new AnalyticalObject<User>());
 
             analyzer.Ignore(p => p.Body);
-
+            
             PopulationResult result = await analyzer.PopulateAsync(new HttpServiceOptions
             {
                 Parameters = new
@@ -55,7 +55,7 @@ namespace UtilityUnitTests
             
             DataIngester ingester = new DataIngester(new MariaDbProvider(MariaDbTableEngine.InnoDB));
 
-            await ingester.InsertIntoDb(result, connection);
+            await ingester.Insert(result, connection);
             
             
             string username = await connection.RunCommandGetString("select * from Post", "userid_user_username");
@@ -72,7 +72,7 @@ namespace UtilityUnitTests
             });
             
                 
-            await ingester.InsertIntoDb(result2, connection);
+            await ingester.Insert(result2, connection);
             
             string body = await connection.RunCommandGetString("select * from Post where Id=2", "post_body");
             
