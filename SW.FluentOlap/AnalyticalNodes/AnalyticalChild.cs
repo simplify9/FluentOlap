@@ -14,7 +14,6 @@ namespace SW.FluentOlap.AnalyticalNode
         readonly Type childType;
         public string parentName { get; set; }
         protected AnalyticalObject<TParent> DirectParent { get; set; }
-        private bool isUnique;
         private InternalType sqlType;
 
 
@@ -68,7 +67,7 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <returns></returns>
         public AnalyticalChild<TParent, T> GetFromService<TS>(string serviceName, AnalyticalObject<TS> node) where TS : class
         {
-            PopulateServiceMaps(serviceName, parentName + "_" + Name, node.Name);
+            PopulateServiceMaps(serviceName, parentName, Name, node.Name);
             foreach(var entry in node.TypeMap)
             {
                 TypeMap.Add(new KeyValuePair<string, NodeProperties>(Name.ToLower() + "_" + entry.Key, entry.Value));
@@ -81,9 +80,9 @@ namespace SW.FluentOlap.AnalyticalNode
         /// </summary>
         /// <param name="type"></param>
         /// <param name="childName"></param>
-        public new void PopulateTypeMaps(InternalType type, string childName)
+        public void PopulateTypeMaps(InternalType type, string childName)
         {
-            base.PopulateTypeMaps(type, parentName + "_" + childName);
+            base.PopulateTypeMaps(type, parentName, childName);
         }
 
         public void DeleteFromTypemaps(string name, bool isPrimitive)
@@ -130,18 +129,6 @@ namespace SW.FluentOlap.AnalyticalNode
         public AnalyticalChild<TParent, T> HasInternalType(InternalType sqlType)
         {
             PopulateTypeMaps(sqlType, Name);
-            return this;
-        }
-
-        /// <summary>
-        /// Specify that this property is unique
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete("Function no longer usable", true)]
-        public AnalyticalChild<TParent, T> IsUnique()
-        {
-            isUnique = true;
-            base.IsUnique(isUnique, parentName + "_" + Name);
             return this;
         }
 

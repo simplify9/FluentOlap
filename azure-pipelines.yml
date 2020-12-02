@@ -38,12 +38,6 @@ steps:
     arguments: '--configuration $(BuildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet test'
-  inputs:
-    command: test
-    projects: '**/*Tests/*.csproj'
-
-- task: DotNetCoreCLI@2
   displayName: 'dotnet pack'
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   inputs:

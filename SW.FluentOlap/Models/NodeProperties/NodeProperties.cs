@@ -68,14 +68,20 @@ namespace SW.FluentOlap.Models
     }
     public class NodeProperties
     {
-        private const string SQLTYPEKEY = "sql_type";
+        private const string SQLTYPEKEY = "internal_type";
         private const string NODENAMEKEY = "node_name";
         private const string UNIQUEKEY = "unique";
         private const string SERVICENAMEKEY = "service_name";
         public InternalType InternalType { get; set; }
         public bool Unique { get; set; }
         public string  NodeName { get; set; }
+        public string Name { get; }
         public string ServiceName { get; set; }
+
+        public NodeProperties(string name)
+        {
+            Name = name;
+        }
         public override string ToString()
         {
             string stringified = $"{SQLTYPEKEY}={InternalType}&";
@@ -86,7 +92,8 @@ namespace SW.FluentOlap.Models
         }
         public static NodeProperties FromString(string s)
         {
-            NodeProperties props = new NodeProperties();
+            //TODO: Get name
+            NodeProperties props = new NodeProperties("");
             Dictionary<string, string> pairs = new Dictionary<string, string>();
             foreach(string segment in s.Split('&'))
             {

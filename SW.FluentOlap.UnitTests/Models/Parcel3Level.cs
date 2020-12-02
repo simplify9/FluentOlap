@@ -18,7 +18,6 @@ namespace UtilityUnitTests.Models
         {
             Property(p => p.Id);
             Property(p => p.Reference);
-            Property(p => p.ReferenceToParcel2Level).GetFromService("SomeService", new Parcel2LevelAnalyzer());
         }
     }
 }

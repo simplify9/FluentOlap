@@ -48,7 +48,7 @@ namespace SW.FluentOlap.Utilities
             IService<IServiceInput, IServiceOutput> focusedService = FluentOlapConfiguration.ServiceDefinitions[focusedObject.ServiceName];
             PopulationResultCollection results = new PopulationResultCollection();
 
-            PopulationResult rootResult = await CallService(focusedService, serviceInput);
+            PopulationResult rootResult = await CallService(focusedService, serviceInput, focusedObject.Name);
             results.Add(rootResult);
 
             foreach (var expandable in focusedObject.ExpandableChildren)
@@ -76,7 +76,7 @@ namespace SW.FluentOlap.Utilities
 
                         input = new HttpServiceOptions
                         {
-                            PrefixKey = expandable.Value.NodeName,
+                            PrefixKey = expandable.Value.Name + "_" + expandable.Value.NodeName,
                             Parameters = parameters
                         };
 
