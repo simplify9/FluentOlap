@@ -21,7 +21,7 @@ namespace UtilityUnitTests
         public DataIngesterTests()
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder.AddJsonFile("/home/shaheen/dev/FluentOlap/SW.FluentOlap.UnitTests/testsettings.json");
+            builder.AddJsonFile("appsettings.json");
             config = builder.Build();
         }
 
