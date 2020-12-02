@@ -20,7 +20,7 @@ namespace UtilityUnitTests
         public StartToFinishTests()
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder.AddJsonFile("testsettings.json");
+            builder.AddJsonFile("appsettings.json");
             config = builder.Build();
         }
         
