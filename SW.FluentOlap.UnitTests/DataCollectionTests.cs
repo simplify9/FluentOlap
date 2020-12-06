@@ -87,6 +87,33 @@ namespace UtilityUnitTests
             foreach (string key in analyzer.TypeMap.Keys)
                 Assert.IsTrue(rs.Keys.Count() >= analyzer.TypeMap.Count());
         }
+        
+        
+        [TestMethod]
+        public async Task WithMissingChildPopulationTest()
+        {
+            PostAnalyzer analyzer = new PostAnalyzer();
+            analyzer.ServiceName = "PostsService";
+
+            FluentOlapConfiguration.ServiceDefinitions = new ServiceDefinitions
+            {
+                ["PostsService"] = new HttpService("https://jsonplaceholder.typicode.com/posts/{PostId}"),
+                ["UsersService"] = new HttpService("https://jsonplaceholder.typicode.com/users/{userId}"),
+            };
+            analyzer.Property(p => p.userId).GetFromService("UsersService", new AnalyticalObject<User>());
+
+
+            PopulationResult rs = await analyzer.PopulateAsync(new HttpServiceOptions
+                {
+                    Parameters = new
+                    {
+                        PostId = 0
+                    }
+                }
+            );
+
+            Assert.IsTrue(!rs.Keys.Any());
+        }
 
         [TestMethod]
         public void MultipleSameServiceTest()

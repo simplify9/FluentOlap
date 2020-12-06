@@ -68,11 +68,19 @@ namespace SW.FluentOlap.Utilities
                     case ServiceType.HttpCall:
                         HttpService expandableHttpService = expandableService as HttpService;
                         IDictionary<string, string> parameters = new Dictionary<string, string>();
+                        bool missingParam = false;
                         foreach (string innerParam in expandableHttpService.GetRequiredParameters())
                         {
                             JToken parsedRoot = JToken.Parse(rootResult.Raw);
+                            if (!parsedRoot.HasValues)
+                            {
+                                missingParam = true;
+                                continue;
+                            }
                             parameters.Add(innerParam, parsedRoot[innerParam].Value<string>());
                         }
+                        
+                        if(missingParam) continue;
 
                         input = new HttpServiceOptions
                         {
