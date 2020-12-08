@@ -33,23 +33,16 @@ namespace SW.FluentOlap.Models
         {
             this.typeString = typeString;
         }
-        public static InternalType STRING {
-            get => new InternalType("STRING");
-        }
-        public static InternalType INTEGER {
-            get => new InternalType("INTEGER");
-        }
-        public static InternalType FLOAT {
-            get => new InternalType("FLOAT");
-        }
-        public static InternalType BOOLEAN
-        {
-            get => new InternalType("BOOLEAN");
-        }
-        public static InternalType DATETIME
-        {
-            get => new InternalType("DATETIME");
-        }
+        public static InternalType STRING => new InternalType("STRING");
+        public static InternalType INTEGER => new InternalType("INTEGER");
+
+        public static InternalType NEVER => new InternalType("NEVER");
+
+        public static InternalType FLOAT => new InternalType("FLOAT");
+
+        public static InternalType BOOLEAN => new InternalType("BOOLEAN");
+
+        public static InternalType DATETIME => new InternalType("DATETIME");
 
         protected bool Equals(InternalType other)
         {

@@ -198,6 +198,8 @@ namespace SW.FluentOlap.AnalyticalNode
         public AnalyticalChild<T, TProperty> Property<TProperty>(string propertyName, AnalyticalObject<TProperty> type)
         {
             var child = new AnalyticalChild<T, TProperty>(this, propertyName, type.AnalyzedType, this.TypeMap);
+            PopulateTypeMaps(InternalType.NEVER, Name, propertyName);
+            
             return child;
         }
 
