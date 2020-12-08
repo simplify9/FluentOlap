@@ -19,20 +19,15 @@ namespace SW.FluentOlap.Utilities
 
         public static bool IsPrimitive(this Type type)
         {
-            if (Nullable.GetUnderlyingType(type) != null)
-                return true;
-            if (type == typeof(string))
-                return true;
-            if (type == typeof(DateTime))
-                return true;
-            if (type == typeof(decimal))
-                return true;
-            return type.IsPrimitive;
+            return Nullable.GetUnderlyingType(type) != null ||
+                   type == typeof(string) || type == typeof(DateTime) ||
+                   type == typeof(decimal) || type == typeof(long) ||
+                   type == typeof(double) || type.IsPrimitive;
         }
-        
+
         public static bool TryGuessInternalType(Type type, out InternalType sqlType)
         {
-            Type focusedType = Nullable.GetUnderlyingType(type)?? type;
+            Type focusedType = Nullable.GetUnderlyingType(type) ?? type;
             sqlType = new InternalType();
 
             if (focusedType.IsAssignableFrom(typeof(string)))
@@ -52,7 +47,7 @@ namespace SW.FluentOlap.Utilities
                 sqlType = InternalType.FLOAT;
                 return true;
             }
-            
+
 
             if (!focusedType.IsPrimitive) return false;
 
@@ -67,7 +62,6 @@ namespace SW.FluentOlap.Utilities
 
 
             return true;
-
         }
     }
 }
