@@ -13,7 +13,8 @@ namespace SW.FluentOlap.Utilities
 {
     public static class DataCollector
     {
-        private static async Task<PopulationResult> CallService(IService<IServiceInput, IServiceOutput> focusedService, IServiceInput serviceInput, string expandableKey = null)
+        private static async Task<PopulationResult> CallService(IService<IServiceInput, IServiceOutput> focusedService,
+            IServiceInput serviceInput, string expandableKey = null)
         {
             IServiceOutput output = null;
 
@@ -41,11 +42,12 @@ namespace SW.FluentOlap.Utilities
         {
             if (focusedObject.ServiceName == null)
                 throw new Exception("Root analyzer object must have a service defined.");
-            
-            if(!FluentOlapConfiguration.ServiceDefinitions.ContainsKey(focusedObject.ServiceName))
+
+            if (!FluentOlapConfiguration.ServiceDefinitions.ContainsKey(focusedObject.ServiceName))
                 throw new Exception($"Service {focusedObject.ServiceName} not defined.");
-            
-            IService<IServiceInput, IServiceOutput> focusedService = FluentOlapConfiguration.ServiceDefinitions[focusedObject.ServiceName];
+
+            IService<IServiceInput, IServiceOutput> focusedService =
+                FluentOlapConfiguration.ServiceDefinitions[focusedObject.ServiceName];
             PopulationResultCollection results = new PopulationResultCollection();
 
             PopulationResult rootResult = await CallService(focusedService, serviceInput, focusedObject.Name);
@@ -55,11 +57,12 @@ namespace SW.FluentOlap.Utilities
             {
                 if (expandable.Value.ServiceName == null)
                     throw new Exception("Child analyzer object must have a service defined.");
-                
-                if(!FluentOlapConfiguration.ServiceDefinitions.ContainsKey(expandable.Value.ServiceName))
+
+                if (!FluentOlapConfiguration.ServiceDefinitions.ContainsKey(expandable.Value.ServiceName))
                     throw new Exception($"Service {expandable.Value.ServiceName} not defined.");
-                
-                IService<IServiceInput, IServiceOutput> expandableService = FluentOlapConfiguration.ServiceDefinitions[expandable.Value.ServiceName];
+
+                IService<IServiceInput, IServiceOutput> expandableService =
+                    FluentOlapConfiguration.ServiceDefinitions[expandable.Value.ServiceName];
 
                 IServiceInput input = null;
 
@@ -72,15 +75,18 @@ namespace SW.FluentOlap.Utilities
                         foreach (string innerParam in expandableHttpService.GetRequiredParameters())
                         {
                             JToken parsedRoot = JToken.Parse(rootResult.Raw);
-                            if (!parsedRoot.HasValues)
+                            if (!parsedRoot.HasValues ||
+                                parsedRoot[innerParam].HasValues ||
+                                string.IsNullOrWhiteSpace(parsedRoot[innerParam].Value<string>()))
                             {
                                 missingParam = true;
                                 continue;
                             }
+
                             parameters.Add(innerParam, parsedRoot[innerParam].Value<string>());
                         }
-                        
-                        if(missingParam) continue;
+
+                        if (missingParam) continue;
 
                         input = new HttpServiceOptions
                         {
