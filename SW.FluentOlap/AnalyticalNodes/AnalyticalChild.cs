@@ -25,7 +25,8 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="childType"></param>
         /// <param name="typeMapsReference"></param>
         /// <param name="grandParentName"></param>
-        public AnalyticalChild(AnalyticalObject<TParent> analyticalObject, string childName, Type childType, TypeMap typeMapsReference = null, string grandParentName = null) : base(analyticalObject.TypeMap)
+        public AnalyticalChild(AnalyticalObject<TParent> analyticalObject, string childName, Type childType, TypeMap typeMapsReference = null, string grandParentName = null) 
+            : base(analyticalObject.TypeMap, analyticalObject.minimumKeyToHierarchy)
         {
             this.DirectParent = analyticalObject;
             this.Name = childName;
@@ -90,18 +91,6 @@ namespace SW.FluentOlap.AnalyticalNode
             DeleteFromTypeMap(parentName + '_' + name, isPrimitive);
         }
         
-        public new void Ignore<TProperty>(Expression<Func<T, TProperty>> propertyExpression)
-        {
-            var parentChain = GetParentChain() + '_' + Name;
-            var expression = (MemberExpression)propertyExpression.Body;
-            string name = parentChain + '_' + expression.Member.Name;
-            
-            if (typeof(TProperty).IsPrimitive || typeof(TProperty) == typeof(string))
-                DeleteFromTypeMap(name, true);
-            else DeleteFromTypeMap(name, false);
-
-        }
-
         /// <summary>
         /// Override default behavior to modify parent passing
         /// </summary>
@@ -111,7 +100,6 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <returns></returns>
         public new AnalyticalChild<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> propertyExpression, AnalyticalObject<T> directParent = null)
         {
-
             var expression = (MemberExpression)propertyExpression.Body;
             string name = expression.Member.Name;
             Type childType = propertyExpression.ReturnType;

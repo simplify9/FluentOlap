@@ -136,7 +136,7 @@ namespace UtilityUnitTests
             {
                 DifferenceType.ChangedColumnOrder
             });
-            Assert.AreEqual(analyzedHash, analyzedCurrentHash);
+            Assert.IsTrue(!differences.Any());
             
         }
 
