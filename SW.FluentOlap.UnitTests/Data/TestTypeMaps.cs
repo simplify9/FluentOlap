@@ -34,31 +34,31 @@ namespace UtilityUnitTests.Data
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcel2level_shipper_name"] = new NodeProperties("")
+            ["shipper_name"] = new NodeProperties("")
             {
                 InternalType = InternalType.STRING
             },
-            ["parcel2level_shipper_origincountry"] = new NodeProperties("")
+            ["shipper_origincountry"] = new NodeProperties("")
             {
                 InternalType = InternalType.STRING
             },
-            ["parcel2level_shipper2_name"] = new NodeProperties("")
+            ["shipper2_name"] = new NodeProperties("")
             {
                 InternalType = InternalType.STRING
             },
-            ["parcel2level_shipper2_origincountry"] = new NodeProperties("")
+            ["shipper2_origincountry"] = new NodeProperties("")
             {
                 InternalType = InternalType.STRING
             },
-            ["parcel2level_supplier_name"] = new NodeProperties("")
+            ["supplier_name"] = new NodeProperties("")
             {
                 InternalType = InternalType.STRING
             },
-            ["parcel2level_supplier_destinationcountry"] = new NodeProperties("")
+            ["supplier_destinationcountry"] = new NodeProperties("")
             {
                 InternalType = InternalType.STRING
             },
-            ["parcel2level_supplier_phone_number"] = new NodeProperties("")
+            ["phone_number"] = new NodeProperties("")
             {
                 InternalType = InternalType.STRING
             }
