@@ -125,15 +125,15 @@ namespace UtilityUnitTests.Data
             {
                 InternalType = InternalType.INTEGER
             },
-            ["selfref_deeper_deeperselfref_number"] = new NodeProperties("")
+            ["deeper_deeperselfref_number"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_deeper_number"] = new NodeProperties("")
+            ["deeper_number"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_deeper_deeperselfref_number"] = new NodeProperties("")
+            ["deeperselfref_number"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },
@@ -146,35 +146,35 @@ namespace UtilityUnitTests.Data
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference2_selfref_id"] = new NodeProperties("")
+            ["selfref_id"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference2_selfref_deeper_number"] = new NodeProperties("")
+            ["selfref_deeper_number"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference2_selfref_deeper_deeperselfref_number"] = new NodeProperties("")
+            ["deeper_deeperselfref_number"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference2_deeper_number"] = new NodeProperties("")
+            ["number"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference2_deeper_deeperselfref_number"] = new NodeProperties("")
+            ["deeperselfref_number"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference2_deeper_deeperselfref_parcelselfref_id"] = new NodeProperties("")
+            ["deeperselfref_parcelselfref_id"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference2_deeper_parcelselfref_id"] = new NodeProperties("")
+            ["parcelselfref_id"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference2_deeper_parcelselfref_deeper_number"] = new NodeProperties("")
+            ["deeper_number"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },
