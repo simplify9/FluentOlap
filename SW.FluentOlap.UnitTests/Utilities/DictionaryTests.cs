@@ -12,8 +12,8 @@ namespace UtilityUnitTests.Utilities
         public static void KeysMatch(TypeMap analyzed, TypeMap test)
         {
             foreach(string key in analyzed.Keys)
-                Assert.IsTrue(TestTypeMaps.P3TypeMap.ContainsKey(key));
-            foreach(string key in TestTypeMaps.P3TypeMap.Keys)
+                Assert.IsTrue(test.ContainsKey(key));
+            foreach(string key in test.Keys)
                 Assert.IsTrue(analyzed.ContainsKey(key));
         }
 

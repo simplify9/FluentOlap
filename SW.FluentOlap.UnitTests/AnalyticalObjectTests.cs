@@ -41,10 +41,11 @@ namespace UtilityUnitTests
             var analyzed = new Parcel2LevelAnalyzer();
             var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
             var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.P2TypeMap);
-            foreach(string key in analyzed.TypeMap.Keys)
-                Assert.IsTrue(TestTypeMaps.P2TypeMap.ContainsKey(key));
             
-            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.P2TypeMap);
+            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.P2TypeMap, new DifferenceType[]
+            {
+                DifferenceType.ChangedColumnOrder
+            });
             
             Assert.AreEqual(analyzedHash, analyzedCurrentHash);
 
@@ -79,13 +80,13 @@ namespace UtilityUnitTests
             analyzed.Property("referencetoparcel2level", new AnalyticalObject<Parcel2Level>()).GetFromService("SomeService", new Parcel2LevelAnalyzer());
             var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
             var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.P3TypeMapNoRef);
-            DictionaryAssert.KeysMatch(analyzed.TypeMap, TestTypeMaps.P3TypeMapNoRef);
 
-            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.P3TypeMap, new List<DifferenceType>()
+            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.P3TypeMapNoRef, new List<DifferenceType>()
                 {
                     DifferenceType.ChangedColumnOrder
                 });
 
+            DictionaryAssert.KeysMatch(analyzed.TypeMap, TestTypeMaps.P3TypeMapNoRef);
             Assert.AreEqual(analyzedHash, analyzedCurrentHash);
         }
 
@@ -105,25 +106,6 @@ namespace UtilityUnitTests
             TypeMap testmap = TypeMap.DecodeFromBase64(p3mapbase64);
             Assert.AreEqual(Hashing.HashTypeMaps(testmap), Hashing.HashTypeMaps(TestTypeMaps.P3TypeMap));
 
-        }
-
-        [TestMethod]
-        public void IgnoreTest()
-        {
-            var analyzed = new Parcel2LevelAnalyzer();
-            analyzed.Ignore(p => p.Shipper);
-            analyzed.Ignore(p => p.Shipper2);
-            var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
-
-            foreach(var pair in TestTypeMaps.P2TypeMap)
-                if (pair.Key.Contains("shipper"))
-                    TestTypeMaps.P2TypeMap.Remove(pair);
-            TestTypeMaps.P2TypeMap.Remove("parcel2level_count");
-
-            var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.P2TypeMap);
-
-            Assert.AreEqual(analyzedHash, analyzedCurrentHash);
-            
         }
 
         [TestMethod]

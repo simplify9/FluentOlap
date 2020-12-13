@@ -83,7 +83,7 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="childName"></param>
         public void PopulateTypeMaps(InternalType type, string childName)
         {
-            base.PopulateTypeMaps(type, parentName, childName);
+            base.PopulateTypeMaps(type, parentName, childName, true);
         }
 
         public void DeleteFromTypemaps(string name, bool isPrimitive)

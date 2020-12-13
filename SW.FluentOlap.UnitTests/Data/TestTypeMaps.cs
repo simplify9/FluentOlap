@@ -95,17 +95,17 @@ namespace UtilityUnitTests.Data
             {
                 NodeName = "parcel2level",
                 ServiceName = "someservice",
-                InternalType = InternalType.STRING
+                InternalType = InternalType.NEVER
             }
         };
 
         public readonly static TypeMap IgnoreTestMap = new TypeMap
         {
-            ["ignoretestmap_co2sm_name2"] = new NodeProperties("")
+            ["co2sm_name2"] = new NodeProperties("")
             {
                 InternalType = InternalType.STRING
             },
-            ["ignoretestmap_complex_stringprop"] = new NodeProperties("")
+            ["complex_stringprop"] = new NodeProperties("")
             {
                 InternalType = InternalType.STRING
             },
@@ -117,15 +117,15 @@ namespace UtilityUnitTests.Data
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_selfref_id"] = new NodeProperties("")
+            ["selfref_id"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_selfref_deeper_number"] = new NodeProperties("")
+            ["selfref_deeper_number"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },
-            ["parcelselfreference_selfref_deeper_deeperselfref_number"] = new NodeProperties("")
+            ["selfref_deeper_deeperselfref_number"] = new NodeProperties("")
             {
                 InternalType = InternalType.INTEGER
             },

@@ -8,12 +8,12 @@ namespace SW.FluentOlap.Models
     public class AnalyticalObjectInitSettings<T>
     {
         
-        internal IList<string> IgnoreList { get; set; }
+        internal IList<KeyValuePair<string, string>> IgnoreList { get; set; }
         
         public AnalyticalObjectInitSettings()
         {
             _referenceLoopDepthLimit = 1;
-            IgnoreList = new List<string>();
+            IgnoreList = new List<KeyValuePair<string, string>>();
         }
         
         private const byte REFERENCELOOPSYSTEMLIMIT = 3;
@@ -37,18 +37,19 @@ namespace SW.FluentOlap.Models
         public void Ignore<TProperty>(Expression<Func<T, TProperty>> propertyExpression)
         {
             var expression = (MemberExpression) propertyExpression.Body;
-            string ignoreKey = string.Empty;
+            string ignoreKey = expression.Member.Name;
+            expression = expression.Expression as MemberExpression;
+            string prefix = string.Empty;
             while (expression != null)
             {
                 string name = expression.Member.Name;
                 expression = expression.Expression as MemberExpression;
-                ignoreKey = name + '_' + ignoreKey;
+                prefix = name + '_' + prefix;
             }
 
-            ignoreKey = typeof(T).Name + '_' + ignoreKey;
+            prefix = typeof(T).Name + '_' + prefix;
 
-            IgnoreList.Add(ignoreKey.Substring(0, ignoreKey.Length - 1).ToLower());
-
+            IgnoreList.Add(new KeyValuePair<string, string>(prefix.Substring(0, prefix.Length - 1), ignoreKey));
         }
         
 

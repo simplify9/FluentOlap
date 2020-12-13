@@ -30,8 +30,6 @@ namespace SW.FluentOlap.AnalyticalNode
         internal IDictionary<string, IEnumerable<string>> minimumKeyToHierarchy { get; }
 
 
-
-
         private AnalyticalObjectInitSettings<T> initSettings;
 
         public MessageProperties MessageMap { get; set; }
@@ -61,27 +59,29 @@ namespace SW.FluentOlap.AnalyticalNode
             TypeMap = existing;
         }
 
-        private bool TryGetMinimumUniqueKey(string[] hierarchy, string propKey, out string minimumKey)
+        private bool TryGetMinimumUniqueKey(string[] hierarchy, string propKey, int index, out string minimumKey)
         {
-            int finalIndex = hierarchy.Length - 1;
+            minimumKey = string.Empty;
+            for (int i = hierarchy.Length - 1; i >= index; i--)
+                minimumKey = hierarchy[i] + SEPARATOR + minimumKey;
 
-            minimumKey = (hierarchy[finalIndex] + '_' + propKey).ToLower();
-            
-            if (!minimumKeyToHierarchy.ContainsKey(minimumKey))
+            minimumKey = (minimumKey + propKey).ToLower();
+
+            if (!TypeMap.ContainsKey(minimumKey))
             {
-                minimumKeyToHierarchy[minimumKey] = hierarchy.TakeLast(finalIndex + 1);
+                minimumKeyToHierarchy[minimumKey] = hierarchy;
                 return true;
             }
 
             return false;
         }
 
-        protected string EnsureMinimumUniqueKey(string prefix, string propKey)
+        protected string EnsureMinimumUniqueKey(string prefix, string propKey, bool overwrite = false)
         {
-
-            string[] hierarchy = prefix.Contains(SEPARATOR)? prefix.Split('_') : new string[] {prefix};
-            if (TryGetMinimumUniqueKey(hierarchy, propKey, out string minimumKey))
-                return minimumKey.ToLower();
+            string[] hierarchy = prefix.Contains(SEPARATOR) ? prefix.Split(SEPARATOR) : new string[] {prefix};
+            bool isUnique = TryGetMinimumUniqueKey(hierarchy, propKey, hierarchy.Length - 1, out string minimumKey);
+            
+            if (overwrite || isUnique) return minimumKey.ToLower();
 
             KeyValuePair<string, NodeProperties> existingTypeMap =
                 TypeMap.FirstOrDefault(kv => kv.Key == minimumKey);
@@ -91,32 +91,49 @@ namespace SW.FluentOlap.AnalyticalNode
                 minimumKeyToHierarchy.FirstOrDefault(kv => kv.Key == minimumKey);
             minimumKeyToHierarchy.Remove(existingMinimumMap);
 
-            for (int i = hierarchy.Length; i >= 0; --i)
+            bool opposingMore = existingMinimumMap.Value.ToArray().Length > hierarchy.Length;
+
+            for (int i = hierarchy.Length - 1; i >= 0; --i)
             {
-                bool current = 
-                    TryGetMinimumUniqueKey(hierarchy, propKey, out minimumKey);
+                bool current =
+                    TryGetMinimumUniqueKey(hierarchy, propKey, i, out minimumKey);
 
-                bool existing = 
-                    TryGetMinimumUniqueKey(existingMinimumMap.Value.ToArray(), propKey, out string existingNewKey);
+                bool existing =
+                    TryGetMinimumUniqueKey(existingMinimumMap.Value.ToArray(), propKey, i, out string existingNewKey);
 
-                if (!(current && existing) || (existingNewKey == minimumKey)) continue;
-                
-                TypeMap.Add(new KeyValuePair<string, NodeProperties>(existingNewKey, existingTypeMap.Value));
 
+                if (current && existing && existingNewKey != minimumKey)
+                {
+                    TypeMap.Add(new KeyValuePair<string, NodeProperties>(existingNewKey, existingTypeMap.Value));
+                    return minimumKey.ToLower();
+                }
             }
 
-            // Either the key has been found, or someone is overwriting a property.
-            return minimumKey.ToLower();
-
-
+            if (opposingMore)
+            {
+                //We will assume it works.
+                bool existing = 
+                    TryGetMinimumUniqueKey(existingMinimumMap.Value.ToArray(), propKey, hierarchy.Length, out string existingNewKey);
+                
+                TypeMap.Add(new KeyValuePair<string, NodeProperties>(existingNewKey, existingTypeMap.Value));
+                return minimumKey.ToLower();
+            }
+            else
+            {
+                
+                // Either the key has been found, or someone is overwriting a property.
+                return minimumKey.ToLower();
+            }
+            
+            
         }
 
 
-        private void InitTypeMap(Type typeToInit, string prefix, string preferredName,  List<string> branchChain = null)
+        private void InitTypeMap(Type typeToInit, string prefix, string preferredName, List<string> branchChain = null)
         {
             // Create the stem/branch if it does not exist
             branchChain ??= new List<string>();
-            
+
             // Make sure occurrences of this type in the current branch do not exceed the limit
             int occurrences = branchChain.Count(v => v == typeToInit.FullName);
             if (occurrences > initSettings.ReferenceLoopDepthLimit) return;
@@ -127,27 +144,25 @@ namespace SW.FluentOlap.AnalyticalNode
             // End of a branch.
             if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType)) // Primitive type
                 PopulateTypeMaps(internalType, prefix, preferredName);
-            
+
             else // This will have inner branches
             {
                 // Keep track of the branch state as an origin point for the current complex type
                 List<string> branchOrigin = branchChain.Select(v => v).ToList();
-                
+
                 // Concatenate parent
                 if (prefix != preferredName && prefix != null) prefix = $"{prefix}_{preferredName}";
-                
+
                 // Recursively init each property
                 foreach (PropertyInfo prop in typeToInit.GetProperties())
                 {
-                    string key = (prefix + '_' + prop.Name).ToLower();
                     // TODO: Create a more efficient ignore algorithm.
-                    if (initSettings.IgnoreList.Contains(key)) continue;
+                    if (initSettings.IgnoreList.Contains(new KeyValuePair<string, string>(prefix, prop.Name))) continue;
                     if (prop.GetCustomAttribute(typeof(IgnoreAttribute)) != null) continue;
-                    
+
                     // Passing the branch to extend it for the properties down the chain.
                     InitTypeMap(prop.PropertyType, prefix, prop.Name, branchChain);
-                    
-                    
+
 
                     // Effectively cutting off the branch once we are done with defining that property.
                     branchChain = branchOrigin.ToList();
@@ -161,16 +176,16 @@ namespace SW.FluentOlap.AnalyticalNode
         /// </summary>
         /// <param name="type">SQL type</param>
         /// <param name="childName"></param>
-        protected void PopulateTypeMaps(InternalType type, string prefix, string childName)
+        protected void PopulateTypeMaps(InternalType type, string prefix, string childName, bool overwrite = false)
         {
-            string key = EnsureMinimumUniqueKey(prefix, childName);
+            string key = EnsureMinimumUniqueKey(prefix, childName, overwrite);
 
             if (key.Length > KeyLengthLimit)
                 KeyLengthLimitSurpassed = true;
-            
+
             if (!TypeMap.ContainsKey(key)) TypeMap[key] = new NodeProperties(childName);
 
-            
+
             TypeMap[key].InternalType = type;
         }
 
@@ -201,9 +216,9 @@ namespace SW.FluentOlap.AnalyticalNode
         protected void PopulateServiceMaps(string serviceName, string prefix, string childName, string nodeName)
         {
             string key = $"{prefix}_{childName}";
-            
+
             if (!TypeMap.ContainsKey(key)) TypeMap[key] = new NodeProperties(childName);
-            
+
             TypeMap[key].ServiceName = serviceName.ToLower();
             TypeMap[key].NodeName = nodeName.ToLower();
         }
@@ -227,7 +242,7 @@ namespace SW.FluentOlap.AnalyticalNode
             this.ServiceName = serviceName;
             return this;
         }
-        
+
         private PopulationResult MergeIntoAggregate(PopulationResultCollection resultCollection)
         {
             IDictionary<string, object> merged = new Dictionary<string, object>();
@@ -266,7 +281,7 @@ namespace SW.FluentOlap.AnalyticalNode
         {
             var child = new AnalyticalChild<T, TProperty>(this, propertyName, type.AnalyzedType, this.TypeMap);
             PopulateTypeMaps(InternalType.NEVER, Name, propertyName);
-            
+
             return child;
         }
 
@@ -288,17 +303,5 @@ namespace SW.FluentOlap.AnalyticalNode
 
             return child;
         }
-        
-        public void Ignore<TProperty>(Expression<Func<T, TProperty>> propertyExpression)
-        {
-            var expression = (MemberExpression) propertyExpression.Body;
-            string name = expression.Member.Name;
-
-            string toRemove = Name + '_' + name;
-            if (typeof(TProperty).IsPrimitive || typeof(TProperty) == typeof(string))
-                DeleteFromTypeMap(toRemove, true);
-            else DeleteFromTypeMap(toRemove, false);
-        }
-
     }
 }
