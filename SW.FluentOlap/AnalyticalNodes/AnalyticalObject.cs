@@ -20,7 +20,7 @@ namespace SW.FluentOlap.AnalyticalNode
     public class AnalyticalObject<T> : IAnalyticalNode
     {
         public TypeMap TypeMap { get; protected set; }
-        private readonly SimpleNamer simpleNamer;
+        internal readonly SimpleNamer simpleNamer;
         public string ServiceName { get; set; }
 
         private const char SEPARATOR = '_';
@@ -184,14 +184,20 @@ namespace SW.FluentOlap.AnalyticalNode
             IDictionary<string, object> merged = new Dictionary<string, object>();
 
             PopulationResult root = resultCollection.Dequeue();
-            foreach (KeyValuePair<string, object> kv in root)
-                merged.Add(kv);
+            foreach ((string k, object v) in root)
+            {
+                string key = simpleNamer.EnsureMinimumUniqueKey(k, merged);
+                merged[key] = v;
+            }
 
             for (int _ = 0; _ < resultCollection.Count; ++_)
             {
                 PopulationResult current = resultCollection.Dequeue();
-                foreach (KeyValuePair<string, object> kv in current)
-                    merged.Add(kv);
+                foreach ((string k, object v) in current)
+                {
+                    string key = simpleNamer.EnsureMinimumUniqueKey(k, merged);
+                    merged[key] = v;
+                }
             }
 
 

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using SW.FluentOlap.Models;
@@ -14,42 +15,42 @@ namespace SW.FluentOlap.Utilities
             SEPARATOR = separator;
             minimumKeyToHierarchy = new Dictionary<string, string[]>();
         }
-        private bool TryGetMinimumUniqueKey(
-            string[] hierarchy, 
-            string propKey, 
-            int index, 
-            ICollection<string> keys,
-            out string minimumKey)
+        private bool TryGetMinimumUniqueKey(string[] hierarchy, string propKey, int index, ICollection<string> keys, out string minimumKey)
         {
             minimumKey = string.Empty;
             for (int i = hierarchy.Length - 1; i >= index; i--)
                 minimumKey = hierarchy[i] + SEPARATOR + minimumKey;
 
             minimumKey = (minimumKey + propKey).ToLower();
+            
+            if (keys.Contains(minimumKey)) return false;
+            
+            minimumKeyToHierarchy[minimumKey] = hierarchy;
+            return true;
 
-            if (!keys.Contains(minimumKey))
-            {
-                minimumKeyToHierarchy[minimumKey] = hierarchy;
-                return true;
-            }
+        }
 
-            return false;
+
+        public string EnsureMinimumUniqueKey<TDicVal>(string fullKey, IDictionary<string, TDicVal> map,
+            bool overwrite = false)
+        {
+            string[] split = fullKey.Split(SEPARATOR);
+            string prefix = string.Join(SEPARATOR, split.Take(split.Length - 1));
+            string propKey = split.TakeLast(1).First();
+            return EnsureMinimumUniqueKey(prefix, propKey, map, overwrite);
         }
         
-        public string EnsureMinimumUniqueKey(
-            string prefix, 
-            string propKey, 
-            TypeMap map,
-            bool overwrite = false)
+        
+        public string EnsureMinimumUniqueKey<TDicVal>(string prefix, string propKey, IDictionary<string, TDicVal> map, bool overwrite = false)
         {
             string[] hierarchy = prefix.Contains(SEPARATOR) ? prefix.Split(SEPARATOR) : new string[] {prefix};
             bool isUnique = TryGetMinimumUniqueKey(hierarchy, propKey, hierarchy.Length - 1, map.Keys, out string minimumKey);
             
             if (overwrite || isUnique) return minimumKey.ToLower();
 
-            KeyValuePair<string, NodeProperties> existingTypeMap =
+            KeyValuePair<string, TDicVal> existingTypeMap =
                 map.FirstOrDefault(kv => kv.Key == minimumKey);
-            map.Remove(existingTypeMap.Key);
+            map.Remove(minimumKey);
 
             KeyValuePair<string, string[]> existingMinimumMap =
                 minimumKeyToHierarchy.FirstOrDefault(kv => kv.Key == minimumKey);

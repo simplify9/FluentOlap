@@ -76,7 +76,6 @@ namespace SW.FluentOlap.Utilities
                         {
                             JToken parsedRoot = JToken.Parse(rootResult.Raw);
                             if (!parsedRoot.HasValues ||
-                                parsedRoot[innerParam].HasValues ||
                                 string.IsNullOrWhiteSpace(parsedRoot[innerParam].Value<string>()))
                             {
                                 missingParam = true;
