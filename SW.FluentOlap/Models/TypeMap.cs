@@ -98,5 +98,16 @@ namespace SW.FluentOlap.Models
 
         }
 
+        public static implicit operator Dictionary<string, object>(TypeMap map)
+        {
+            Dictionary<string, object> tmp = new Dictionary<string, object>();
+            
+            foreach ((string key, NodeProperties value) in map)
+                tmp[key] = value;
+
+            return tmp;
+        }
+        
+
     }
 }

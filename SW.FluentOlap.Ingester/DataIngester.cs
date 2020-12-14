@@ -17,7 +17,7 @@ namespace SW.FluentOlap.Ingester
     public class DataIngester<T> : DataIngester where T : IDbProvider
     {
         public DataIngester(params object[] constructorArgs) : base((T) Activator.CreateInstance(typeof(T), constructorArgs)) { }
-        protected new async Task EnsureConsistency(PopulationResultCollection rs, DbConnection con)
+        protected async Task EnsureConsistency(PopulationResultCollection rs, DbConnection con)
         {
             await base.EnsureScheme(rs.Sample, con);
         }
@@ -28,17 +28,17 @@ namespace SW.FluentOlap.Ingester
         /// <param name="con"></param>
         /// <param name="sqlProvider"></param>
         /// <returns></returns>
-        protected new async Task EnsureConsistency(PopulationResult rs, DbConnection con)
+        protected async Task EnsureConsistency(PopulationResult rs, DbConnection con)
         {
             await base.EnsureScheme(rs, con);
 
         }
-        public new async Task InsertIntoDb(PopulationResult rs, DbConnection con)
+        public async Task InsertIntoDb(PopulationResult rs, DbConnection con)
         {
             await base.Insert(rs, con);
         }
 
-        public new async Task InsertIntoDb(PopulationResultCollection rs, DbConnection con)
+        public async Task InsertIntoDb(PopulationResultCollection rs, DbConnection con)
         {
             await base.Insert(rs, con);
 

@@ -20,6 +20,7 @@ namespace SW.FluentOlap.AnalyticalNode
     public class AnalyticalObject<T> : IAnalyticalNode
     {
         public TypeMap TypeMap { get; protected set; }
+        private readonly SimpleNamer simpleNamer;
         public string ServiceName { get; set; }
 
         private const char SEPARATOR = '_';
@@ -39,7 +40,8 @@ namespace SW.FluentOlap.AnalyticalNode
         public Dictionary<string, NodeProperties> ExpandableChildren =>
             new Dictionary<string, NodeProperties>(TypeMap.Where(n => n.Value.ServiceName != null));
 
-        public AnalyticalObject(Action<AnalyticalObjectInitSettings<T>> settings = null)
+
+    public AnalyticalObject(Action<AnalyticalObjectInitSettings<T>> settings = null)
         {
             this.minimumKeyToHierarchy = new Dictionary<string, IEnumerable<string>>();
             initSettings = new AnalyticalObjectInitSettings<T>();
@@ -49,6 +51,8 @@ namespace SW.FluentOlap.AnalyticalNode
             AnalyzedType = typeof(T);
             Name = AnalyzedType.Name;
             TypeMap = new TypeMap(Name);
+            
+            simpleNamer = new SimpleNamer(SEPARATOR);
 
             InitTypeMap(AnalyzedType, AnalyzedType.Name, AnalyzedType.Name);
         }
@@ -56,76 +60,8 @@ namespace SW.FluentOlap.AnalyticalNode
         protected AnalyticalObject(TypeMap existing, IDictionary<string, IEnumerable<string>> minimumKeyToHierarchy)
         {
             this.minimumKeyToHierarchy = minimumKeyToHierarchy;
+            simpleNamer = new SimpleNamer(SEPARATOR);
             TypeMap = existing;
-        }
-
-        private bool TryGetMinimumUniqueKey(string[] hierarchy, string propKey, int index, out string minimumKey)
-        {
-            minimumKey = string.Empty;
-            for (int i = hierarchy.Length - 1; i >= index; i--)
-                minimumKey = hierarchy[i] + SEPARATOR + minimumKey;
-
-            minimumKey = (minimumKey + propKey).ToLower();
-
-            if (!TypeMap.ContainsKey(minimumKey))
-            {
-                minimumKeyToHierarchy[minimumKey] = hierarchy;
-                return true;
-            }
-
-            return false;
-        }
-
-        protected string EnsureMinimumUniqueKey(string prefix, string propKey, bool overwrite = false)
-        {
-            string[] hierarchy = prefix.Contains(SEPARATOR) ? prefix.Split(SEPARATOR) : new string[] {prefix};
-            bool isUnique = TryGetMinimumUniqueKey(hierarchy, propKey, hierarchy.Length - 1, out string minimumKey);
-            
-            if (overwrite || isUnique) return minimumKey.ToLower();
-
-            KeyValuePair<string, NodeProperties> existingTypeMap =
-                TypeMap.FirstOrDefault(kv => kv.Key == minimumKey);
-            TypeMap.Remove(existingTypeMap);
-
-            KeyValuePair<string, IEnumerable<string>> existingMinimumMap =
-                minimumKeyToHierarchy.FirstOrDefault(kv => kv.Key == minimumKey);
-            minimumKeyToHierarchy.Remove(existingMinimumMap);
-
-            bool opposingMore = existingMinimumMap.Value.ToArray().Length > hierarchy.Length;
-
-            for (int i = hierarchy.Length - 1; i >= 0; --i)
-            {
-                bool current =
-                    TryGetMinimumUniqueKey(hierarchy, propKey, i, out minimumKey);
-
-                bool existing =
-                    TryGetMinimumUniqueKey(existingMinimumMap.Value.ToArray(), propKey, i, out string existingNewKey);
-
-
-                if (current && existing && existingNewKey != minimumKey)
-                {
-                    TypeMap.Add(new KeyValuePair<string, NodeProperties>(existingNewKey, existingTypeMap.Value));
-                    return minimumKey.ToLower();
-                }
-            }
-
-            if (opposingMore)
-            {
-                //We will assume it works.
-                bool existing = 
-                    TryGetMinimumUniqueKey(existingMinimumMap.Value.ToArray(), propKey, hierarchy.Length, out string existingNewKey);
-                
-                TypeMap.Add(new KeyValuePair<string, NodeProperties>(existingNewKey, existingTypeMap.Value));
-                return minimumKey.ToLower();
-            }
-            else
-            {
-                
-                // Either the key has been found, or someone is overwriting a property.
-                return minimumKey.ToLower();
-            }
-            
-            
         }
 
 
@@ -178,7 +114,7 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="childName"></param>
         protected void PopulateTypeMaps(InternalType type, string prefix, string childName, bool overwrite = false)
         {
-            string key = EnsureMinimumUniqueKey(prefix, childName, overwrite);
+            string key = simpleNamer.EnsureMinimumUniqueKey(prefix, childName, TypeMap, overwrite);
 
             if (key.Length > KeyLengthLimit)
                 KeyLengthLimitSurpassed = true;
