@@ -44,8 +44,13 @@ namespace SW.FluentOlap.Models
 
         public static InternalType DATETIME => new InternalType("DATETIME");
 
-        protected bool Equals(InternalType other)
+        public override bool Equals(object obj)
         {
+            if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+                return false;
+
+            InternalType other = (InternalType)obj;
+            
             return typeString == other.typeString;
         }
 

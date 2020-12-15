@@ -29,8 +29,9 @@ namespace SW.FluentOlap.Ingester
             IDictionary<string, SqlTypeInformation> sqlMaps = new Dictionary<string, SqlTypeInformation>();
             foreach (var map in typeMaps)
             {
-                if(map.Value.InternalType != InternalType.NEVER)
-                    sqlMaps[map.Key] = SqlTypeFromInternalType(map.Value.InternalType, provider);
+                if (map.Value.InternalType.Equals(InternalType.NEVER)) continue;
+                
+                sqlMaps[map.Key] = SqlTypeFromInternalType(map.Value.InternalType, provider);
             }
             return sqlMaps;
         }

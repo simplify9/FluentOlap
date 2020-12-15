@@ -7,12 +7,12 @@ using SW.FluentOlap.Models;
 
 namespace SW.FluentOlap.Utilities
 {
-    internal class SimpleNamer
+    internal class Namer
     {
         private readonly char SEPARATOR;
         private readonly Dictionary<string, string[]> minimumKeyToHierarchy;
 
-        public SimpleNamer(char separator)
+        public Namer(char separator)
         {
             SEPARATOR = separator;
             minimumKeyToHierarchy = new Dictionary<string, string[]>();

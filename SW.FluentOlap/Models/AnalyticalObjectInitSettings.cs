@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using SW.FluentOlap.Utilities;
 
 namespace SW.FluentOlap.Models
 {
@@ -36,20 +37,8 @@ namespace SW.FluentOlap.Models
         
         public void Ignore<TProperty>(Expression<Func<T, TProperty>> propertyExpression)
         {
-            var expression = (MemberExpression) propertyExpression.Body;
-            string ignoreKey = expression.Member.Name;
-            expression = expression.Expression as MemberExpression;
-            string prefix = string.Empty;
-            while (expression != null)
-            {
-                string name = expression.Member.Name;
-                expression = expression.Expression as MemberExpression;
-                prefix = name + '_' + prefix;
-            }
 
-            prefix = typeof(T).Name + '_' + prefix;
-
-            IgnoreList.Add(new KeyValuePair<string, string>(prefix.Substring(0, prefix.Length - 1), ignoreKey));
+            IgnoreList.Add(Namer.GetPrefixAndKey(propertyExpression));
         }
         
 

@@ -22,7 +22,8 @@ namespace SW.FluentOlap.Utilities
             return Nullable.GetUnderlyingType(type) != null ||
                    type == typeof(string) || type == typeof(DateTime) ||
                    type == typeof(decimal) || type == typeof(long) ||
-                   type == typeof(double) || type.IsPrimitive;
+                   type == typeof(TimeSpan) || type == typeof(double) ||
+                    type.IsPrimitive;
         }
 
         public static bool TryGuessInternalType(Type type, out InternalType sqlType)
@@ -30,7 +31,7 @@ namespace SW.FluentOlap.Utilities
             Type focusedType = Nullable.GetUnderlyingType(type) ?? type;
             sqlType = new InternalType();
 
-            if (focusedType.IsAssignableFrom(typeof(string)))
+            if (focusedType.IsAssignableFrom(typeof(string)) || focusedType.IsAssignableFrom(typeof(TimeSpan)))
             {
                 sqlType = InternalType.STRING;
                 return true;
@@ -42,19 +43,18 @@ namespace SW.FluentOlap.Utilities
                 return true;
             }
 
-            if (focusedType.IsAssignableFrom(typeof(decimal)))
+            if (focusedType.IsAssignableFrom(typeof(double)) || focusedType.IsAssignableFrom(typeof(decimal)))
             {
                 sqlType = InternalType.FLOAT;
                 return true;
             }
-
 
             if (!focusedType.IsPrimitive) return false;
 
             if (focusedType.IsAssignableFrom(typeof(float)))
                 sqlType = InternalType.FLOAT;
 
-            if (focusedType.IsAssignableFrom(typeof(int)))
+            if (focusedType.IsAssignableFrom(typeof(int)) || focusedType.IsAssignableFrom(typeof(long)))
                 sqlType = InternalType.INTEGER;
 
             if (focusedType.IsAssignableFrom(typeof(bool)))
