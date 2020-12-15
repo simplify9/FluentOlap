@@ -9,14 +9,14 @@ namespace UtilityUnitTests.Models
     public class Post
     {
         public string userId { get; set; }
-        public string Id { get; set; }
+        public double Id { get; set; }
         public string Title { get; set; }
         public string Body { get; set; }
     }
 
     public class User
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
         public string Username { get; set; }
         public string Phone { get; set; }

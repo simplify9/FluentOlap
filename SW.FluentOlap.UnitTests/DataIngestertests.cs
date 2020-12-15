@@ -48,10 +48,6 @@ namespace UtilityUnitTests
 
             
             Assert.AreEqual(test2Val, "hello");
-            
-            
-
-
         }
         
     }

@@ -35,8 +35,6 @@ namespace UtilityUnitTests.Models
             }
         )
         {
-            //Property(p => p.Co2sm).Ignore(c => c.Name);
-            //Property(p => p.Complex).Ignore(c => c.IntProp);
         }
     }
 }

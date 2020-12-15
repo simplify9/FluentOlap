@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using SW.FluentOlap.Models;
 
 namespace SW.FluentOlap.Utilities
@@ -30,6 +32,13 @@ namespace SW.FluentOlap.Utilities
 
         }
 
+        public string EnsureMinimumUniqueKey<TDicVal, T, TProperty>(Expression<Func<T, TProperty>> propertyExpression,
+            IDictionary<string, TDicVal> map,
+            bool overwrite = false)
+        {
+            var kv = GetPrefixAndKey(propertyExpression);
+            return EnsureMinimumUniqueKey(kv.Key + SEPARATOR + kv.Value, map, overwrite);
+        }
 
         public string EnsureMinimumUniqueKey<TDicVal>(string fullKey, IDictionary<string, TDicVal> map,
             bool overwrite = false)
@@ -38,6 +47,25 @@ namespace SW.FluentOlap.Utilities
             string prefix = string.Join(SEPARATOR, split.Take(split.Length - 1));
             string propKey = split.TakeLast(1).First();
             return EnsureMinimumUniqueKey(prefix, propKey, map, overwrite);
+        }
+
+
+        public static KeyValuePair<string, string> GetPrefixAndKey<T, TProperty>(Expression<Func<T, TProperty>> propertyExpression)
+        {
+            
+            var expression = (MemberExpression) propertyExpression.Body;
+            string key = expression.Member.Name;
+            expression = expression.Expression as MemberExpression;
+            string prefix = string.Empty;
+            while (expression != null)
+            {
+                string name = expression.Member.Name;
+                expression = expression.Expression as MemberExpression;
+                prefix = name + '_' + prefix;
+            }
+
+            prefix = typeof(T).Name + '_' + prefix;
+            return new KeyValuePair<string, string>(prefix.Substring(0, prefix.Length - 1), key);
         }
         
         
@@ -84,7 +112,6 @@ namespace SW.FluentOlap.Utilities
             }
             else
             {
-                
                 // Either the key has been found, or someone is overwriting a property.
                 return minimumKey.ToLower();
             }
