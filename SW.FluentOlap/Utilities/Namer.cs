@@ -84,7 +84,10 @@ namespace SW.FluentOlap.Utilities
                 minimumKeyToHierarchy.FirstOrDefault(kv => kv.Key == minimumKey);
             minimumKeyToHierarchy.Remove(existingMinimumMap.Key);
 
-            bool opposingMore = existingMinimumMap.Value.ToArray().Length > hierarchy.Length;
+            string[] existingHierarchy = existingMinimumMap.Value.ToArray();
+
+            bool opposingMore = existingHierarchy.Length > hierarchy.Length;
+            bool currentMore = existingHierarchy.Length > hierarchy.Length;
 
             for (int i = hierarchy.Length - 1; i >= 0; --i)
             {
@@ -110,7 +113,7 @@ namespace SW.FluentOlap.Utilities
                 map[existingNewKey] = existingTypeMap.Value;
                 return minimumKey.ToLower();
             }
-            else
+            else 
             {
                 // Either the key has been found, or someone is overwriting a property.
                 return minimumKey.ToLower();
