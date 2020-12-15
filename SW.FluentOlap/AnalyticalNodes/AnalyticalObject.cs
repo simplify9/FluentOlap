@@ -20,7 +20,7 @@ namespace SW.FluentOlap.AnalyticalNode
     public class AnalyticalObject<T> : IAnalyticalNode
     {
         public TypeMap TypeMap { get; protected set; }
-        internal readonly SimpleNamer simpleNamer;
+        internal readonly Namer Namer;
         public string ServiceName { get; set; }
 
         private const char SEPARATOR = '_';
@@ -52,7 +52,7 @@ namespace SW.FluentOlap.AnalyticalNode
             Name = AnalyzedType.Name;
             TypeMap = new TypeMap(Name);
             
-            simpleNamer = new SimpleNamer(SEPARATOR);
+            Namer = new Namer(SEPARATOR);
 
             InitTypeMap(AnalyzedType, AnalyzedType.Name, AnalyzedType.Name);
         }
@@ -60,7 +60,7 @@ namespace SW.FluentOlap.AnalyticalNode
         protected AnalyticalObject(TypeMap existing, IDictionary<string, IEnumerable<string>> minimumKeyToHierarchy)
         {
             this.minimumKeyToHierarchy = minimumKeyToHierarchy;
-            simpleNamer = new SimpleNamer(SEPARATOR);
+            Namer = new Namer(SEPARATOR);
             TypeMap = existing;
         }
 
@@ -114,7 +114,7 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="childName"></param>
         protected void PopulateTypeMaps(InternalType type, string prefix, string childName, bool overwrite = false)
         {
-            string key = simpleNamer.EnsureMinimumUniqueKey(prefix, childName, TypeMap, overwrite);
+            string key = Namer.EnsureMinimumUniqueKey(prefix, childName, TypeMap, overwrite);
 
             if (key.Length > KeyLengthLimit)
                 KeyLengthLimitSurpassed = true;
@@ -186,7 +186,7 @@ namespace SW.FluentOlap.AnalyticalNode
             PopulationResult root = resultCollection.Dequeue();
             foreach ((string k, object v) in root)
             {
-                string key = simpleNamer.EnsureMinimumUniqueKey(k, merged);
+                string key = Namer.EnsureMinimumUniqueKey(k, merged);
                 merged[key] = v;
             }
 
@@ -195,7 +195,7 @@ namespace SW.FluentOlap.AnalyticalNode
                 PopulationResult current = resultCollection.Dequeue();
                 foreach ((string k, object v) in current)
                 {
-                    string key = simpleNamer.EnsureMinimumUniqueKey(k, merged);
+                    string key = Namer.EnsureMinimumUniqueKey(k, merged);
                     merged[key] = v;
                 }
             }
@@ -244,6 +244,11 @@ namespace SW.FluentOlap.AnalyticalNode
             var child = new AnalyticalChild<T, TProperty>(directParent ?? this, name, childType, this.TypeMap);
 
             return child;
+        }
+
+        public void Remove<TProperty>(Expression<Func<T, TProperty>> propertyExpression)
+        {
+            TypeMap.Remove(Namer.EnsureMinimumUniqueKey(propertyExpression, TypeMap));
         }
     }
 }

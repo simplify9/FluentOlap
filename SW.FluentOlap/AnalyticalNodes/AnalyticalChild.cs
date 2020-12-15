@@ -71,7 +71,7 @@ namespace SW.FluentOlap.AnalyticalNode
             PopulateServiceMaps(serviceName, parentName, Name, node.Name);
             foreach(var entry in node.TypeMap)
             {
-                string key = simpleNamer.EnsureMinimumUniqueKey(Name.ToLower() + "_" + entry.Key, TypeMap, true);
+                string key = Namer.EnsureMinimumUniqueKey(Name.ToLower() + "_" + entry.Key, TypeMap, true);
                 TypeMap[key] = entry.Value;
             }
             return this;
