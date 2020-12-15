@@ -22,6 +22,7 @@ namespace UtilityUnitTests
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
             builder.AddJsonFile("appsettings.json");
+            builder.AddEnvironmentVariables();
             config = builder.Build();
         }
 

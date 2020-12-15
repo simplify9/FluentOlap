@@ -76,6 +76,7 @@ namespace SW.FluentOlap.Utilities
             
             if (overwrite || isUnique) return minimumKey.ToLower();
 
+            // Removing data of member with same name.
             KeyValuePair<string, TDicVal> existingTypeMap =
                 map.FirstOrDefault(kv => kv.Key == minimumKey);
             map.Remove(minimumKey);
@@ -87,7 +88,7 @@ namespace SW.FluentOlap.Utilities
             string[] existingHierarchy = existingMinimumMap.Value.ToArray();
 
             bool opposingMore = existingHierarchy.Length > hierarchy.Length;
-            bool currentMore = existingHierarchy.Length > hierarchy.Length;
+            //bool currentMore = existingHierarchy.Length > hierarchy.Length;
 
             for (int i = hierarchy.Length - 1; i >= 0; --i)
             {

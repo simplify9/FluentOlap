@@ -11,6 +11,7 @@ namespace UtilityUnitTests.Models
         public string userId { get; set; }
         public double Id { get; set; }
         public string Title { get; set; }
+        public string DoesNotExist { get; set; }
         public string Body { get; set; }
     }
 

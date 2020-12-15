@@ -85,7 +85,8 @@ namespace UtilityUnitTests
             );
 
             foreach (string key in analyzer.TypeMap.Keys)
-                Assert.IsTrue(rs.Keys.Count() >= analyzer.TypeMap.Count());
+                // -1 because of the "DoesNotExist" property.
+                Assert.IsTrue(rs.Keys.Count() >= analyzer.TypeMap.Count() - 1);
         }
         
         

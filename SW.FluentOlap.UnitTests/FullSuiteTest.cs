@@ -21,6 +21,7 @@ namespace UtilityUnitTests
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
             builder.AddJsonFile("appsettings.json");
+            builder.AddEnvironmentVariables();
             config = builder.Build();
         }
 
@@ -57,6 +58,9 @@ namespace UtilityUnitTests
 
             string username = await connection.RunCommandGetString("select * from Post", "user_username");
             Assert.AreEqual(username, "Bret");
+            
+            await connection.RunCommandAsync("DROP TABLE Post");
+            await connection.RunCommandAsync("DROP TABLE AnalyzedModelHashes");
         }
         
         [TestMethod]
