@@ -138,7 +138,7 @@ namespace SW.FluentOlap.Ingester.MariaDb
 
             IList<string> tmpValues = new List<string>();
             foreach (object value in populationResult.Values)
-                tmpValues.Add($"'{value?? "NULL"}'");
+                tmpValues.Add(value != null? $"'{value}'" : "NULL");
             string values = string.Join(',', tmpValues);
 
             string insert = $"INSERT INTO {tableName} ({columns}) VALUES ({values})";
