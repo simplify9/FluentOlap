@@ -75,6 +75,7 @@ namespace SW.FluentOlap.Models
         public string  NodeName { get; set; }
         public string Name { get; }
         public string ServiceName { get; set; }
+        public Func<object, object> Transformation { get; set; }
 
         public NodeProperties(string name)
         {

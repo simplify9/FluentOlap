@@ -40,9 +40,23 @@ namespace SW.FluentOlap.AnalyticalNode
         }
 
 
-        public new AnalyticalObject<TParent> GetDirectParent()
+        internal new AnalyticalObject<TParent> GetDirectParent()
         {
             return DirectParent;
+        }
+        
+        
+        /// {id: 5}
+        /// {id: 15}
+
+        /// <summary>
+        /// Takes in a lambda function, and runs it on this property after the population phase to the specified field.
+        /// </summary>
+        /// <returns></returns>
+        public AnalyticalChild<TParent, T> HasTransformation(Func<object, object> transformation)
+        {
+            TypeMap[Name].Transformation = transformation;
+            return this;
         }
 
         protected string GetParentChain()
