@@ -36,8 +36,8 @@ namespace SW.FluentOlap.Utilities
             IDictionary<string, TDicVal> map,
             bool overwrite = false)
         {
-            var kv = GetPrefixAndKey(propertyExpression);
-            return EnsureMinimumUniqueKey(kv.Key + SEPARATOR + kv.Value, map, overwrite);
+            (string key, string value) = GetPrefixAndKey(propertyExpression);
+            return EnsureMinimumUniqueKey(key + SEPARATOR + value, map, overwrite);
         }
 
         public string EnsureMinimumUniqueKey<TDicVal>(string fullKey, IDictionary<string, TDicVal> map,
@@ -68,6 +68,15 @@ namespace SW.FluentOlap.Utilities
             return new KeyValuePair<string, string>(prefix.Substring(0, prefix.Length - 1), key);
         }
         
+        /// <summary>
+        /// Ensures that the key is at its minimum length while remaining unique.
+        /// </summary>
+        /// <param name="prefix">The string segment without the final key</param>
+        /// <param name="propKey">Final key</param>
+        /// <param name="map">Dictionary in which the keys need to be unique.</param>
+        /// <param name="overwrite">Whether or not to replace first existing member found with same minimum key</param>
+        /// <typeparam name="TDicVal">Value property in the dictionary</typeparam>
+        /// <returns></returns>
         
         public string EnsureMinimumUniqueKey<TDicVal>(string prefix, string propKey, IDictionary<string, TDicVal> map, bool overwrite = false)
         {
