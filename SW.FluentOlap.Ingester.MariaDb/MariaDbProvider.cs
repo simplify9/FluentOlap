@@ -20,21 +20,15 @@ namespace SW.FluentOlap.Ingester.MariaDb
     {
         private readonly MariaDbTableEngine engine;
 
-        public MariaDbProvider(MariaDbTableEngine engine)
+        public MariaDbProvider(MariaDbTableEngine engine, Dictionary<InternalType, string> translatedTypes)
         {
             this.engine = engine;
+            this.translatedTypes = translatedTypes;
         }
 
-        private readonly Dictionary<string, string> translatedTypes = new Dictionary<string, string>()
-        {
-            ["STRING"] = "TEXT",
-            ["INTEGER"] = "INT",
-            ["FLOAT"] = "FLOAT",
-            ["BOOLEAN"] = "BOOLEAN",
-            ["DATETIME"] = "DATETIME"
-        };
+        private readonly Dictionary<InternalType, string> translatedTypes;
 
-        public IReadOnlyDictionary<string, string> TypeDictionary => translatedTypes;
+        public IReadOnlyDictionary<InternalType, string> TypeDictionary => translatedTypes;
 
         public async Task AddOrUpdateSchemeRecord(DbConnection con, string tableName, string hash)
         {

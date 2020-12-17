@@ -13,7 +13,7 @@ namespace SW.FluentOlap.Ingester.Interfaces
     /// </summary>
     public interface IDbProvider
     {
-        public IReadOnlyDictionary<string, string> TypeDictionary { get; }
+        public IReadOnlyDictionary<InternalType, string> TypeDictionary { get; }
         public Task EnsureModelTableExists(DbConnection ctx);
         public Task CreateTableFromTypeMap(DbConnection ctx, string tableName, TypeMap map);
         public Task AddOrUpdateSchemeRecord(DbConnection ctx, string messageName, string hash);

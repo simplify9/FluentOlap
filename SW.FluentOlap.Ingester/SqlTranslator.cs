@@ -13,7 +13,7 @@ namespace SW.FluentOlap.Ingester
         {
             return new SqlTypeInformation
                {
-                   SqlType = provider.TypeDictionary[internalType.typeString],
+                   SqlType = provider.TypeDictionary[internalType],
                    IsUnique = false
                };
         }
