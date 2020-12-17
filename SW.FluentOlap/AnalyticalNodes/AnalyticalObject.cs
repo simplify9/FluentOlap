@@ -79,7 +79,7 @@ namespace SW.FluentOlap.AnalyticalNode
 
             // End of a branch.
             if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType)) // Primitive type
-                PopulateTypeMaps(internalType, prefix, preferredName);
+                PopulateTypeMaps(new NodeProperties() {InternalType = internalType}, prefix, preferredName);
 
             else // This will have inner branches
             {
@@ -106,23 +106,20 @@ namespace SW.FluentOlap.AnalyticalNode
             }
         }
 
-        /// <summary>
-        /// Add a new map to the object's TypeMaps, by defining a type
-        /// If it exists, it updates its type.
-        /// </summary>
-        /// <param name="type">SQL type</param>
-        /// <param name="childName"></param>
-        protected void PopulateTypeMaps(InternalType type, string prefix, string childName, bool overwrite = false)
+        protected void PopulateTypeMaps(NodeProperties props, string prefix, string childName, bool overwrite = false)
         {
             string key = Namer.EnsureMinimumUniqueKey(prefix, childName, TypeMap, overwrite);
-
             if (key.Length > KeyLengthLimit)
                 KeyLengthLimitSurpassed = true;
 
-            if (!TypeMap.ContainsKey(key)) TypeMap[key] = new NodeProperties(childName);
-
-
-            TypeMap[key].InternalType = type;
+            if (!TypeMap.ContainsKey(key))
+            {
+                props.Name = key;
+                TypeMap[key] = props;
+                return;
+            }
+            
+            TypeMap[key].Update(props);
         }
 
         public virtual AnalyticalObject<T> GetDirectParent() => null;
@@ -142,21 +139,6 @@ namespace SW.FluentOlap.AnalyticalNode
                         this.TypeMap.Remove(entry);
                 }
             }
-        }
-
-        /// <summary>
-        /// Define a service to pull information from
-        /// </summary>
-        /// <param name="serviceKey"></param>
-        /// <param name="serviceUrl"></param>
-        protected void PopulateServiceMaps(string serviceName, string prefix, string childName, string nodeName)
-        {
-            string key = $"{prefix}_{childName}";
-
-            if (!TypeMap.ContainsKey(key)) TypeMap[key] = new NodeProperties(childName);
-
-            TypeMap[key].ServiceName = serviceName.ToLower();
-            TypeMap[key].NodeName = nodeName.ToLower();
         }
 
         public AnalyticalObject<T> Handles(string messageName, string keyPath)
@@ -222,7 +204,7 @@ namespace SW.FluentOlap.AnalyticalNode
         public AnalyticalChild<T, TProperty> Property<TProperty>(string propertyName, AnalyticalObject<TProperty> type)
         {
             var child = new AnalyticalChild<T, TProperty>(this, propertyName, type.AnalyzedType, this.TypeMap);
-            PopulateTypeMaps(InternalType.NEVER, Name, propertyName);
+            PopulateTypeMaps(new NodeProperties(){InternalType = InternalType.NEVER}, Name, propertyName);
 
             return child;
         }

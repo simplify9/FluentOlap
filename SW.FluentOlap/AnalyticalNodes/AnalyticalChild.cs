@@ -8,7 +8,6 @@ using System.Text;
 
 namespace SW.FluentOlap.AnalyticalNode
 {
-
     public class AnalyticalChild<TParent, T> : AnalyticalObject<T>
     {
         readonly Type childType;
@@ -25,15 +24,18 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="childType"></param>
         /// <param name="typeMapsReference"></param>
         /// <param name="grandParentName"></param>
-        public AnalyticalChild(AnalyticalObject<TParent> analyticalObject, string childName, Type childType, TypeMap typeMapsReference = null, string grandParentName = null) 
+        public AnalyticalChild(AnalyticalObject<TParent> analyticalObject, string childName, Type childType,
+            TypeMap typeMapsReference = null, string grandParentName = null)
             : base(analyticalObject.TypeMap, analyticalObject.minimumKeyToHierarchy)
         {
             this.DirectParent = analyticalObject;
             this.Name = childName;
             this.childType = childType;
-            this.parentName = grandParentName == null? analyticalObject.Name : grandParentName + "_" + analyticalObject.Name;
+            this.parentName = grandParentName == null
+                ? analyticalObject.Name
+                : grandParentName + "_" + analyticalObject.Name;
             this.TypeMap = typeMapsReference ?? base.TypeMap;
-            if(TypeUtils.TryGuessInternalType(childType, out this.sqlType))
+            if (TypeUtils.TryGuessInternalType(childType, out this.sqlType))
             {
                 PopulateTypeMaps(sqlType, childName);
             }
@@ -44,10 +46,7 @@ namespace SW.FluentOlap.AnalyticalNode
         {
             return DirectParent;
         }
-        
-        
-        /// {id: 5}
-        /// {id: 15}
+
 
         /// <summary>
         /// Takes in a lambda function, and runs it on this property after the population phase to the specified field.
@@ -55,7 +54,11 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <returns></returns>
         public AnalyticalChild<TParent, T> HasTransformation(Func<object, object> transformation)
         {
-            TypeMap[Name].Transformation = transformation;
+            PopulateTypeMaps(new NodeProperties()
+            {
+                Transformation = transformation
+            }, parentName, Name, true);
+            
             return this;
         }
 
@@ -69,6 +72,7 @@ namespace SW.FluentOlap.AnalyticalNode
                 parentChainArr.Add(parent.Name);
                 parent = parent.GetDirectParent();
             }
+
             return string.Join(',', parentChainArr);
         }
 
@@ -80,14 +84,21 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="serviceName"></param>
         /// <param name="node"></param>
         /// <returns></returns>
-        public AnalyticalChild<TParent, T> GetFromService<TS>(string serviceName, AnalyticalObject<TS> node) where TS : class
+        public AnalyticalChild<TParent, T> GetFromService<TS>(string serviceName, AnalyticalObject<TS> node)
+            where TS : class
         {
-            PopulateServiceMaps(serviceName, parentName, Name, node.Name);
-            foreach(var entry in node.TypeMap)
+            PopulateTypeMaps(new NodeProperties()
+            {
+                ServiceName = serviceName,
+                NodeName = node.Name,
+            }, parentName, Name, true);
+
+            foreach (var entry in node.TypeMap)
             {
                 string key = Namer.EnsureMinimumUniqueKey(Name.ToLower() + "_" + entry.Key, TypeMap, true);
                 TypeMap[key] = entry.Value;
             }
+
             return this;
         }
 
@@ -98,14 +109,14 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="childName"></param>
         public void PopulateTypeMaps(InternalType type, string childName)
         {
-            base.PopulateTypeMaps(type, parentName, childName, true);
+            base.PopulateTypeMaps(new NodeProperties() {InternalType = type}, parentName, childName, true);
         }
 
         public void DeleteFromTypemaps(string name, bool isPrimitive)
         {
             DeleteFromTypeMap(parentName + '_' + name, isPrimitive);
         }
-        
+
         /// <summary>
         /// Override default behavior to modify parent passing
         /// </summary>
@@ -113,9 +124,10 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="propertyExpression"></param>
         /// <param name="directParent"></param>
         /// <returns></returns>
-        public new AnalyticalChild<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> propertyExpression, AnalyticalObject<T> directParent = null)
+        public new AnalyticalChild<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> propertyExpression,
+            AnalyticalObject<T> directParent = null)
         {
-            var expression = (MemberExpression)propertyExpression.Body;
+            var expression = (MemberExpression) propertyExpression.Body;
             string name = expression.Member.Name;
             Type childType = propertyExpression.ReturnType;
             AnalyticalChild<T, TProperty> child;
@@ -134,6 +146,5 @@ namespace SW.FluentOlap.AnalyticalNode
             PopulateTypeMaps(sqlType, Name);
             return this;
         }
-
     }
 }

@@ -73,7 +73,7 @@ namespace SW.FluentOlap.Models
         public InternalType InternalType { get; set; }
         public bool Unique { get; set; }
         public string  NodeName { get; set; }
-        public string Name { get; }
+        public string Name { get; internal set; }
         public string ServiceName { get; set; }
         public Func<object, object> Transformation { get; set; }
 
@@ -81,6 +81,21 @@ namespace SW.FluentOlap.Models
         {
             Name = name;
         }
+
+        public NodeProperties() { }
+
+        public void Update(NodeProperties other)
+        {
+            if (other.Transformation != null)
+                Transformation = other.Transformation;
+            if (other.InternalType != null)
+                InternalType = other.InternalType;
+            if (other.NodeName != null)
+                NodeName = other.NodeName;
+            if (other.ServiceName != null)
+                ServiceName = other.ServiceName;
+        }
+        
         public override string ToString()
         {
             string stringified = $"{SQLTYPEKEY}={InternalType}&";
