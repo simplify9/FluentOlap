@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,7 +21,6 @@ namespace UtilityUnitTests
         public StartToFinishTests()
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder.AddJsonFile("appsettings.json");
             builder.AddEnvironmentVariables();
             config = builder.Build();
         }
@@ -53,7 +53,14 @@ namespace UtilityUnitTests
                 }
             });
             
-            DataIngester ingester = new DataIngester(new MariaDbProvider(MariaDbTableEngine.InnoDB));
+            DataIngester ingester = new DataIngester(new MariaDbProvider(MariaDbTableEngine.InnoDB, new Dictionary<InternalType, string>()
+            {
+                [InternalType.STRING] = "TEXT",
+                [InternalType.INTEGER] = "BIGINT",
+                [InternalType.FLOAT] = "FLOAT",
+                [InternalType.BOOLEAN] = "BOOLEAN",
+                [InternalType.DATETIME] = "DATETIME"
+            }));
             await ingester.Insert(result, connection);
 
             string username = await connection.RunCommandGetString("select * from Post", "user_username");
@@ -92,7 +99,14 @@ namespace UtilityUnitTests
                 }
             });
             
-            DataIngester ingester = new DataIngester(new MariaDbProvider(MariaDbTableEngine.InnoDB));
+            DataIngester ingester = new DataIngester(new MariaDbProvider(MariaDbTableEngine.InnoDB, new Dictionary<InternalType, string>()
+            {
+                [InternalType.STRING] = "TEXT",
+                [InternalType.INTEGER] = "BIGINT",
+                [InternalType.FLOAT] = "FLOAT",
+                [InternalType.BOOLEAN] = "BOOLEAN",
+                [InternalType.DATETIME] = "DATETIME"
+            }));
 
             await ingester.Insert(result, connection);
             
