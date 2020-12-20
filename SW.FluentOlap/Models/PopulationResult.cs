@@ -41,9 +41,16 @@ namespace SW.FluentOlap.Models
             
             foreach (string key in neededTransformation)
             {
-                object current = filteredResult[key];
                 NodeProperties props = typeMap[key];
-                filteredResult[key] = props.Transformation(current);
+                if (filteredResult.TryGetValue(key, out object current))
+                {
+                    filteredResult[key] = props.Transformation(current);
+                }
+                else
+                {
+                    filteredResult[key] = props.Transformation(null);
+                }
+                
             }
 
             inner = filteredResult;

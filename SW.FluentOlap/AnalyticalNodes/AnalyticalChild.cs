@@ -11,7 +11,7 @@ namespace SW.FluentOlap.AnalyticalNode
     public class AnalyticalChild<TParent, T> : AnalyticalObject<T>
     {
         readonly Type childType;
-        public string parentName { get; set; }
+        internal string parentName { get; set; }
         protected AnalyticalObject<TParent> DirectParent { get; set; }
         private InternalType sqlType;
 
@@ -47,16 +47,77 @@ namespace SW.FluentOlap.AnalyticalNode
             return DirectParent;
         }
 
+        private static object MasterFunctionWrapper(Func<T, T> func, object o, object defaultValue)
+        {
+            if (o == null && typeof(T).IsValueType)
+                return defaultValue;
+
+            return func((T)o);
+        }
+
+
+        private static object MasterFunctionWrapper<TCast>(Func<object, TCast> func, object o)
+        {
+            return func(o);
+        }
+
+        private static object MasterFunctionWrapper(Func<T, T> func, object o)
+        {
+            if (o == null && typeof(T).IsValueType)
+                throw new InvalidOperationException($"Can not cast value to type of {typeof(T).Name} as it is null.");
+
+            return func((T)o);
+        }
 
         /// <summary>
-        /// Takes in a lambda function, and runs it on this property after the population phase to the specified field.
+        /// Specifies how the incoming should be cast from one value to another
         /// </summary>
+        /// <param name="transformation">Transformation Value</param>
+        /// <typeparam name="TCast">Inteded output type</typeparam>
         /// <returns></returns>
-        public AnalyticalChild<TParent, T> HasTransformation(Func<object, object> transformation)
+        public AnalyticalChild<TParent, T> HasTransformation<TCast>(Func<object, TCast> transformation)
         {
+            
             PopulateTypeMaps(new NodeProperties()
             {
-                Transformation = transformation
+                Transformation = o => MasterFunctionWrapper(transformation, o),
+            }, parentName, Name, true);
+            
+            return this;
+        }
+
+
+        /// <summary>
+        /// Takes in a lambda that returns an object of the same incoming type,
+        /// returning a new value after applying the transformation.
+        /// If the incoming value is null, the default value will be used.
+        /// </summary>
+        /// <param name="transformation">Transformation Lambda</param>
+        /// <param name="defaultValue">Default v</param>
+        /// <returns></returns>
+        public AnalyticalChild<TParent, T> HasTransformation(Func<T, T> transformation, object defaultValue)
+        {
+                
+            PopulateTypeMaps(new NodeProperties()
+            {
+                Transformation = o => MasterFunctionWrapper(transformation, o, defaultValue),
+            }, parentName, Name, true);
+            
+            return this;
+        }
+        /// <summary>
+        /// Takes in a lambda that returns an object of the same incoming type,
+        /// returning a new value after applying the transformation.
+        /// If the incoming value is null, an Exception will be thrown.
+        /// </summary>
+        /// <param name="transformation">Transformation Lambda</param>
+        /// <returns></returns>
+        public AnalyticalChild<TParent, T> HasTransformation(Func<T, T> transformation)
+        {
+                
+            PopulateTypeMaps(new NodeProperties()
+            {
+                Transformation = o => MasterFunctionWrapper(transformation, o),
             }, parentName, Name, true);
             
             return this;

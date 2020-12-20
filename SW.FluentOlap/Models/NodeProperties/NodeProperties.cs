@@ -64,6 +64,14 @@ namespace SW.FluentOlap.Models
             return typeString;
         }
     }
+
+
+    
+    /// <summary>
+    /// A Non generic base class for Node Properties.
+    /// It is not generic to allow decoding/encoding 
+    /// When you do not know the original type of the member.
+    /// </summary>
     public class NodeProperties
     {
         private const string SQLTYPEKEY = "internal_type";
