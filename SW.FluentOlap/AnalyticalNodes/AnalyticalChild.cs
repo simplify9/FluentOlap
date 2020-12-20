@@ -56,10 +56,8 @@ namespace SW.FluentOlap.AnalyticalNode
         }
 
 
-        private static object MasterFunctionWrapper<TCast>(Func<object, TCast> func, object o)
-        {
-            return func(o);
-        }
+        private static object MasterFunctionWrapper<TCast>(Func<object, TCast> func, object o) => func(o);
+        
 
         private static object MasterFunctionWrapper(Func<T, T> func, object o)
         {

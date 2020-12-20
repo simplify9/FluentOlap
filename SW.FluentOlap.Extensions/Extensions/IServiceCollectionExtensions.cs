@@ -19,7 +19,7 @@ namespace SW.FluentOlap.Extensions
         /// <param name="services"></param>
         /// <param name="assemblies"></param>
         /// <returns></returns>
-        public static IServiceCollection AddFluentOlap(this IServiceCollection serviceCollection, AnalyticalMetadata metadata, ServiceDefinitions serviceDefinitions ,params Assembly[] assemblies)
+        public static IServiceCollection AddFluentOlap(this IServiceCollection serviceCollection, ServiceDefinitions serviceDefinitions ,params Assembly[] assemblies)
         {
 
             IDictionary<string, TypeMap> maps = new Dictionary<string, TypeMap>();
@@ -58,28 +58,24 @@ namespace SW.FluentOlap.Extensions
 
             //serviceCollection.AddSingleton(serviceDefinitions);
             FluentOlapConfiguration.ServiceDefinitions = serviceDefinitions;
-            serviceCollection.AddSingleton(new MasterTypeMaps(metadata, maps, messageMaps));
+            serviceCollection.AddSingleton(new MasterTypeMaps(maps, messageMaps));
             return serviceCollection;
         }
-        public static IServiceCollection AddFluentOlap(this IServiceCollection serviceCollection, Action<AnalyticalMetadata, ServiceDefinitions> configure,params Assembly[] assemblies)
+        public static IServiceCollection AddFluentOlap(this IServiceCollection serviceCollection, Action<ServiceDefinitions> configure,params Assembly[] assemblies)
         {
             if(assemblies.Length == 0)
             {
                 Assembly assembly = Assembly.GetCallingAssembly();
                 assemblies = new Assembly[] { assembly };
             }
-            AnalyticalMetadata metadata = new AnalyticalMetadata();
             ServiceDefinitions serviceDefinitions = new ServiceDefinitions();
-            configure.Invoke(metadata, serviceDefinitions);
+            configure.Invoke(serviceDefinitions);
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
-            var metadataConfig = serviceProvider.GetRequiredService<IConfiguration>().GetSection("FluentOlap").GetSection("Metadata");
-            metadataConfig.Bind(metadata);
             var serviceDefinitionsConfig = serviceProvider.GetRequiredService<IConfiguration>().GetSection("FluentOlap").GetSection("ServiceDefinitions");
             serviceDefinitionsConfig.Bind(serviceDefinitions);
 
-
-            serviceCollection.AddFluentOlap(metadata, serviceDefinitions, assemblies);
+            serviceCollection.AddFluentOlap(serviceDefinitions, assemblies);
             return serviceCollection;
         }
 

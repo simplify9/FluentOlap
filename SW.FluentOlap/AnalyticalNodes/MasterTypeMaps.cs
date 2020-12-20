@@ -11,7 +11,6 @@ namespace SW.FluentOlap.AnalyticalNodes
         public IDictionary<string, TypeMap> Maps { get;  }
         public IList<MessageProperties> MessageMaps { get; }
         public IDictionary<string, string> ServiceMaps { get; set; }
-        public AnalyticalMetadata Metadata { get;  }
         public IEnumerator<KeyValuePair<string, TypeMap>> GetEnumerator()
         {
             return Maps.GetEnumerator();
@@ -23,11 +22,10 @@ namespace SW.FluentOlap.AnalyticalNodes
             return Maps.GetEnumerator();
         }
 
-        public MasterTypeMaps(AnalyticalMetadata metadata, IDictionary<string, TypeMap> maps, IList<MessageProperties> messageMaps)
+        public MasterTypeMaps(IDictionary<string, TypeMap> maps, IList<MessageProperties> messageMaps)
         {
             Maps = maps;
             MessageMaps = messageMaps;
-            Metadata = metadata;
         }
     }
 }

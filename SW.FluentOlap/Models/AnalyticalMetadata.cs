@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SW.FluentOlap.Models
 {
-    public class AnalyticalMetadata
+    internal class AnalyticalMetadata
     {
         public string BaseUrl { get; set; }
     }

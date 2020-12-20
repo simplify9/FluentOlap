@@ -78,12 +78,7 @@ namespace UtilityUnitTests
 
             var analyzer = new AnalyticalObject<ValueTypeTest>();
 
-            analyzer.Property(u => u.y).HasTransformation(
-                o =>
-                {
-                    return o + "5";
-                }
-            );
+            analyzer.Property(u => u.y).HasTransformation(o => o + "5");
 
             PopulationResult rs = new PopulationResult(new Dictionary<string, object>()
             {

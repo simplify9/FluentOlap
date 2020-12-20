@@ -7,7 +7,6 @@ namespace SW.FluentOlap.Models
     public static class FluentOlapConfiguration
     {
         public static ServiceDefinitions ServiceDefinitions { get; set; }
-        public static AnalyticalMetadata Metadata { get; set; }
 
     }
 }
