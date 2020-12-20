@@ -25,6 +25,20 @@ namespace UtilityUnitTests
             
             Assert.AreEqual(popRs["valuetypetest_x"], "|1|");
         }
+
+        [TestMethod]
+        public void TransformationFromMasterList()
+        {
+            FluentOlapConfiguration.TransformationsMasterList.AddTransformation<int, string>("Surround", o => $"|{o}|");
+            
+            var analyzer = new AnalyticalObject<ValueTypeTest>();
+            analyzer.Property(p => p.x).HasTransformation("Surround");
+            var popRs = new PopulationResult(new Dictionary<string, object>()
+            {
+                ["valuetypetest_x"] = 1
+            }, analyzer.TypeMap);
+            Assert.AreEqual(popRs["valuetypetest_x"], "|1|");
+        }
         
         
         [TestMethod]

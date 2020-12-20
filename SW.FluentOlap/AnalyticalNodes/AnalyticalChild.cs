@@ -47,26 +47,6 @@ namespace SW.FluentOlap.AnalyticalNode
             return DirectParent;
         }
 
-        private static object MasterFunctionWrapper(Func<T, T> func, object o, object defaultValue)
-        {
-            if (o == null && typeof(T).IsValueType)
-                return defaultValue;
-
-            return func((T)o);
-        }
-
-
-        private static object MasterFunctionWrapper<TCast>(Func<object, TCast> func, object o) => func(o);
-        
-
-        private static object MasterFunctionWrapper(Func<T, T> func, object o)
-        {
-            if (o == null && typeof(T).IsValueType)
-                throw new InvalidOperationException($"Can not cast value to type of {typeof(T).Name} as it is null.");
-
-            return func((T)o);
-        }
-
         /// <summary>
         /// Specifies how the incoming should be cast from one value to another
         /// </summary>
@@ -78,7 +58,21 @@ namespace SW.FluentOlap.AnalyticalNode
             
             PopulateTypeMaps(new NodeProperties()
             {
-                Transformation = o => MasterFunctionWrapper(transformation, o),
+                Transformation = o => MasterWrappers.MasterFunctionWrapper(transformation, o),
+            }, parentName, Name, true);
+            
+            return this;
+        }
+
+        public AnalyticalChild<TParent, T> HasTransformation(string key)
+        {
+            if (!FluentOlapConfiguration.TransformationsMasterList
+                .TryGetValue(key, out Func<object, object> transformation))
+                throw new KeyNotFoundException($"No transformation with key {key} found in TransformationMasterList.");
+                    
+            PopulateTypeMaps(new NodeProperties()
+            {
+                Transformation = transformation
             }, parentName, Name, true);
             
             return this;
@@ -98,7 +92,7 @@ namespace SW.FluentOlap.AnalyticalNode
                 
             PopulateTypeMaps(new NodeProperties()
             {
-                Transformation = o => MasterFunctionWrapper(transformation, o, defaultValue),
+                Transformation = o => MasterWrappers.MasterFunctionWrapper(transformation, o, defaultValue),
             }, parentName, Name, true);
             
             return this;
@@ -115,7 +109,7 @@ namespace SW.FluentOlap.AnalyticalNode
                 
             PopulateTypeMaps(new NodeProperties()
             {
-                Transformation = o => MasterFunctionWrapper(transformation, o),
+                Transformation = o => MasterWrappers.MasterFunctionWrapper(transformation, o),
             }, parentName, Name, true);
             
             return this;
