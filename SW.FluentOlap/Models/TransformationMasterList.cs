@@ -22,15 +22,15 @@ namespace SW.FluentOlap.Models
         
         public void AddTransformation<T>(InternalType key, Func<T, T> transformation)
         {
-            _transformations[key.typeString] = o => MasterWrappers.MasterFunctionWrapper(transformation, o);
+            _transformations[key.typeString] = MasterWrappers.MasterFunctionWrapper(transformation);
         }
         public void AddTransformation<T,TCast>(InternalType key, Func<object, TCast> transformation)
         {
-            _transformations[key.typeString] = o => MasterWrappers.MasterFunctionWrapper(transformation, o);
+            _transformations[key.typeString] = MasterWrappers.MasterFunctionWrapper(transformation);
         }
         public void AddTransformation<T,TCast>(InternalType key, Func<T, T> transformation, object defaultValue)
         {
-            _transformations[key.typeString] = o => MasterWrappers.MasterFunctionWrapper(transformation, o, defaultValue);
+            _transformations[key.typeString] = MasterWrappers.MasterFunctionWrapper(transformation, defaultValue);
         }
 
         public void AddTransformation<T>(string key, Func<T, T> transformation)
@@ -39,11 +39,11 @@ namespace SW.FluentOlap.Models
         }
         public void AddTransformation<T,TCast>(string key, Func<object, TCast> transformation)
         {
-            _transformations[key] = o => MasterWrappers.MasterFunctionWrapper(transformation, o);
+            _transformations[key] = MasterWrappers.MasterFunctionWrapper(transformation);
         }
         public void AddTransformation<T,TCast>(string key, Func<T, T> transformation, object defaultValue)
         {
-            _transformations[key] = o => MasterWrappers.MasterFunctionWrapper(transformation, o, defaultValue);
+            _transformations[key] = MasterWrappers.MasterFunctionWrapper(transformation, defaultValue);
         }
 
         IEnumerator IEnumerable.GetEnumerator()

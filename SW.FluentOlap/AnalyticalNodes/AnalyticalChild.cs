@@ -60,7 +60,7 @@ namespace SW.FluentOlap.AnalyticalNode
             
             PopulateTypeMaps(new NodeProperties()
             {
-                Transformation = o => MasterWrappers.MasterFunctionWrapper(transformation, o),
+                Transformation = MasterWrappers.MasterFunctionWrapper(transformation),
             }, parentName, Name, true);
             
             return this;
@@ -94,7 +94,7 @@ namespace SW.FluentOlap.AnalyticalNode
                 
             PopulateTypeMaps(new NodeProperties()
             {
-                Transformation = o => MasterWrappers.MasterFunctionWrapper(transformation, o, defaultValue),
+                Transformation =MasterWrappers.MasterFunctionWrapper(transformation, defaultValue),
             }, parentName, Name, true);
             
             return this;
@@ -111,7 +111,7 @@ namespace SW.FluentOlap.AnalyticalNode
                 
             PopulateTypeMaps(new NodeProperties()
             {
-                Transformation = o => MasterWrappers.MasterFunctionWrapper(transformation, o),
+                Transformation = MasterWrappers.MasterFunctionWrapper(transformation),
             }, parentName, Name, true);
             
             return this;
@@ -155,11 +155,6 @@ namespace SW.FluentOlap.AnalyticalNode
             }
 
             return this;
-        }
-
-        public void DeleteFromTypemaps(string name, bool isPrimitive)
-        {
-            DeleteFromTypeMap(parentName + '_' + name, isPrimitive);
         }
 
         /// <summary>
