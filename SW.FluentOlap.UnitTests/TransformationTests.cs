@@ -80,7 +80,8 @@ namespace UtilityUnitTests
         [TestMethod]
         public void TransformationFromMasterListInternalKeytest()
         {
-            FluentOlapConfiguration.TransformationsMasterList.AddTransformation<int, string>(InternalType.INTEGER, o => $"|{o}|");
+            FluentOlapConfiguration.TransformationsMasterList
+                .AddTransformation<int, string>(InternalType.INTEGER, o => $"|{o}|");
             
             var analyzer = new AnalyticalObject<ValueTypeTest>();
             analyzer.Property(p => p.x);

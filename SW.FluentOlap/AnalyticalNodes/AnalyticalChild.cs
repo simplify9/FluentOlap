@@ -37,7 +37,9 @@ namespace SW.FluentOlap.AnalyticalNode
             this.TypeMap = typeMapsReference ?? base.TypeMap;
             if (TypeUtils.TryGuessInternalType(childType, out this.sqlType))
             {
-                PopulateTypeMaps(sqlType, childName);
+                base.PopulateTypeMaps(
+                    new NodeProperties() {InternalType = sqlType}, 
+                    parentName, childName, true);
             }
         }
 
@@ -155,16 +157,6 @@ namespace SW.FluentOlap.AnalyticalNode
             return this;
         }
 
-        /// <summary>
-        /// Override the default population to mention parent
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="childName"></param>
-        public void PopulateTypeMaps(InternalType type, string childName)
-        {
-            base.PopulateTypeMaps(new NodeProperties() {InternalType = type}, parentName, childName, true);
-        }
-
         public void DeleteFromTypemaps(string name, bool isPrimitive)
         {
             DeleteFromTypeMap(parentName + '_' + name, isPrimitive);
@@ -187,17 +179,6 @@ namespace SW.FluentOlap.AnalyticalNode
             // Passing the type maps down to the child, so that all children/grandchildren share the same type dictionary
             child = new AnalyticalChild<T, TProperty>(this, name, childType, this.TypeMap, this.parentName);
             return child;
-        }
-
-        /// <summary>
-        /// Define SQL type for this property
-        /// </summary>
-        /// <param name="sqlType"></param>
-        /// <returns></returns>
-        public AnalyticalChild<TParent, T> HasInternalType(InternalType sqlType)
-        {
-            PopulateTypeMaps(sqlType, Name);
-            return this;
         }
     }
 }
