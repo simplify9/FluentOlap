@@ -7,4 +7,11 @@ namespace UtilityUnitTests.Models
         public int x { get; set; }
         public string y { get; set; }
     }
+
+    class ValueTypeTestInner
+    {
+        public int z { get; set; }
+    }
+    
+    
 }

@@ -106,9 +106,8 @@ namespace SW.FluentOlap.AnalyticalNode
             }
         }
 
-        protected void PopulateTypeMaps(NodeProperties props, string prefix, string childName, bool overwrite = false)
+        private void _populateTypeMaps(NodeProperties props, string key, bool overwrite = false)
         {
-            string key = Namer.EnsureMinimumUniqueKey(prefix, childName, TypeMap, overwrite);
             if (key.Length > KeyLengthLimit)
                 KeyLengthLimitSurpassed = true;
 
@@ -120,6 +119,18 @@ namespace SW.FluentOlap.AnalyticalNode
             }
             
             TypeMap[key].Update(props);
+        }
+
+        protected void PopulateTypeMaps(NodeProperties props, string fullkey, bool overwrite = false)
+        {
+            string key = Namer.EnsureMinimumUniqueKey(fullkey, TypeMap, overwrite);
+            _populateTypeMaps(props, key, overwrite);
+        }
+        
+        protected void PopulateTypeMaps(NodeProperties props, string prefix, string childName, bool overwrite = false)
+        {
+            string key = Namer.EnsureMinimumUniqueKey(prefix, childName, TypeMap, overwrite);
+            _populateTypeMaps(props, key, overwrite);
         }
 
         public virtual AnalyticalObject<T> GetDirectParent() => null;
@@ -205,6 +216,11 @@ namespace SW.FluentOlap.AnalyticalNode
         {
             var child = new AnalyticalChild<T, TProperty>(this, propertyName, type.AnalyzedType, this.TypeMap);
             PopulateTypeMaps(new NodeProperties(){InternalType = InternalType.NEVER}, Name, propertyName);
+
+            foreach ((string key, NodeProperties value) in type.TypeMap)
+            {
+                PopulateTypeMaps(value, $"{propertyName}_{key}", true);
+            }
 
             return child;
         }

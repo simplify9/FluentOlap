@@ -11,6 +11,44 @@ namespace UtilityUnitTests
     [TestClass]
     public class TransformationTests
     {
+
+        [TestMethod]
+        public void TransformationShadowPropertyTest()
+        {
+            
+            var analyzer = new AnalyticalObject<ValueTypeTest>();
+            var innerAnalyzer = new AnalyticalObject<ValueTypeTestInner>();
+            innerAnalyzer.Property(x => x.z).HasTransformation(o => o + 2);
+            analyzer.Property("shadow", innerAnalyzer);
+            
+            var popRs = new PopulationResult(new Dictionary<string, object>()
+            {
+                ["valuetypetestinner_z"] = 1
+            }, analyzer.TypeMap);
+            Assert.AreEqual(popRs["valuetypetestinner_z"], 3);
+        }
+        
+        
+        [TestMethod]
+        public void TransformationShadowPropertyNullTest()
+        {
+            
+            var analyzer = new AnalyticalObject<ValueTypeTest>();
+            var innerAnalyzer = new AnalyticalObject<ValueTypeTestInner>();
+            innerAnalyzer.Property(x => x.z).HasTransformation(o => o + 2);
+            analyzer.Property("shadow", innerAnalyzer);
+
+            try
+            {
+                var popRs = new PopulationResult(new Dictionary<string, object>()
+                {
+                }, analyzer.TypeMap);
+            }
+            catch(InvalidOperationException e)
+            {
+            }
+            //Assert.AreEqual(popRs["valuetypetestinner_z"], 3);
+        }
         
         [TestMethod]
         public void TransformationCastTest()
@@ -27,12 +65,25 @@ namespace UtilityUnitTests
         }
 
         [TestMethod]
-        public void TransformationFromMasterList()
+        public void TransformationFromMasterListTest()
         {
             FluentOlapConfiguration.TransformationsMasterList.AddTransformation<int, string>("Surround", o => $"|{o}|");
             
             var analyzer = new AnalyticalObject<ValueTypeTest>();
             analyzer.Property(p => p.x).HasTransformation("Surround");
+            var popRs = new PopulationResult(new Dictionary<string, object>()
+            {
+                ["valuetypetest_x"] = 1
+            }, analyzer.TypeMap);
+            Assert.AreEqual(popRs["valuetypetest_x"], "|1|");
+        }
+        [TestMethod]
+        public void TransformationFromMasterListInternalKeytest()
+        {
+            FluentOlapConfiguration.TransformationsMasterList.AddTransformation<int, string>(InternalType.INTEGER, o => $"|{o}|");
+            
+            var analyzer = new AnalyticalObject<ValueTypeTest>();
+            analyzer.Property(p => p.x);
             var popRs = new PopulationResult(new Dictionary<string, object>()
             {
                 ["valuetypetest_x"] = 1

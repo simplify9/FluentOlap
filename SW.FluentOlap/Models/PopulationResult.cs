@@ -34,14 +34,22 @@ namespace SW.FluentOlap.Models
         {
             OriginTypeMap = typeMap;
             var filteredResult
-                = new Dictionary<string, object>(flattened.Where(v => OriginTypeMap.ContainsKey(v.Key)));;
-            
+                = new Dictionary<string, object>(flattened.Where(v => OriginTypeMap.ContainsKey(v.Key)));
+            ;
+
             var neededTransformation =
-                typeMap.Where(pair => pair.Value.Transformation != null).Select(i => i.Key).ToList();
-            
+                typeMap.Where(pair => pair.Value.Transformation != null ||
+                              FluentOlapConfiguration.TransformationsMasterList.ContainsKey(pair.Value
+                              .InternalType.typeString)
+                ).Select(i => i.Key).ToList();
+
             foreach (string key in neededTransformation)
             {
                 NodeProperties props = typeMap[key];
+                
+                // Default to the master list.
+                props.Transformation ??= FluentOlapConfiguration.TransformationsMasterList[props.InternalType];
+                
                 if (filteredResult.TryGetValue(key, out object current))
                 {
                     filteredResult[key] = props.Transformation(current);
@@ -50,11 +58,9 @@ namespace SW.FluentOlap.Models
                 {
                     filteredResult[key] = props.Transformation(null);
                 }
-                
             }
 
             inner = filteredResult;
-
         }
 
         /// <summary>
