@@ -158,9 +158,9 @@ namespace SW.FluentOlap.AnalyticalNode
             return this;
         }
 
-        public AnalyticalObject<T> Handles<M>(Expression<Func<M, object>> propertyExpression)
+        public AnalyticalObject<T> Handles<TM>(Expression<Func<TM, object>> propertyExpression)
         {
-            string messageName = typeof(M).Name;
+            string messageName = typeof(TM).Name;
             var expression = (MemberExpression) propertyExpression.Body;
             string keyPath = expression.Member.Name;
             return this.Handles(messageName, keyPath);
