@@ -63,9 +63,12 @@ namespace UtilityUnitTests
             var analyzedHash = Hashing.HashTypeMaps(analyzed.TypeMap);
             var analyzedCurrentHash = Hashing.HashTypeMaps(TestTypeMaps.P3TypeMap);
 
-            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.P3TypeMap);
+            TypeMapDifferences differences = new TypeMapDifferences(analyzed.TypeMap, TestTypeMaps.P3TypeMap, new DifferenceType[]
+            {
+                DifferenceType.ChangedColumnOrder
+            });
 
-            Assert.AreEqual(analyzedHash, analyzedCurrentHash);
+            Assert.IsFalse(differences.Any());
         }
         
         [TestMethod]
@@ -85,8 +88,7 @@ namespace UtilityUnitTests
                     DifferenceType.ChangedColumnOrder
                 });
 
-            DictionaryAssert.KeysMatch(analyzed.TypeMap, TestTypeMaps.P3TypeMapNoRef);
-            Assert.AreEqual(analyzedHash, analyzedCurrentHash);
+            Assert.IsFalse(differences.Any());
         }
 
         [TestMethod]

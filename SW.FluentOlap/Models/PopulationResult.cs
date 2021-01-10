@@ -32,9 +32,35 @@ namespace SW.FluentOlap.Models
         /// <param name="typeMap"></param>
         public PopulationResult(IDictionary<string, object> flattened, TypeMap typeMap)
         {
-            inner = flattened;
             OriginTypeMap = typeMap;
-            inner = new Dictionary<string, object>(inner.Where(v => OriginTypeMap.ContainsKey(v.Key)));
+            var filteredResult
+                = new Dictionary<string, object>(flattened.Where(v => OriginTypeMap.ContainsKey(v.Key)));
+            ;
+
+            var neededTransformation =
+                typeMap.Where(pair => pair.Value.Transformation != null ||
+                              FluentOlapConfiguration.TransformationsMasterList.ContainsKey(pair.Value
+                              .InternalType.typeString)
+                ).Select(i => i.Key).ToList();
+
+            foreach (string key in neededTransformation)
+            {
+                NodeProperties props = typeMap[key];
+                
+                // Default to the master list.
+                props.Transformation ??= FluentOlapConfiguration.TransformationsMasterList[props.InternalType];
+                
+                if (filteredResult.TryGetValue(key, out object current))
+                {
+                    filteredResult[key] = props.Transformation(current);
+                }
+                else
+                {
+                    filteredResult[key] = props.Transformation(null);
+                }
+            }
+
+            inner = filteredResult;
         }
 
         /// <summary>

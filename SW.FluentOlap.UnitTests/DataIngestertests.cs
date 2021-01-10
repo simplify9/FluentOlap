@@ -21,7 +21,6 @@ namespace UtilityUnitTests
         public DataIngesterTests()
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder.AddJsonFile("appsettings.json");
             builder.AddEnvironmentVariables();
             config = builder.Build();
         }
@@ -35,7 +34,14 @@ namespace UtilityUnitTests
             await connection.RunCommandAsync("DROP TABLE IF EXISTS BasicInsertClass");
             await connection.RunCommandAsync("DROP TABLE IF EXISTS AnalyzedModelHashes");
             
-            DataIngester ingester = new DataIngester(new MariaDbProvider(MariaDbTableEngine.InnoDB));
+            DataIngester ingester = new DataIngester(new MariaDbProvider(MariaDbTableEngine.InnoDB, new Dictionary<InternalType, string>()
+            {
+                [InternalType.STRING] = "TEXT",
+                [InternalType.INTEGER] = "BIGINT",
+                [InternalType.FLOAT] = "FLOAT",
+                [InternalType.BOOLEAN] = "BOOLEAN",
+                [InternalType.DATETIME] = "DATETIME"
+            }));
             
             await ingester.Insert(new PopulationResult(new Dictionary<string, object>()
                 {

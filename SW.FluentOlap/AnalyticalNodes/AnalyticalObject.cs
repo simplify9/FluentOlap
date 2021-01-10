@@ -79,7 +79,7 @@ namespace SW.FluentOlap.AnalyticalNode
 
             // End of a branch.
             if (TypeUtils.TryGuessInternalType(typeToInit, out InternalType internalType)) // Primitive type
-                PopulateTypeMaps(internalType, prefix, preferredName);
+                PopulateTypeMaps(new NodeProperties() {InternalType = internalType}, prefix, preferredName);
 
             else // This will have inner branches
             {
@@ -106,23 +106,31 @@ namespace SW.FluentOlap.AnalyticalNode
             }
         }
 
-        /// <summary>
-        /// Add a new map to the object's TypeMaps, by defining a type
-        /// If it exists, it updates its type.
-        /// </summary>
-        /// <param name="type">SQL type</param>
-        /// <param name="childName"></param>
-        protected void PopulateTypeMaps(InternalType type, string prefix, string childName, bool overwrite = false)
+        private void _populateTypeMaps(NodeProperties props, string key, bool overwrite = false)
         {
-            string key = Namer.EnsureMinimumUniqueKey(prefix, childName, TypeMap, overwrite);
-
             if (key.Length > KeyLengthLimit)
                 KeyLengthLimitSurpassed = true;
 
-            if (!TypeMap.ContainsKey(key)) TypeMap[key] = new NodeProperties(childName);
+            if (!TypeMap.ContainsKey(key))
+            {
+                props.Name = key;
+                TypeMap[key] = props;
+                return;
+            }
+            
+            TypeMap[key].Update(props);
+        }
 
-
-            TypeMap[key].InternalType = type;
+        protected void PopulateTypeMaps(NodeProperties props, string fullkey, bool overwrite = false)
+        {
+            string key = Namer.EnsureMinimumUniqueKey(fullkey, TypeMap, overwrite);
+            _populateTypeMaps(props, key, overwrite);
+        }
+        
+        protected void PopulateTypeMaps(NodeProperties props, string prefix, string childName, bool overwrite = false)
+        {
+            string key = Namer.EnsureMinimumUniqueKey(prefix, childName, TypeMap, overwrite);
+            _populateTypeMaps(props, key, overwrite);
         }
 
         public virtual AnalyticalObject<T> GetDirectParent() => null;
@@ -144,30 +152,15 @@ namespace SW.FluentOlap.AnalyticalNode
             }
         }
 
-        /// <summary>
-        /// Define a service to pull information from
-        /// </summary>
-        /// <param name="serviceKey"></param>
-        /// <param name="serviceUrl"></param>
-        protected void PopulateServiceMaps(string serviceName, string prefix, string childName, string nodeName)
-        {
-            string key = $"{prefix}_{childName}";
-
-            if (!TypeMap.ContainsKey(key)) TypeMap[key] = new NodeProperties(childName);
-
-            TypeMap[key].ServiceName = serviceName.ToLower();
-            TypeMap[key].NodeName = nodeName.ToLower();
-        }
-
         public AnalyticalObject<T> Handles(string messageName, string keyPath)
         {
             this.MessageMap = new MessageProperties(messageName, keyPath);
             return this;
         }
 
-        public AnalyticalObject<T> Handles<M>(Expression<Func<M, object>> propertyExpression)
+        public AnalyticalObject<T> Handles<TM>(Expression<Func<TM, object>> propertyExpression)
         {
-            string messageName = typeof(M).Name;
+            string messageName = typeof(TM).Name;
             var expression = (MemberExpression) propertyExpression.Body;
             string keyPath = expression.Member.Name;
             return this.Handles(messageName, keyPath);
@@ -222,7 +215,12 @@ namespace SW.FluentOlap.AnalyticalNode
         public AnalyticalChild<T, TProperty> Property<TProperty>(string propertyName, AnalyticalObject<TProperty> type)
         {
             var child = new AnalyticalChild<T, TProperty>(this, propertyName, type.AnalyzedType, this.TypeMap);
-            PopulateTypeMaps(InternalType.NEVER, Name, propertyName);
+            PopulateTypeMaps(new NodeProperties(){InternalType = InternalType.NEVER}, Name, propertyName);
+
+            foreach ((string key, NodeProperties value) in type.TypeMap)
+            {
+                PopulateTypeMaps(value, $"{propertyName}_{key}", true);
+            }
 
             return child;
         }

@@ -8,11 +8,10 @@ using System.Text;
 
 namespace SW.FluentOlap.AnalyticalNode
 {
-
     public class AnalyticalChild<TParent, T> : AnalyticalObject<T>
     {
         readonly Type childType;
-        public string parentName { get; set; }
+        internal string parentName { get; set; }
         protected AnalyticalObject<TParent> DirectParent { get; set; }
         private InternalType sqlType;
 
@@ -25,24 +24,97 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="childType"></param>
         /// <param name="typeMapsReference"></param>
         /// <param name="grandParentName"></param>
-        public AnalyticalChild(AnalyticalObject<TParent> analyticalObject, string childName, Type childType, TypeMap typeMapsReference = null, string grandParentName = null) 
+        public AnalyticalChild(AnalyticalObject<TParent> analyticalObject, string childName, Type childType,
+            TypeMap typeMapsReference = null, string grandParentName = null)
             : base(analyticalObject.TypeMap, analyticalObject.minimumKeyToHierarchy)
         {
             this.DirectParent = analyticalObject;
             this.Name = childName;
             this.childType = childType;
-            this.parentName = grandParentName == null? analyticalObject.Name : grandParentName + "_" + analyticalObject.Name;
+            this.parentName = grandParentName == null
+                ? analyticalObject.Name
+                : grandParentName + "_" + analyticalObject.Name;
             this.TypeMap = typeMapsReference ?? base.TypeMap;
-            if(TypeUtils.TryGuessInternalType(childType, out this.sqlType))
+            if (TypeUtils.TryGuessInternalType(childType, out this.sqlType))
             {
-                PopulateTypeMaps(sqlType, childName);
+                base.PopulateTypeMaps(
+                    new NodeProperties() {InternalType = sqlType}, 
+                    parentName, childName, true);
             }
         }
 
 
-        public new AnalyticalObject<TParent> GetDirectParent()
+        internal new AnalyticalObject<TParent> GetDirectParent()
         {
             return DirectParent;
+        }
+
+        /// <summary>
+        /// Specifies how the incoming should be cast from one value to another
+        /// </summary>
+        /// <param name="transformation">Transformation Value</param>
+        /// <typeparam name="TCast">Inteded output type</typeparam>
+        /// <returns></returns>
+        public AnalyticalChild<TParent, T> HasTransformation<TCast>(Func<object, TCast> transformation)
+        {
+            
+            PopulateTypeMaps(new NodeProperties()
+            {
+                Transformation = MasterWrappers.MasterFunctionWrapper(transformation),
+            }, parentName, Name, true);
+            
+            return this;
+        }
+
+        public AnalyticalChild<TParent, T> HasTransformation(string key)
+        {
+            if (!FluentOlapConfiguration.TransformationsMasterList
+                .TryGetValue(key, out Func<object, object> transformation))
+                throw new KeyNotFoundException($"No transformation with key {key} found in TransformationMasterList.");
+                    
+            PopulateTypeMaps(new NodeProperties()
+            {
+                Transformation = transformation
+            }, parentName, Name, true);
+            
+            return this;
+        }
+
+
+        /// <summary>
+        /// Takes in a lambda that returns an object of the same incoming type,
+        /// returning a new value after applying the transformation.
+        /// If the incoming value is null, the default value will be used.
+        /// </summary>
+        /// <param name="transformation">Transformation Lambda</param>
+        /// <param name="defaultValue">Default v</param>
+        /// <returns></returns>
+        public AnalyticalChild<TParent, T> HasTransformation(Func<T, T> transformation, object defaultValue)
+        {
+                
+            PopulateTypeMaps(new NodeProperties()
+            {
+                Transformation =MasterWrappers.MasterFunctionWrapper(transformation, defaultValue),
+            }, parentName, Name, true);
+            
+            return this;
+        }
+        /// <summary>
+        /// Takes in a lambda that returns an object of the same incoming type,
+        /// returning a new value after applying the transformation.
+        /// If the incoming value is null, an Exception will be thrown.
+        /// </summary>
+        /// <param name="transformation">Transformation Lambda</param>
+        /// <returns></returns>
+        public AnalyticalChild<TParent, T> HasTransformation(Func<T, T> transformation)
+        {
+                
+            PopulateTypeMaps(new NodeProperties()
+            {
+                Transformation = MasterWrappers.MasterFunctionWrapper(transformation),
+            }, parentName, Name, true);
+            
+            return this;
         }
 
         protected string GetParentChain()
@@ -55,6 +127,7 @@ namespace SW.FluentOlap.AnalyticalNode
                 parentChainArr.Add(parent.Name);
                 parent = parent.GetDirectParent();
             }
+
             return string.Join(',', parentChainArr);
         }
 
@@ -66,32 +139,24 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="serviceName"></param>
         /// <param name="node"></param>
         /// <returns></returns>
-        public AnalyticalChild<TParent, T> GetFromService<TS>(string serviceName, AnalyticalObject<TS> node) where TS : class
+        public AnalyticalChild<TParent, T> GetFromService<TS>(string serviceName, AnalyticalObject<TS> node)
+            where TS : class
         {
-            PopulateServiceMaps(serviceName, parentName, Name, node.Name);
-            foreach(var entry in node.TypeMap)
+            PopulateTypeMaps(new NodeProperties()
+            {
+                ServiceName = serviceName,
+                NodeName = node.Name,
+            }, parentName, Name, true);
+
+            foreach (var entry in node.TypeMap)
             {
                 string key = Namer.EnsureMinimumUniqueKey(Name.ToLower() + "_" + entry.Key, TypeMap, true);
                 TypeMap[key] = entry.Value;
             }
+
             return this;
         }
 
-        /// <summary>
-        /// Override the default population to mention parent
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="childName"></param>
-        public void PopulateTypeMaps(InternalType type, string childName)
-        {
-            base.PopulateTypeMaps(type, parentName, childName, true);
-        }
-
-        public void DeleteFromTypemaps(string name, bool isPrimitive)
-        {
-            DeleteFromTypeMap(parentName + '_' + name, isPrimitive);
-        }
-        
         /// <summary>
         /// Override default behavior to modify parent passing
         /// </summary>
@@ -99,9 +164,10 @@ namespace SW.FluentOlap.AnalyticalNode
         /// <param name="propertyExpression"></param>
         /// <param name="directParent"></param>
         /// <returns></returns>
-        public new AnalyticalChild<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> propertyExpression, AnalyticalObject<T> directParent = null)
+        public new AnalyticalChild<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> propertyExpression,
+            AnalyticalObject<T> directParent = null)
         {
-            var expression = (MemberExpression)propertyExpression.Body;
+            var expression = (MemberExpression) propertyExpression.Body;
             string name = expression.Member.Name;
             Type childType = propertyExpression.ReturnType;
             AnalyticalChild<T, TProperty> child;
@@ -109,17 +175,5 @@ namespace SW.FluentOlap.AnalyticalNode
             child = new AnalyticalChild<T, TProperty>(this, name, childType, this.TypeMap, this.parentName);
             return child;
         }
-
-        /// <summary>
-        /// Define SQL type for this property
-        /// </summary>
-        /// <param name="sqlType"></param>
-        /// <returns></returns>
-        public AnalyticalChild<TParent, T> HasInternalType(InternalType sqlType)
-        {
-            PopulateTypeMaps(sqlType, Name);
-            return this;
-        }
-
     }
 }
