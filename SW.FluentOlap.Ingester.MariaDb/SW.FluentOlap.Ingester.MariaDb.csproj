@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <PackageId>SimplyWorks.FluentOlap.Ingester.MariaDb</PackageId>
+    <Product>SimplyWorks.FluentOlap.Ingester.MariaDb</Product>
+    <Authors>Simplify9</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +15,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SW.FluentOlap.Ingester\SW.FluentOlap.Ingester.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
