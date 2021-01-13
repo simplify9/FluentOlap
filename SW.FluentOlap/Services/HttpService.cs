@@ -142,13 +142,11 @@ namespace SW.FluentOlap.Models
         /// </summary>
         public IEnumerable<string> GetRequiredParameters(bool format = true)
         {
-            IEnumerable<string> parameters = 
-            Regex.Matches(
-                templatedUrl,
-                "" + "{\\w*\\}")
-                .Select(c => 
-                    c.Value
-                );
+            
+                var parameters =Regex.Matches(
+                    templatedUrl,
+                    "" + "{\\w*\\}").Cast<Match>().Select(c => c.Value);
+                
             return !format ? parameters : parameters.Select(FormatParameter);
         }
 

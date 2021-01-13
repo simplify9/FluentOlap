@@ -102,8 +102,8 @@ namespace SW.FluentOlap.Models
         {
             Dictionary<string, object> tmp = new Dictionary<string, object>();
             
-            foreach ((string key, NodeProperties value) in map)
-                tmp[key] = value;
+            foreach (var kv in map)
+                tmp[kv.Key] = kv.Value;
 
             return tmp;
         }

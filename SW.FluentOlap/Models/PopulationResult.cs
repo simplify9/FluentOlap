@@ -34,7 +34,9 @@ namespace SW.FluentOlap.Models
         {
             OriginTypeMap = typeMap;
             var filteredResult
-                = new Dictionary<string, object>(flattened.Where(v => OriginTypeMap.ContainsKey(v.Key)));
+                = new Dictionary<string, object>(
+                    flattened.Where(v => OriginTypeMap.ContainsKey(v.Key))
+                        .ToDictionary(kv => kv.Key, kv => kv.Value));
             ;
 
             var neededTransformation =

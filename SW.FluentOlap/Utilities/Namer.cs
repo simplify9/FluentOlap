@@ -36,16 +36,16 @@ namespace SW.FluentOlap.Utilities
             IDictionary<string, TDicVal> map,
             bool overwrite = false)
         {
-            (string key, string value) = GetPrefixAndKey(propertyExpression);
-            return EnsureMinimumUniqueKey(key + SEPARATOR + value, map, overwrite);
+            var kv = GetPrefixAndKey(propertyExpression);
+            return EnsureMinimumUniqueKey(kv.Key + SEPARATOR + kv.Value, map, overwrite);
         }
 
         public string EnsureMinimumUniqueKey<TDicVal>(string fullKey, IDictionary<string, TDicVal> map,
             bool overwrite = false)
         {
-            string[] split = fullKey.Split(SEPARATOR);
-            string prefix = string.Join(SEPARATOR, split.Take(split.Length - 1));
-            string propKey = split.TakeLast(1).First();
+            var split = fullKey.Split(SEPARATOR);
+            string prefix = string.Join(SEPARATOR.ToString(), split.Take(split.Length - 1));
+            string propKey = split[split.Length - 1];
             return EnsureMinimumUniqueKey(prefix, propKey, map, overwrite);
         }
 
