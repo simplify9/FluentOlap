@@ -128,12 +128,12 @@ namespace SW.FluentOlap.Ingester.MariaDb
 
         public async Task Write(DbConnection con, string tableName, PopulationResult populationResult)
         {
-            string columns = string.Join(',', populationResult.Keys);
+            string columns = string.Join(",", populationResult.Keys);
 
             IList<string> tmpValues = new List<string>();
             foreach (object value in populationResult.Values)
                 tmpValues.Add(value != null? $"'{value}'" : "NULL");
-            string values = string.Join(',', tmpValues);
+            string values = string.Join(",", tmpValues);
 
             string insert = $"INSERT INTO {tableName} ({columns}) VALUES ({values})";
 

@@ -128,7 +128,7 @@ namespace SW.FluentOlap.AnalyticalNode
                 parent = parent.GetDirectParent();
             }
 
-            return string.Join(',', parentChainArr);
+            return string.Join(",", parentChainArr);
         }
 
 

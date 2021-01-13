@@ -38,7 +38,8 @@ namespace SW.FluentOlap.AnalyticalNode
         public Type AnalyzedType { get; set; }
 
         public Dictionary<string, NodeProperties> ExpandableChildren =>
-            new Dictionary<string, NodeProperties>(TypeMap.Where(n => n.Value.ServiceName != null));
+            new Dictionary<string, NodeProperties>(TypeMap.Where(n => n.Value.ServiceName != null)
+                .ToDictionary(kv => kv.Key, kv => kv.Value));
 
 
     public AnalyticalObject(Action<AnalyticalObjectInitSettings<T>> settings = null)
@@ -177,19 +178,19 @@ namespace SW.FluentOlap.AnalyticalNode
             IDictionary<string, object> merged = new Dictionary<string, object>();
 
             PopulationResult root = resultCollection.Dequeue();
-            foreach ((string k, object v) in root)
+            foreach (var kv in root)
             {
-                string key = Namer.EnsureMinimumUniqueKey(k, merged);
-                merged[key] = v;
+                string key = Namer.EnsureMinimumUniqueKey(kv.Key, merged);
+                merged[key] = kv.Value;
             }
 
             for (int _ = 0; _ < resultCollection.Count; ++_)
             {
                 PopulationResult current = resultCollection.Dequeue();
-                foreach ((string k, object v) in current)
+                foreach (var kv in current)
                 {
-                    string key = Namer.EnsureMinimumUniqueKey(k, merged);
-                    merged[key] = v;
+                    string key = Namer.EnsureMinimumUniqueKey(kv.Key, merged);
+                    merged[key] = kv.Value;
                 }
             }
 
@@ -217,9 +218,9 @@ namespace SW.FluentOlap.AnalyticalNode
             var child = new AnalyticalChild<T, TProperty>(this, propertyName, type.AnalyzedType, this.TypeMap);
             PopulateTypeMaps(new NodeProperties(){InternalType = InternalType.NEVER}, Name, propertyName);
 
-            foreach ((string key, NodeProperties value) in type.TypeMap)
+            foreach (var kv in type.TypeMap)
             {
-                PopulateTypeMaps(value, $"{propertyName}_{key}", true);
+                PopulateTypeMaps(kv.Value, $"{propertyName}_{kv.Key}", true);
             }
 
             return child;

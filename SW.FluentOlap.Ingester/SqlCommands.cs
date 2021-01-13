@@ -18,7 +18,7 @@ namespace SW.FluentOlap.Ingester
             DbCommand command = con.CreateCommand();
             command.CommandText = commandTxt;
             int rs = await command.ExecuteNonQueryAsync();
-            await con.CloseAsync();
+            con.Close();
             return rs;
         }
 
@@ -39,7 +39,7 @@ namespace SW.FluentOlap.Ingester
                 rs = reader.GetString(ordinal);
             }
 
-            await con.CloseAsync();
+            con.Close();
             return rs;
 
         }
