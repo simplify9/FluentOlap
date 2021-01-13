@@ -42,7 +42,7 @@ steps:
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   inputs:
     command: pack
-    packagesToPack: 'SW.FluentOlap.Ingester.MariaDb/SW.FluentOlap.Ingester.MariaDb.csproj;SW.FluentOlap/SW.FluentOlap.csproj;' 
+    packagesToPack: 'SW.FluentOlap.Ingester/SW.FluentOlap.Ingester.csproj;SW.FluentOlap.Ingester.MariaDb/SW.FluentOlap.Ingester.MariaDb.csproj;SW.FluentOlap/SW.FluentOlap.csproj;' 
     nobuild: true
     versioningScheme: byBuildNumber
 
